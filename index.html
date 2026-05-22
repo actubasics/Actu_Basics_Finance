@@ -340,49 +340,420 @@ hr.div{border:none;border-top:1px solid var(--border);margin:14px 0}
      ETFs
 ══════════════════════════════════════════════ -->
 <div id="panel-etfs" class="panel">
-  <div class="sec mt20">Comparatif ETFs — tout en EUR</div>
-  <div class="etfc">
-    <div class="etfcard">
-      <div style="font-size:1.05rem;font-weight:800;margin-bottom:2px">VWCE</div>
-      <div class="note mb12">IE00B3RBWM25 · Vanguard FTSE All-World UCITS ACC</div>
-      <div class="etf-row"><span>Bourse</span><span class="mono">Euronext Amsterdam (€)</span></div>
-      <div class="etf-row"><span>TER annuel</span><span class="ta">0.22%</span></div>
-      <div class="etf-row"><span>Index</span><span>FTSE All-World</span></div>
-      <div class="etf-row"><span>Développés</span><span>~90%</span></div>
-      <div class="etf-row"><span>Émergents</span><span>~10%</span></div>
-      <div class="etf-row"><span>Corée du Sud</span><span class="ta">EM (FTSE)</span></div>
-      <div class="etf-row"><span>Titres</span><span>~3 700</span></div>
-      <div class="etf-row"><span>Dividendes</span><span class="tg">Accumulants ✓</span></div>
-      <div class="etf-row"><span>Fiscalité Belgique</span><span class="tg">0% plus-value ✓</span></div>
-      <div class="etf-row"><span>Complexité</span><span class="tg">1 ETF — minimal</span></div>
-    </div>
-    <div class="etfcard rec">
-      <div style="font-size:1.05rem;font-weight:800;margin-bottom:2px">IWDA + EMIM</div>
-      <div class="note mb12">IE00B4L5Y983 + IE00BKM4GZ66 · iShares UCITS ACC</div>
-      <div class="etf-row"><span>Bourse</span><span class="mono">Euronext Amsterdam (€)</span></div>
-      <div class="etf-row"><span>TER moyen pondéré</span><span class="tg">~0.20%</span></div>
-      <div class="etf-row"><span>Index</span><span>MSCI World + MSCI EM IMI</span></div>
-      <div class="etf-row"><span>Développés (IWDA)</span><span>100% de IWDA</span></div>
-      <div class="etf-row"><span>Émergents (EMIM)</span><span class="tg">Contrôlable 10–30%</span></div>
-      <div class="etf-row"><span>Corée du Sud</span><span class="tb">DM (MSCI)</span></div>
-      <div class="etf-row"><span>Titres</span><span>~1 500 + ~3 000</span></div>
-      <div class="etf-row"><span>Dividendes</span><span class="tg">Accumulants ✓</span></div>
-      <div class="etf-row"><span>Fiscalité Belgique</span><span class="tg">0% plus-value ✓</span></div>
-      <div class="etf-row"><span>Complexité</span><span class="ta">2 ETFs — modérée</span></div>
-    </div>
+  <div class="sec mt20">Comparatif ETFs — tout en EUR · Données mai 2026</div>
+
+  <!-- HYPOTHESE DISCIPLINE -->
+  <div style="background:linear-gradient(135deg,rgba(0,212,170,.08),rgba(155,127,232,.06));border:1px solid rgba(0,212,170,.3);border-radius:12px;padding:14px 18px;margin-bottom:14px;font-size:.82rem;line-height:1.7">
+    <span style="font-size:.65rem;font-family:var(--mono);color:var(--green);text-transform:uppercase;letter-spacing:.1em;display:block;margin-bottom:6px">Hypothèse : discipline totale confirmée</span>
+    Tu ne paniques pas en crise. Tu achètes quand le marché baisse. Tu ne regardes pas le portefeuille plus de 2 fois par an. Dans ce cas — et seulement dans ce cas — voici les allocations optimales maximisant le rendement ajusté au risque sur chaque horizon.
   </div>
+
+  <!-- ROADMAP 4 PHASES -->
   <div class="card mb16">
-    <div class="card-title">Impact des frais sur 20 ans — même devise EUR, même capital</div>
-    <div class="chart-box" style="height:260px"><canvas id="c-fees"></canvas></div>
-    <div class="note mt8">Base : 5 000€ initial + 400€/mois · 7%/an · Seule différence = le TER annuel</div>
+    <div class="card-title">🗺️ Feuille de route ETF ultime — profil offensif discipliné</div>
+
+    <!-- Phase 0 — Démarrage -->
+    <div style="border-left:3px solid var(--green);padding:14px 16px;margin-bottom:12px;background:rgba(0,212,170,.04);border-radius:0 10px 10px 0">
+      <div style="display:flex;align-items:center;gap:10px;margin-bottom:10px">
+        <div style="background:var(--green);color:var(--bg);border-radius:50%;width:26px;height:26px;display:flex;align-items:center;justify-content:center;font-size:.75rem;font-weight:700;flex-shrink:0">0</div>
+        <div style="flex:1">
+          <div style="font-weight:700;font-size:.9rem">Démarrage — maintenant (capital &lt; 20 000€ · versement &lt; 800€/mois)</div>
+          <div style="font-size:.72rem;color:var(--muted);font-family:var(--mono)">TER moyen : ~0.24% · 2 ETFs · Frais transaction optimaux</div>
+        </div>
+        <div style="text-align:right;flex-shrink:0">
+          <div style="font-size:1rem;font-weight:800;color:var(--green);font-family:var(--mono)">VWCE 90% + XAIX 10%</div>
+          <div style="font-size:.65rem;color:var(--muted)">AEB · IE00B3RBWM25 + IBIS · IE00BGV5VN51</div>
+        </div>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:8px">
+        <div style="background:var(--bg4);border-radius:8px;padding:10px 12px">
+          <div style="font-size:.85rem;font-weight:800;color:var(--green);font-family:var(--mono)">VWCE 90%</div>
+          <div style="font-size:.7rem;color:var(--muted);margin-top:2px">4 500€ initial · 360€/mois · Diversification mondiale maximale · FTSE All-World 3 700 titres</div>
+        </div>
+        <div style="background:var(--bg4);border-radius:8px;padding:10px 12px">
+          <div style="font-size:.85rem;font-weight:800;color:var(--purple);font-family:var(--mono)">XAIX 10%</div>
+          <div style="font-size:.7rem;color:var(--muted);margin-top:2px">500€ initial · 40€/mois · Satellite IA · Nasdaq Global AI &amp; Big Data · 100 entreprises</div>
+        </div>
+      </div>
+      <div style="font-size:.75rem;color:var(--muted);line-height:1.5;margin-bottom:8px">Sur 400€/mois, répartir sur 6 ETFs donnerait 20€/mois sur XAIX et WSML — les frais IBKR (~1€/ordre) représenteraient 5% de chaque achat, annulant l'avantage des frais bas. <strong style="color:var(--text)">2 lignes maintenant, 6 lignes dès que le versement dépasse 800€/mois.</strong></div>
+      <div style="background:rgba(59,142,234,.06);border:1px solid rgba(59,142,234,.2);border-radius:8px;padding:9px 12px;font-size:.73rem;color:var(--muted)">
+        🔄 <strong style="color:var(--text)">Alternative phase 0 si tu veux les small caps inclus dès maintenant :</strong> remplace VWCE par <strong style="color:var(--blue)">SPYI (IE00B3YLTY66, TER 0.17%)</strong> — même logique "tout en un" que VWCE mais avec ~9 000 titres dont les small caps. Garde XAIX 10% en satellite. SPYI est sur IBIS (XETRA) sur IBKR.
+      </div>
+    </div>
+
+    <!-- Phase 1 — Court terme -->
+    <div style="border-left:3px solid var(--green);padding:14px 16px;margin-bottom:12px;background:rgba(0,212,170,.03);border-radius:0 10px 10px 0">
+      <div style="display:flex;align-items:center;gap:10px;margin-bottom:10px">
+        <div style="background:rgba(0,212,170,.2);color:var(--green);border-radius:50%;width:26px;height:26px;display:flex;align-items:center;justify-content:center;font-size:.75rem;font-weight:700;flex-shrink:0">1</div>
+        <div style="flex:1">
+          <div style="font-weight:700;font-size:.9rem">Court terme — An 1 à 3 (capital ~20 000€ · versement ~400–700€/mois)</div>
+          <div style="font-size:.72rem;color:var(--muted);font-family:var(--mono)">TER moyen : ~0.24% · Même allocation · Accumulation pure</div>
+        </div>
+        <div style="text-align:right;flex-shrink:0">
+          <div style="font-size:1rem;font-weight:800;color:var(--green);font-family:var(--mono)">VWCE 90% + XAIX 10%</div>
+          <div style="font-size:.65rem;color:var(--muted)">Rien ne change — on accumule</div>
+        </div>
+      </div>
+      <div style="font-size:.75rem;color:var(--muted);line-height:1.5">
+        Discipline unique : <strong style="color:var(--text)">acheter chaque mois, surtout quand le marché baisse.</strong> Une correction −30% = parts VWCE à −30% que tu accumules. Le marché a récupéré 100% des corrections historiques sur 5–7 ans. La crise est ton meilleur ami si tu continues d'acheter.
+      </div>
+      <div style="margin-top:8px;background:var(--bg4);border-radius:6px;padding:8px 10px;font-size:.72rem;color:var(--muted)">
+        💡 <strong style="color:var(--text)">Note IWDA :</strong> si tu as déjà du IWDA, tu le gardes — même index MSCI World que WRDU, 0.08%/an de plus seulement. Pas de raison de vendre et de déclencher un événement fiscal inutile.
+      </div>
+    </div>
+
+    <!-- Phase 2 — Moyen terme -->
+    <div style="border-left:3px solid var(--blue);padding:14px 16px;margin-bottom:12px;background:rgba(59,142,234,.04);border-radius:0 10px 10px 0">
+      <div style="display:flex;align-items:center;gap:10px;margin-bottom:10px">
+        <div style="background:rgba(59,142,234,.2);color:var(--blue);border-radius:50%;width:26px;height:26px;display:flex;align-items:center;justify-content:center;font-size:.75rem;font-weight:700;flex-shrink:0">2</div>
+        <div style="flex:1">
+          <div style="font-weight:700;font-size:.9rem">Moyen terme — An 3 à 7 (capital ~25 000€ → ~90 000€ · versement ≥ 800€/mois)</div>
+          <div style="font-size:.72rem;color:var(--muted);font-family:var(--mono)">TER moyen : ~0.17% · 4 ETFs · Rééquilibrage 1×/an en janvier</div>
+        </div>
+        <div style="text-align:right;flex-shrink:0">
+          <div style="font-size:.9rem;font-weight:800;color:var(--blue);font-family:var(--mono)">WRDU 70% + EMIM 15%</div>
+          <div style="font-size:.9rem;font-weight:800;color:var(--blue);font-family:var(--mono)">+ XAIX 10% + WSML 5%</div>
+        </div>
+      </div>
+      <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:7px;margin-bottom:10px">
+        <div style="background:var(--bg4);border-radius:8px;padding:9px 10px;text-align:center">
+          <div style="font-size:.82rem;font-weight:800;color:var(--green);font-family:var(--mono)">WRDU</div>
+          <div style="font-size:.62rem;color:var(--muted);margin-top:2px">70% · Monde dév.</div>
+          <div style="font-size:.62rem;color:var(--muted)">TER 0.12%</div>
+          <div style="font-size:.62rem;color:var(--muted)">~560€/mois</div>
+        </div>
+        <div style="background:var(--bg4);border-radius:8px;padding:9px 10px;text-align:center">
+          <div style="font-size:.82rem;font-weight:800;color:var(--blue);font-family:var(--mono)">EMIM</div>
+          <div style="font-size:.62rem;color:var(--muted);margin-top:2px">15% · Émergents</div>
+          <div style="font-size:.62rem;color:var(--muted)">TER 0.18%</div>
+          <div style="font-size:.62rem;color:var(--muted)">~120€/mois</div>
+        </div>
+        <div style="background:rgba(155,127,232,.1);border-radius:8px;padding:9px 10px;text-align:center;border:1px solid rgba(155,127,232,.2)">
+          <div style="font-size:.82rem;font-weight:800;color:var(--purple);font-family:var(--mono)">XAIX</div>
+          <div style="font-size:.62rem;color:var(--muted);margin-top:2px">10% · IA satellite</div>
+          <div style="font-size:.62rem;color:var(--muted)">TER 0.35%</div>
+          <div style="font-size:.62rem;color:var(--muted)">~80€/mois</div>
+        </div>
+        <div style="background:rgba(245,166,35,.08);border-radius:8px;padding:9px 10px;text-align:center;border:1px solid rgba(245,166,35,.2)">
+          <div style="font-size:.82rem;font-weight:800;color:var(--amber);font-family:var(--mono)">WSML</div>
+          <div style="font-size:.62rem;color:var(--muted);margin-top:2px">5% · Small cap</div>
+          <div style="font-size:.62rem;color:var(--muted)">TER 0.35%</div>
+          <div style="font-size:.62rem;color:var(--muted)">~40€/mois</div>
+        </div>
+      </div>
+      <div style="font-size:.75rem;color:var(--muted);line-height:1.5;margin-bottom:8px">
+        Tu ne vends pas VWCE/XAIX existants — pas d'événement fiscal. Tu diriges les <strong style="color:var(--text)">nouveaux versements</strong> vers cette nouvelle répartition. Le portefeuille converge naturellement. EMIM réduit à 15% car WRDU (MSCI World) sous-pondère déjà les émergents — l'exposition globale reste équilibrée.
+      </div>
+      <div style="background:var(--bg4);border-radius:6px;padding:8px 10px;font-size:.72rem;color:var(--muted)">
+        💡 <strong style="color:var(--text)">Frais de change WRDU :</strong> utilise <strong style="color:var(--text)">WCOR sur EPA</strong> (Euronext Paris, IBKR) — même ISIN IE000BI8OT95, coté en EUR, zéro conversion.
+      </div>
+    </div>
+
+    <!-- Phase 3 — Long terme -->
+    <div style="border-left:3px solid var(--purple);padding:14px 16px;background:rgba(155,127,232,.04);border-radius:0 10px 10px 0;margin-bottom:12px">
+      <div style="display:flex;align-items:center;gap:10px;margin-bottom:8px">
+        <div style="background:rgba(155,127,232,.2);color:var(--purple);border-radius:50%;width:26px;height:26px;display:flex;align-items:center;justify-content:center;font-size:.75rem;font-weight:700;flex-shrink:0">3</div>
+        <div>
+          <div style="font-weight:700;font-size:.9rem">Long terme — An 7+ (capital > 100 000€ · résidence stabilisée · versement ≥ 1 200€/mois)</div>
+          <div style="font-size:.72rem;color:var(--muted);font-family:var(--mono)">TER moyen : ~0.16% · 6 ETFs · Rééquilibrage annuel en janvier</div>
+        </div>
+        <div style="text-align:right;flex-shrink:0">
+          <div style="font-size:.82rem;font-weight:800;color:var(--purple);font-family:var(--mono)">WRDU 45% + EMIM 20% + CEBZ 15%</div>
+          <div style="font-size:.82rem;font-weight:800;color:var(--purple);font-family:var(--mono)">+ SPYL 10% + XAIX 5% + WSML 5%</div>
+        </div>
+      </div>
+      <div style="font-size:.78rem;color:var(--muted);line-height:1.6;margin-bottom:10px">
+        Le portefeuille ultime. 6 facteurs de risque rémunérés : monde développé (WRDU), émergents (EMIM), Europe surpondérée (CEBZ), S&P 500 low-cost (SPYL), IA/tech (XAIX), small cap premium (WSML). WSML capte la prime small cap documentée académiquement — +2–3%/an historique vs large cap sur 20 ans, au prix d'une volatilité +30%. Rééquilibrage : nouveaux versements vers la poche sous-représentée — ventes uniquement si écart ≥ ±5%.
+      </div>
+      <div style="display:grid;grid-template-columns:repeat(6,1fr);gap:7px">
+        <div style="background:var(--bg4);border-radius:8px;padding:10px;text-align:center">
+          <div style="font-size:.85rem;font-weight:800;color:var(--green);font-family:var(--mono)">WRDU</div>
+          <div style="font-size:.62rem;color:var(--muted);margin-top:2px">50% · Monde dév.</div>
+          <div style="font-size:.62rem;color:var(--muted)">TER 0.12%</div>
+        </div>
+        <div style="background:var(--bg4);border-radius:8px;padding:10px;text-align:center">
+          <div style="font-size:.85rem;font-weight:800;color:var(--blue);font-family:var(--mono)">EMIM</div>
+          <div style="font-size:.62rem;color:var(--muted);margin-top:2px">20% · Émergents</div>
+          <div style="font-size:.62rem;color:var(--muted)">TER 0.18%</div>
+        </div>
+        <div style="background:var(--bg4);border-radius:8px;padding:10px;text-align:center">
+          <div style="font-size:.85rem;font-weight:800;color:var(--amber);font-family:var(--mono)">CEBZ</div>
+          <div style="font-size:.62rem;color:var(--muted);margin-top:2px">15% · Europe</div>
+          <div style="font-size:.62rem;color:var(--muted)">TER 0.12%</div>
+        </div>
+        <div style="background:var(--bg4);border-radius:8px;padding:10px;text-align:center">
+          <div style="font-size:.85rem;font-weight:800;color:var(--amber);font-family:var(--mono)">SPYL</div>
+          <div style="font-size:.62rem;color:var(--muted);margin-top:2px">10% · S&P 500</div>
+          <div style="font-size:.62rem;color:var(--muted)">TER 0.03%</div>
+        </div>
+        <div style="background:rgba(155,127,232,.15);border-radius:8px;padding:10px;text-align:center;border:1px solid rgba(155,127,232,.3)">
+          <div style="font-size:.82rem;font-weight:800;color:var(--purple);font-family:var(--mono)">XAIX</div>
+          <div style="font-size:.62rem;color:var(--muted);margin-top:2px">5% · IA satellite</div>
+          <div style="font-size:.62rem;color:var(--muted)">TER 0.35%</div>
+        </div>
+        <div style="background:rgba(245,166,35,.1);border-radius:8px;padding:10px;text-align:center;border:1px solid rgba(245,166,35,.25)">
+          <div style="font-size:.82rem;font-weight:800;color:var(--amber);font-family:var(--mono)">WSML</div>
+          <div style="font-size:.62rem;color:var(--muted);margin-top:2px">5% · Small cap</div>
+          <div style="font-size:.62rem;color:var(--muted)">TER 0.35%</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Bloc satellite IA — optionnel dès la phase 2 -->
+    <div style="border-left:3px solid var(--purple);padding:14px 16px;background:rgba(155,127,232,.03);border-radius:0 10px 10px 0">
+      <div style="display:flex;align-items:center;gap:10px;margin-bottom:8px">
+        <div style="background:rgba(155,127,232,.15);color:var(--purple);border-radius:50%;width:26px;height:26px;display:flex;align-items:center;justify-content:center;font-size:.75rem;font-weight:700;flex-shrink:0">★</div>
+        <div>
+          <div style="font-weight:700;font-size:.9rem">Poche satellite IA — optionnel dès la phase 2 (si capital > 25 000€)</div>
+          <div style="font-size:.72rem;color:var(--muted);font-family:var(--mono)">Max 5–10% du portefeuille total · Jamais plus</div>
+        </div>
+      </div>
+      <div style="font-size:.78rem;color:var(--muted);line-height:1.6;margin-bottom:10px">
+        Ta sœur a potentiellement raison sur l'IA. Mais personne ne sait lesquelles des entreprises actuelles domineront dans 10 ans (comme Amazon vs Pets.com en 2000). La solution : un ETF qui parie sur le secteur entier, pas sur un titre. <strong style="color:var(--text)">Maximum 5–10% de ton portefeuille</strong> — assez pour profiter si ça explose, pas assez pour te couler si ça corrige de 60%.
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+        <div style="background:var(--bg4);border-radius:10px;padding:12px 14px">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
+            <div style="font-size:.9rem;font-weight:800;color:var(--purple);font-family:var(--mono)">XAIX</div>
+            <span class="badge b-g">Recommandé</span>
+          </div>
+          <div style="font-size:.7rem;color:var(--muted);font-family:var(--mono);margin-bottom:8px">IE00BGV5VN51 · Xtrackers · IBIS (XETRA)</div>
+          <div class="etf-row"><span>Index</span><span>Nasdaq Global AI & Big Data</span></div>
+          <div class="etf-row"><span>TER</span><span class="ta">0.35%/an</span></div>
+          <div class="etf-row"><span>Encours</span><span>~6.9 Md€</span></div>
+          <div class="etf-row"><span>Titres</span><span>~100 entreprises</span></div>
+          <div class="etf-row"><span>Scope</span><span>IA + Big Data + Cybersécurité</span></div>
+          <div class="etf-row"><span>Dividendes</span><span class="tg">ACC ✓</span></div>
+          <div class="etf-row"><span>Fisc. Belgique</span><span class="tg">0% ✓</span></div>
+          <div style="margin-top:8px;font-size:.72rem;color:var(--muted)">Diversifié sur 100 entreprises IA mondiales · Moins risqué que NVIDIA seul · Encours solide</div>
+        </div>
+        <div style="background:var(--bg4);border-radius:10px;padding:12px 14px">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
+            <div style="font-size:.9rem;font-weight:800;color:var(--purple);font-family:var(--mono)">WTAI</div>
+            <span class="badge b-b">Alternative</span>
+          </div>
+          <div style="font-size:.7rem;color:var(--muted);font-family:var(--mono);margin-bottom:8px">IE00BDVPNG13 · WisdomTree · WTAI.MI (Milan)</div>
+          <div class="etf-row"><span>Index</span><span>NASDAQ CTA AI Index</span></div>
+          <div class="etf-row"><span>TER</span><span class="ta">0.40%/an</span></div>
+          <div class="etf-row"><span>Encours</span><span>~568 M€</span></div>
+          <div class="etf-row"><span>Titres</span><span>~60–80 entreprises</span></div>
+          <div class="etf-row"><span>Scope</span><span>IA pure (sans cybersécurité)</span></div>
+          <div class="etf-row"><span>Dividendes</span><span class="tg">ACC ✓</span></div>
+          <div class="etf-row"><span>Fisc. Belgique</span><span class="tg">0% ✓</span></div>
+          <div style="margin-top:8px;font-size:.72rem;color:var(--muted)">Plus concentré sur l'IA pure · Encours plus faible · Top holdings : Micron, Qualcomm</div>
+        </div>
+      </div>
+      <div style="margin-top:10px;background:rgba(255,87,87,.06);border:1px solid rgba(255,87,87,.15);border-radius:8px;padding:9px 12px;font-size:.72rem;color:var(--muted)">
+        ⚠ <strong style="color:var(--text)">Règle absolue :</strong> cette poche satellite ne dépasse jamais 10% du portefeuille total. Si XAIX x2 en 2 ans et représente 15%, tu rééquilibres en janvier en redirigeant les versements vers le reste. L'enthousiasme pour l'IA ne justifie pas de dépasser ce plafond.
+      </div>
+    </div>
   </div>
+
+  <div class="card mb16">
+    <div class="card-title">Comparatif complet — ETFs UCITS ACC irlandais · Tickers IBKR réels</div>
+    <div style="overflow-x:auto"><table class="tbl">
+      <thead><tr>
+        <th>Ticker IBKR</th><th>Bourse sur IBKR</th><th>Nom court</th><th>ISIN</th><th>Émetteur</th><th>Index</th>
+        <th>TER/an</th><th>Encours</th><th>Titres</th><th>Émergents</th><th>Small caps</th>
+        <th>Corée</th><th>Acc/Dist</th><th>Fisc. BE</th><th>Recommandé</th>
+      </tr></thead>
+      <tbody>
+        <tr style="background:rgba(0,212,170,.04)">
+          <td class="mono fw7 tg">VWCE</td>
+          <td class="mono" style="font-size:.72rem">AEB (Amsterdam)</td>
+          <td>Vanguard FTSE All-World</td>
+          <td class="mono" style="font-size:.65rem">IE00B3RBWM25</td>
+          <td>Vanguard</td><td>FTSE All-World</td>
+          <td class="ta mono">0.22%</td>
+          <td class="mono">~50 Md€</td>
+          <td class="mono">~3 700</td>
+          <td class="tg">✓ ~10%</td><td class="tr">✗</td>
+          <td class="ta">EM</td>
+          <td><span class="badge b-g">ACC</span></td>
+          <td><span class="badge b-g">0% ✓</span></td>
+          <td><span class="badge b-g">✓ Simpliste</span></td>
+        </tr>
+        <tr style="background:rgba(0,212,170,.06)">
+          <td class="mono fw7 tg">WRDU <span style="font-size:.65rem;color:var(--muted)">ou ISIN</span></td>
+          <td class="mono" style="font-size:.72rem">AEB (Amsterdam)</td>
+          <td>Amundi Core MSCI World</td>
+          <td class="mono" style="font-size:.65rem">IE000BI8OT95</td>
+          <td>Amundi</td><td>MSCI World</td>
+          <td class="tg mono fw7">0.12%</td>
+          <td class="mono">~15 Md€</td>
+          <td class="mono">~1 500</td>
+          <td class="tr">✗</td><td class="tr">✗</td>
+          <td class="tb">DM</td>
+          <td><span class="badge b-g">ACC</span></td>
+          <td><span class="badge b-g">0% ✓</span></td>
+          <td><span class="badge b-g">✓ + EMIM</span></td>
+        </tr>
+        <tr>
+          <td class="mono fw7 tb">IWDA</td>
+          <td class="mono" style="font-size:.72rem">AEB (Amsterdam)</td>
+          <td>iShares Core MSCI World</td>
+          <td class="mono" style="font-size:.65rem">IE00B4L5Y983</td>
+          <td>BlackRock</td><td>MSCI World</td>
+          <td class="mono">0.20%</td>
+          <td class="mono">~80 Md€</td>
+          <td class="mono">~1 500</td>
+          <td class="tr">✗</td><td class="tr">✗</td>
+          <td class="tb">DM</td>
+          <td><span class="badge b-g">ACC</span></td>
+          <td><span class="badge b-g">0% ✓</span></td>
+          <td><span class="badge b-b">+ EMIM</span></td>
+        </tr>
+        <tr>
+          <td class="mono fw7 tb">EMIM</td>
+          <td class="mono" style="font-size:.72rem">AEB (Amsterdam)</td>
+          <td>iShares MSCI EM IMI</td>
+          <td class="mono" style="font-size:.65rem">IE00BKM4GZ66</td>
+          <td>BlackRock</td><td>MSCI EM IMI</td>
+          <td class="mono">0.18%</td>
+          <td class="mono">~20 Md€</td>
+          <td class="mono">~3 000</td>
+          <td class="tg">100% EM</td><td class="tg">✓</td>
+          <td class="tb">EM (MSCI)</td>
+          <td><span class="badge b-g">ACC</span></td>
+          <td><span class="badge b-g">0% ✓</span></td>
+          <td><span class="badge b-b">Complément</span></td>
+        </tr>
+        <tr style="background:rgba(59,142,234,.04)">
+          <td class="mono fw7 tp">SPYI</td>
+          <td class="mono" style="font-size:.72rem">IBIS (XETRA)</td>
+          <td>SPDR MSCI ACWI IMI</td>
+          <td class="mono" style="font-size:.65rem">IE00B3YLTY66</td>
+          <td>State Street</td><td>MSCI ACWI IMI</td>
+          <td class="tg mono">0.17%</td>
+          <td class="mono">~3 Md€</td>
+          <td class="mono">~9 000</td>
+          <td class="tg">✓ ~12%</td><td class="tg">✓</td>
+          <td class="tb">DM</td>
+          <td><span class="badge b-g">ACC</span></td>
+          <td><span class="badge b-g">0% ✓</span></td>
+          <td><span class="badge b-p">✓ Max large</span></td>
+        </tr>
+        <tr style="background:rgba(245,166,35,.04)">
+          <td class="mono fw7 ta">SPYL</td>
+          <td class="mono" style="font-size:.72rem">IBIS (XETRA)</td>
+          <td>SPDR S&P 500 UCITS</td>
+          <td class="mono" style="font-size:.65rem">IE000XZSV718</td>
+          <td>State Street</td><td>S&P 500</td>
+          <td class="tg mono fw7">0.03%</td>
+          <td class="mono">~15 Md€</td>
+          <td class="mono">500</td>
+          <td class="tr">✗</td><td class="tr">✗</td>
+          <td class="tb">DM (USA)</td>
+          <td><span class="badge b-g">ACC</span></td>
+          <td><span class="badge b-g">0% ✓</span></td>
+          <td><span class="badge b-a">⚠ USA seul</span></td>
+        </tr>
+        <tr>
+          <td class="mono fw7 ta">CEBZ</td>
+          <td class="mono" style="font-size:.72rem">IBIS (XETRA)</td>
+          <td>iShares Core MSCI Europe</td>
+          <td class="mono" style="font-size:.65rem">IE00B4K48X80</td>
+          <td>BlackRock</td><td>MSCI Europe</td>
+          <td class="tg mono">0.12%</td>
+          <td class="mono">~15 Md€</td>
+          <td class="mono">~430</td>
+          <td class="tr">✗</td><td class="tr">✗</td>
+          <td class="tb">DM</td>
+          <td><span class="badge b-g">ACC</span></td>
+          <td><span class="badge b-g">0% ✓</span></td>
+          <td><span class="badge b-a">Phase 2+</span></td>
+        </tr>
+        <tr style="background:rgba(155,127,232,.04)">
+          <td class="mono fw7 tp">XAIX</td>
+          <td class="mono" style="font-size:.72rem">IBIS (XETRA)</td>
+          <td>Xtrackers AI & Big Data</td>
+          <td class="mono" style="font-size:.65rem">IE00BGV5VN51</td>
+          <td>DWS/Xtrackers</td><td>Nasdaq Global AI & Big Data</td>
+          <td class="ta mono">0.35%</td>
+          <td class="mono">~6.9 Md€</td>
+          <td class="mono">~100</td>
+          <td class="tg">✓ partiel</td><td class="tg">✓ partiel</td>
+          <td class="tb">Global</td>
+          <td><span class="badge b-g">ACC</span></td>
+          <td><span class="badge b-g">0% ✓</span></td>
+          <td><span class="badge b-p">★ Satellite IA 5%</span></td>
+        </tr>
+        <tr style="background:rgba(155,127,232,.02)">
+          <td class="mono fw7 tp">WTAI</td>
+          <td class="mono" style="font-size:.72rem">Milan (WTAI.MI)</td>
+          <td>WisdomTree AI UCITS</td>
+          <td class="mono" style="font-size:.65rem">IE00BDVPNG13</td>
+          <td>WisdomTree</td><td>NASDAQ CTA AI Index</td>
+          <td class="ta mono">0.40%</td>
+          <td class="mono">~568 M€</td>
+          <td class="mono">~70</td>
+          <td class="tr">✗</td><td class="tr">✗</td>
+          <td class="tb">Global</td>
+          <td><span class="badge b-g">ACC</span></td>
+          <td><span class="badge b-g">0% ✓</span></td>
+          <td><span class="badge b-p">Alt. Satellite IA</span></td>
+        </tr>
+      </tbody>
+    </table></div>
+    <div style="margin-top:12px;background:var(--bg4);border-radius:8px;padding:10px 14px;font-size:.75rem;color:var(--muted);line-height:1.7">
+      <strong style="color:var(--text)">💡 Astuce IBKR :</strong> si tu ne trouves pas un ticker, cherche directement par <strong style="color:var(--green)">ISIN</strong> dans la barre de recherche — c'est le code universel. Sélectionne ensuite la bourse <strong style="color:var(--text)">AEB</strong> (Euronext Amsterdam) pour les ETFs en EUR, ou <strong style="color:var(--text)">IBIS</strong> (XETRA) pour SPYI, SPYL et CEBZ.
+    </div>
+  </div>
+
+  <!-- Scenarios d'allocation -->
+  <div class="card mb16">
+    <div class="card-title">3 scénarios d'allocation selon ton profil</div>
+    <div class="g3">
+      <div class="card-sm" style="border-color:var(--green)">
+        <div style="font-size:.68rem;font-family:var(--mono);color:var(--green);text-transform:uppercase;letter-spacing:.08em;margin-bottom:8px">Option 1 — Simplicité totale</div>
+        <div style="font-size:.95rem;font-weight:800;margin-bottom:10px">VWCE 100%</div>
+        <div class="etf-row"><span>Frais</span><span class="ta">0.22%/an</span></div>
+        <div class="etf-row"><span>Nombre de lignes</span><span class="tg">1 seule</span></div>
+        <div class="etf-row"><span>Rééquilibrage</span><span class="tg">Jamais nécessaire</span></div>
+        <div class="etf-row"><span>Convient si</span><span>Capital &lt; 50k€</span></div>
+        <div style="margin-top:10px;font-size:.77rem;color:var(--muted)">Sur 400€/mois sur 20 ans, la différence avec l'option 2 est de ~2 000€. Simplicité vaut largement ce coût.</div>
+      </div>
+      <div class="card-sm" style="border-color:rgba(0,212,170,.4)">
+        <div style="font-size:.68rem;font-family:var(--mono);color:var(--green);text-transform:uppercase;letter-spacing:.08em;margin-bottom:8px">Option 2 — Coût minimal</div>
+        <div style="font-size:.95rem;font-weight:800;margin-bottom:10px">WCOR 75% + EMIM 25%</div>
+        <div class="etf-row"><span>Frais moyens</span><span class="tg">0.135%/an</span></div>
+        <div class="etf-row"><span>Nombre de lignes</span><span class="ta">2 lignes</span></div>
+        <div class="etf-row"><span>Rééquilibrage</span><span class="ta">1×/an conseillé</span></div>
+        <div class="etf-row"><span>Convient si</span><span>Tu veux gratter chaque bp</span></div>
+        <div style="margin-top:10px;font-size:.77rem;color:var(--muted)">Amundi est irlandais domicilié, UCITS, pleinement réglementé. Pas de risque supplémentaire vs iShares.</div>
+      </div>
+      <div class="card-sm" style="border-color:var(--purple)">
+        <div style="font-size:.68rem;font-family:var(--mono);color:var(--purple);text-transform:uppercase;letter-spacing:.08em;margin-bottom:8px">Option 3 — Couverture maximale</div>
+        <div style="font-size:.95rem;font-weight:800;margin-bottom:10px">SPYI 100%</div>
+        <div class="etf-row"><span>Frais</span><span class="tg">0.17%/an</span></div>
+        <div class="etf-row"><span>Nombre de lignes</span><span class="tg">1 seule</span></div>
+        <div class="etf-row"><span>Rééquilibrage</span><span class="tg">Jamais nécessaire</span></div>
+        <div class="etf-row"><span>Convient si</span><span>Tu veux small caps incluses</span></div>
+        <div style="margin-top:10px;font-size:.77rem;color:var(--muted)">~9 000 titres vs 3 700 pour VWCE. Diversification maximale. Moins liquide que VWCE mais encours suffisant.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Graphique frais -->
+  <div class="card mb16">
+    <div class="card-title">Impact des frais sur 20 ans — même capital, même rendement brut</div>
+    <div class="chart-box" style="height:270px"><canvas id="c-fees"></canvas></div>
+    <div class="note mt8">Base : 5 000€ initial + 400€/mois · 7%/an brut · Seule différence = le TER annuel</div>
+  </div>
+
+  <!-- Règles de combinaison -->
   <div class="card">
-    <div class="card-title">Pourquoi ne jamais combiner VWCE + IWDA + EMIM ?</div>
-    <div style="font-size:.82rem;color:var(--muted);line-height:1.8">
-      <p>VWCE utilise l'index <strong style="color:var(--text)">FTSE</strong>, IWDA/EMIM utilisent l'index <strong style="color:var(--text)">MSCI</strong>. Ces indices ont des périmètres différents :</p>
-      <p>→ FTSE classe <strong style="color:var(--amber)">la Corée du Sud en marché émergent</strong>. MSCI la classe en marché développé.</p>
-      <p>→ Combiner VWCE + IWDA = double exposition aux marchés développés hors Corée, sans le vouloir.</p>
-      <p>→ Règle : <strong style="color:var(--green)">soit VWCE seul, soit IWDA + EMIM. Jamais les deux familles ensemble.</strong></p>
+    <div class="card-title">Règles de combinaison — ce qu'on peut et ne peut pas faire</div>
+    <div style="font-size:.82rem;line-height:1.8;color:var(--muted)">
+      <p><span class="tg">✓ OK</span> — <strong style="color:var(--text)">VWCE seul</strong> : famille FTSE, 1 ETF, tout inclus.</p>
+      <p><span class="tg">✓ OK</span> — <strong style="color:var(--text)">IWDA + EMIM</strong> ou <strong style="color:var(--text)">WCOR + EMIM</strong> : famille MSCI, développés + émergents séparés. Contrôle du poids EM.</p>
+      <p><span class="tg">✓ OK</span> — <strong style="color:var(--text)">SPYI seul</strong> : famille MSCI, tout inclus + small caps.</p>
+      <p><span class="tg">✓ OK</span> — <strong style="color:var(--text)">IWDA + EMIM + CEBZ</strong> : surpondération Europe volontaire. Sens si tu vis et travailles durablement en Europe.</p>
+      <p><span class="tr">✗ INTERDIT</span> — <strong style="color:var(--text)">VWCE + IWDA</strong> : double exposition aux développés (FTSE ≠ MSCI, Corée classée différemment).</p>
+      <p><span class="tr">✗ INTERDIT</span> — <strong style="color:var(--text)">VWCE + SPYI</strong> : même problème, indices différents, double exposition involontaire.</p>
+      <p><span class="ta">⚠ CONCENTRÉ</span> — <strong style="color:var(--text)">SPYL seul</strong> : TER 0.03% imbattable, mais 100% USA. Zéro Europe, zéro Japon, zéro émergents. Pertinent en complément (ex: SPYL 50% + CEBZ 25% + EMIM 25%) — pas comme seul ETF d'un portefeuille mondial.</p>
+      <p><span class="ta">⚠ ÉVITER</span> — <strong style="color:var(--text)">CEB4</strong> (FTSE 100 EUR Hedgé) : lancé août 2024, seulement 54M€ d'encours, risque de fermeture + coût du hedging 0.5–1.5%/an sur long terme.</p>
+      <p><span class="ta">⚠ PHASE 2+</span> — <strong style="color:var(--text)">CEBZ / EUN2</strong> : pertinents uniquement si capital &gt; 50k€ et résidence européenne stabilisée. Biais domestique si utilisés trop tôt.</p>
     </div>
   </div>
 </div>
@@ -391,19 +762,121 @@ hr.div{border:none;border-top:1px solid var(--border);margin:14px 0}
      PAYS
 ══════════════════════════════════════════════ -->
 <div id="panel-countries" class="panel">
-  <div class="sec mt20">Comparatif destinations — tout en EUR</div>
-  <div class="note mb16">Taux indicatifs mai 2026 : 1 CHF = 1.04 EUR · 1 CAD = 0.67 EUR</div>
-  <div class="card mb16"><div class="card-title">Salaire actuaire junior net/mois en EUR</div><div class="chart-box" style="height:250px"><canvas id="c-countries"></canvas></div></div>
-  <div class="card"><div style="overflow-x:auto"><table class="tbl">
-    <thead><tr><th>Pays</th><th>Salaire junior net/mois (€)</th><th>Loyer moyen (€)</th><th>Reste après loyer (€)</th><th>Fiscalité plus-values</th><th>Enveloppe dispo</th><th>Résidence permanente</th><th>Visa CMR</th><th>Score profil</th></tr></thead>
-    <tbody>
-      <tr><td>🇱🇺 Luxembourg</td><td class="tg mono fw7">3 200–4 200 €</td><td class="mono">900–1 300 €</td><td class="tg mono">2 300–2 900 €</td><td><span class="badge b-g">0% actions</span></td><td class="tm">Compte-titres</td><td>7 ans</td><td><span class="badge b-a">Permis B</span></td><td><div class="cbar"><div class="cbar-fill" style="width:92%;background:var(--green)"></div></div><span class="mono" style="font-size:.68rem">92/100</span></td></tr>
-      <tr><td>🇨🇦 Canada (Québec)</td><td class="mono fw7">2 600–3 400 €</td><td class="mono">900–1 400 €</td><td class="tg mono">1 700–2 000 €</td><td><span class="badge b-a">50% imposable</span></td><td><span class="badge b-g">TFSA 0%</span></td><td><span class="badge b-g">2–4 ans ✓</span></td><td><span class="badge b-g">Entrée Express</span></td><td><div class="cbar"><div class="cbar-fill" style="width:74%;background:var(--blue)"></div></div><span class="mono" style="font-size:.68rem">74/100</span></td></tr>
-      <tr><td>🇨🇭 Suisse Romande</td><td class="tg mono fw7">4 500–6 300 €</td><td class="mono">1 600–2 800 €</td><td class="tg mono">2 900–3 500 €</td><td><span class="badge b-g">0% plus-values</span></td><td class="tm">Compte-titres</td><td>12 ans</td><td><span class="badge b-r">Quota strict ✗</span></td><td><div class="cbar"><div class="cbar-fill" style="width:55%;background:var(--muted)"></div></div><span class="mono" style="font-size:.68rem">55/100</span></td></tr>
-      <tr><td>🇫🇷 France (Paris)</td><td class="mono fw7">2 400–3 100 €</td><td class="mono">1 100–1 800 €</td><td class="mono">1 300–1 300 €</td><td><span class="badge b-a">PFU 30%</span></td><td><span class="badge b-b">PEA après 5 ans</span></td><td>10 ans</td><td><span class="badge b-a">Titre séjour</span></td><td><div class="cbar"><div class="cbar-fill" style="width:78%;background:var(--amber)"></div></div><span class="mono" style="font-size:.68rem">78/100</span></td></tr>
-      <tr><td>🇧🇪 Belgique (actuel)</td><td class="mono fw7">2 000–2 500 €</td><td class="mono">875–1 100 €</td><td class="mono">1 125–1 400 €</td><td><span class="badge b-g">0% actions pures</span></td><td class="tm">Compte-titres</td><td>5 ans</td><td><span class="badge b-g">Tu y es déjà</span></td><td><div class="cbar"><div class="cbar-fill" style="width:65%;background:var(--purple)"></div></div><span class="mono" style="font-size:.68rem">65/100</span></td></tr>
-    </tbody>
-  </table></div></div>
+  <div class="sec mt20">Comparatif destinations — tout en EUR · Profil actuaire francophone</div>
+  <div class="note mb16">Taux indicatifs mai 2026 : 1 CHF = 1.04 EUR · 1 CAD = 0.67 EUR · 1 GBP = 1.17 EUR</div>
+
+  <div class="card mb16">
+    <div class="card-title">Salaire actuaire junior net/mois en EUR — comparatif complet</div>
+    <div class="chart-box" style="height:320px"><canvas id="c-countries"></canvas></div>
+  </div>
+
+  <div class="card mb16">
+    <div style="overflow-x:auto"><table class="tbl">
+      <thead><tr>
+        <th>Pays</th><th>Salaire junior net/mois (€)</th><th>Loyer moyen (€)</th>
+        <th>Reste après loyer (€)</th><th>Fiscalité plus-values</th>
+        <th>Enveloppe invest.</th><th>Résidence perm.</th>
+        <th>Visa CMR</th><th>Français</th><th>Score</th>
+      </tr></thead>
+      <tbody>
+        <tr style="background:rgba(0,212,170,.05)">
+          <td>🇱🇺 Luxembourg</td><td class="tg mono fw7">3 200–4 200 €</td><td class="mono">900–1 300 €</td>
+          <td class="tg mono">2 300–2 900 €</td><td><span class="badge b-g">0% actions</span></td>
+          <td class="tm">Compte-titres</td><td>7 ans</td>
+          <td><span class="badge b-a">Permis B</span></td><td><span class="badge b-g">Oui ✓</span></td>
+          <td><div class="cbar"><div class="cbar-fill" style="width:92%;background:var(--green)"></div></div><span class="mono" style="font-size:.68rem">92/100</span></td>
+        </tr>
+        <tr>
+          <td>🇮🇪 Irlande (Dublin)</td><td class="tg mono fw7">2 900–3 800 €</td><td class="mono">1 400–2 000 €</td>
+          <td class="tg mono">1 500–1 800 €</td><td><span class="badge b-a">33% CGT</span></td>
+          <td class="tm">Compte-titres</td><td>5 ans</td>
+          <td><span class="badge b-g">Visa travail EU</span></td><td><span class="badge b-r">Anglais req.</span></td>
+          <td><div class="cbar"><div class="cbar-fill" style="width:85%;background:var(--green)"></div></div><span class="mono" style="font-size:.68rem">85/100</span></td>
+        </tr>
+        <tr>
+          <td>🇳🇱 Pays-Bas (Amsterdam)</td><td class="tg mono fw7">2 800–3 600 €</td><td class="mono">1 200–1 800 €</td>
+          <td class="tg mono">1 600–1 800 €</td><td><span class="badge b-a">Box 3 ~1.6%/an</span></td>
+          <td class="tm">Compte-titres</td><td>5 ans</td>
+          <td><span class="badge b-g">Permis EU</span></td><td><span class="badge b-a">Anglais largement OK</span></td>
+          <td><div class="cbar"><div class="cbar-fill" style="width:83%;background:var(--green)"></div></div><span class="mono" style="font-size:.68rem">83/100</span></td>
+        </tr>
+        <tr>
+          <td>🇩🇪 Allemagne (Munich)</td><td class="mono fw7">2 700–3 500 €</td><td class="mono">1 100–1 700 €</td>
+          <td class="mono">1 600–1 800 €</td><td><span class="badge b-a">26.4% flat tax</span></td>
+          <td class="tm">Compte-titres</td><td>5 ans</td>
+          <td><span class="badge b-g">Permis EU</span></td><td><span class="badge b-a">Anglais OK multinat.</span></td>
+          <td><div class="cbar"><div class="cbar-fill" style="width:80%;background:var(--blue)"></div></div><span class="mono" style="font-size:.68rem">80/100</span></td>
+        </tr>
+        <tr>
+          <td>🇫🇷 France (Paris)</td><td class="mono fw7">2 400–3 100 €</td><td class="mono">1 100–1 800 €</td>
+          <td class="mono">1 300–1 300 €</td><td><span class="badge b-a">PFU 30%</span></td>
+          <td><span class="badge b-b">PEA après 5 ans</span></td><td>10 ans</td>
+          <td><span class="badge b-a">Titre séjour</span></td><td><span class="badge b-g">Oui ✓</span></td>
+          <td><div class="cbar"><div class="cbar-fill" style="width:78%;background:var(--amber)"></div></div><span class="mono" style="font-size:.68rem">78/100</span></td>
+        </tr>
+        <tr>
+          <td>🇨🇦 Canada (Québec)</td><td class="mono fw7">2 600–3 400 €</td><td class="mono">900–1 400 €</td>
+          <td class="tg mono">1 700–2 000 €</td><td><span class="badge b-a">50% imposable</span></td>
+          <td><span class="badge b-g">TFSA 0%</span></td><td><span class="badge b-g">2–4 ans ✓</span></td>
+          <td><span class="badge b-g">Entrée Express</span></td><td><span class="badge b-g">Oui ✓</span></td>
+          <td><div class="cbar"><div class="cbar-fill" style="width:74%;background:var(--blue)"></div></div><span class="mono" style="font-size:.68rem">74/100</span></td>
+        </tr>
+        <tr>
+          <td>🇵🇹 Portugal (Lisbonne)</td><td class="mono fw7">1 800–2 400 €</td><td class="mono">900–1 400 €</td>
+          <td class="mono">900–1 000 €</td><td><span class="badge b-a">28% flat</span></td>
+          <td class="tm">Compte-titres</td><td>5 ans</td>
+          <td><span class="badge b-g">Permis EU</span></td><td><span class="badge b-a">Portugais proche FR</span></td>
+          <td><div class="cbar"><div class="cbar-fill" style="width:68%;background:var(--amber)"></div></div><span class="mono" style="font-size:.68rem">68/100</span></td>
+        </tr>
+        <tr>
+          <td>🇪🇸 Espagne (Madrid)</td><td class="mono fw7">1 900–2 600 €</td><td class="mono">900–1 400 €</td>
+          <td class="mono">1 000–1 200 €</td><td><span class="badge b-a">19–26% progressif</span></td>
+          <td><span class="badge b-b">Régime Beckham 6 ans</span></td><td>10 ans</td>
+          <td><span class="badge b-g">Permis EU</span></td><td><span class="badge b-a">Espagnol proche FR</span></td>
+          <td><div class="cbar"><div class="cbar-fill" style="width:65%;background:var(--amber)"></div></div><span class="mono" style="font-size:.68rem">65/100</span></td>
+        </tr>
+        <tr>
+          <td>🇧🇪 Belgique (actuel)</td><td class="mono fw7">2 000–2 500 €</td><td class="mono">875–1 100 €</td>
+          <td class="mono">1 125–1 400 €</td><td><span class="badge b-g">0% actions pures</span></td>
+          <td class="tm">Compte-titres</td><td>5 ans</td>
+          <td><span class="badge b-g">Tu y es déjà</span></td><td><span class="badge b-g">Oui ✓</span></td>
+          <td><div class="cbar"><div class="cbar-fill" style="width:65%;background:var(--purple)"></div></div><span class="mono" style="font-size:.68rem">65/100</span></td>
+        </tr>
+        <tr>
+          <td>🇨🇭 Suisse Romande</td><td class="tg mono fw7">4 500–6 300 €</td><td class="mono">1 600–2 800 €</td>
+          <td class="tg mono">2 900–3 500 €</td><td><span class="badge b-g">0% plus-values</span></td>
+          <td class="tm">Compte-titres</td><td>12 ans</td>
+          <td><span class="badge b-r">Quota strict ✗</span></td><td><span class="badge b-g">Romande oui</span></td>
+          <td><div class="cbar"><div class="cbar-fill" style="width:55%;background:var(--muted)"></div></div><span class="mono" style="font-size:.68rem">55/100</span></td>
+        </tr>
+      </tbody>
+    </table></div>
+  </div>
+
+  <!-- Feuille de route Europe -->
+  <div class="card">
+    <div class="card-title">Stratégie Europe — pourquoi rester dans l'UE est souvent optimal</div>
+    <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px">
+      <div class="card-sm" style="border-color:var(--green)">
+        <div style="font-size:.78rem;font-weight:700;margin-bottom:8px;color:var(--green)">Avantage clé UE</div>
+        <div style="font-size:.77rem;color:var(--muted);line-height:1.6">
+          Carte résident longue durée UE après 5 ans en Belgique → droit de vivre et travailler dans <strong style="color:var(--text)">27 pays</strong> sans visa ni quota. C'est l'équivalent fonctionnel d'un passeport EU pour le marché du travail.
+        </div>
+      </div>
+      <div class="card-sm" style="border-color:var(--blue)">
+        <div style="font-size:.78rem;font-weight:700;margin-bottom:8px;color:var(--blue)">Marché actuariel EU</div>
+        <div style="font-size:.77rem;color:var(--muted);line-height:1.6">
+          Luxembourg, Dublin, Amsterdam, Munich, Paris — toutes accessibles en 2h depuis Bruxelles. Qualification Solvabilité II / IFRS 17 reconnue partout en Europe. Pénurie d'actuaires dans toutes ces villes.
+        </div>
+      </div>
+      <div class="card-sm" style="border-color:var(--amber)">
+        <div style="font-size:.78rem;font-weight:700;margin-bottom:8px;color:var(--amber)">Naturalisations EU</div>
+        <div style="font-size:.77rem;color:var(--muted);line-height:1.6">
+          BE / NL / PT / IE : 5 ans · LU : 7 ans · DE : 5 ans (réforme 2024). Un passeport EU = 186 pays sans visa. Comparable au passeport canadien — mais atteignable sans quitter l'Europe.
+        </div>
+      </div>
+    </div>
+  </div>
 </div>
 
 <!-- ══════════════════════════════════════════════
@@ -862,12 +1335,16 @@ function drawFees() {
   S.ch.fees = new Chart(document.getElementById('c-fees').getContext('2d'),{
     type:'line',
     data:{labels,datasets:[
-      {label:'IWDA+EMIM (0.20%)',data:calc(0.002),borderColor:'#00d4aa',borderWidth:2.5,fill:false,tension:0.3,pointRadius:0},
-      {label:'VWCE (0.22%)',data:calc(0.0022),borderColor:'#3b8eea',borderDash:[6,3],borderWidth:2,fill:false,tension:0.3,pointRadius:0},
-      {label:'Fonds actif (1.50%)',data:calc(0.015),borderColor:'#ff5757',borderDash:[4,4],borderWidth:2,fill:false,tension:0.3,pointRadius:0},
+      {label:'SPYL S&P500 (0.03%)',data:calc(0.0003),borderColor:'#f5a623',borderWidth:3,fill:false,tension:0.3,pointRadius:0},
+      {label:'WCOR Amundi (0.12%)',data:calc(0.0012),borderColor:'#00d4aa',borderWidth:2.5,fill:false,tension:0.3,pointRadius:0},
+      {label:'XAIX Satellite IA (0.35%)',data:calc(0.0035),borderColor:'#9b7fe8',borderDash:[5,3],borderWidth:2,fill:false,tension:0.3,pointRadius:0},
+      {label:'SPYI SPDR (0.17%)',data:calc(0.0017),borderColor:'#9b7fe8',borderWidth:2,fill:false,tension:0.3,pointRadius:0},
+      {label:'IWDA iShares (0.20%)',data:calc(0.002),borderColor:'#3b8eea',borderDash:[6,3],borderWidth:2,fill:false,tension:0.3,pointRadius:0},
+      {label:'VWCE Vanguard (0.22%)',data:calc(0.0022),borderColor:'#f5a623',borderDash:[4,4],borderWidth:2,fill:false,tension:0.3,pointRadius:0},
+      {label:'Fonds actif (1.50%)',data:calc(0.015),borderColor:'#ff5757',borderDash:[3,3],borderWidth:1.5,fill:false,tension:0.3,pointRadius:0},
     ]},
     options:{responsive:true,maintainAspectRatio:false,
-      plugins:{legend:{labels:{color:'#8892b0',font:{family:'Syne',size:11}}}},
+      plugins:{legend:{labels:{color:'#8892b0',font:{family:'Syne',size:10}}}},
       scales:{
         x:{ticks:{color:'#4a6080',font:{family:'JetBrains Mono',size:9}},grid:{color:'rgba(30,45,64,.4)'}},
         y:{ticks:{color:'#4a6080',font:{family:'JetBrains Mono',size:9},callback:v=>fmtE(v)},grid:{color:'rgba(30,45,64,.4)'}}
@@ -884,17 +1361,17 @@ function drawCountries() {
   S.ch.countries = new Chart(document.getElementById('c-countries').getContext('2d'),{
     type:'bar',
     data:{
-      labels:['🇱🇺 Luxembourg','🇨🇭 Suisse Romande','🇨🇦 Canada Québec','🇫🇷 France Paris','🇧🇪 Belgique'],
+      labels:['🇨🇭 Suisse Romande','🇱🇺 Luxembourg','🇮🇪 Irlande Dublin','🇩🇪 Allemagne Munich','🇳🇱 Pays-Bas Amst.','🇨🇦 Canada Québec','🇫🇷 France Paris','🇧🇪 Belgique','🇪🇸 Espagne Madrid','🇵🇹 Portugal Lisbonne'],
       datasets:[
-        {label:'Min net/mois (€)',data:[3200,4500,2600,2400,2000],backgroundColor:'rgba(0,212,170,0.4)',borderColor:'#00d4aa',borderWidth:1.5},
-        {label:'Max net/mois (€)',data:[4200,6300,3400,3100,2500],backgroundColor:'rgba(59,142,234,0.4)',borderColor:'#3b8eea',borderWidth:1.5},
+        {label:'Salaire min net/mois (€)',data:[4500,3200,2900,2700,2800,2600,2400,2000,1900,1800],backgroundColor:'rgba(0,212,170,0.45)',borderColor:'#00d4aa',borderWidth:1.5,borderRadius:3},
+        {label:'Salaire max net/mois (€)',data:[6300,4200,3800,3500,3600,3400,3100,2500,2600,2400],backgroundColor:'rgba(59,142,234,0.45)',borderColor:'#3b8eea',borderWidth:1.5,borderRadius:3},
       ]
     },
     options:{indexAxis:'y',responsive:true,maintainAspectRatio:false,
-      plugins:{legend:{labels:{color:'#8892b0',font:{family:'Syne',size:11}}}},
+      plugins:{legend:{labels:{color:'#8892b0',font:{family:'Syne',size:10}}}},
       scales:{
         x:{ticks:{color:'#4a6080',font:{family:'JetBrains Mono',size:9},callback:v=>fmtE(v)},grid:{color:'rgba(30,45,64,.4)'}},
-        y:{ticks:{color:'#e2e8f0',font:{family:'Syne',size:11}},grid:{display:false}}
+        y:{ticks:{color:'#e2e8f0',font:{family:'Syne',size:10}},grid:{display:false}}
       }
     }
   });
