@@ -172,7 +172,7 @@ hr.div{border:none;border-top:1px solid var(--border);margin:14px 0}
   <div class="hdr">
     <div>
       <div class="logo">LIBERTÉ FINANCIÈRE</div>
-      <div class="logo-sub">Actuaire · Belgique · International · 21 mai 2026</div>
+      <div class="logo-sub">Actuaire · Belgique · International · <span id="live-date"></span></div>
     </div>
     <div class="live"><span class="pulse"></span><span id="last-update">Chargement cours...</span></div>
   </div>
@@ -1585,6 +1585,13 @@ function toast(msg,color='var(--green)'){
 dashParams();
 salParams();
 projParams();
+// Date dynamique dans le header
+(function() {
+  const now = new Date();
+  const opts = { day:'numeric', month:'long', year:'numeric' };
+  const el = document.getElementById('live-date');
+  if(el) el.textContent = now.toLocaleDateString('fr-FR', opts);
+})();
 document.getElementById('t-date').value = new Date().toISOString().split('T')[0];
 updateDash();
 loadPrices();
