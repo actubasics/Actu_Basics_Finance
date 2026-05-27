@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="fr">
+<html lang="en">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
@@ -11,7 +11,7 @@
   --bg:#080b10;--bg3:#131920;--bg4:#1a2230;--border:#1e2d40;
   --text:#e2e8f0;--muted:#4a6080;--dim:#2a3f55;
   --green:#00d4aa;--green2:#00a880;--blue:#3b8eea;
-  --amber:#f5a623;--red:#ff5757;--purple:#9b7fe8;--pink:#e91e8c;
+  --amber:#f5a623;--red:#ff5757;--purple:#9b7fe8;
   --font:'Syne',sans-serif;--mono:'JetBrains Mono',monospace;
 }
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
@@ -27,7 +27,7 @@ header{padding:20px 0 0;border-bottom:1px solid var(--border)}
 .live{display:flex;align-items:center;gap:5px;font-family:var(--mono);font-size:.64rem;color:var(--muted);padding:3px 9px;border:1px solid var(--border);border-radius:20px}
 .dot{width:5px;height:5px;border-radius:50%;background:var(--green);animation:p 2s infinite}
 @keyframes p{0%,100%{opacity:1}50%{opacity:.3}}
-.tabs{display:flex;overflow-x:auto;gap:0}
+.tabs{display:flex;overflow-x:auto}
 .tab{font-family:var(--font);font-size:.78rem;font-weight:600;color:var(--muted);padding:9px 16px;cursor:pointer;border-bottom:2px solid transparent;white-space:nowrap;background:none;border-top:none;border-left:none;border-right:none;transition:all .2s}
 .tab:hover{color:var(--text)}.tab.active{color:var(--green);border-bottom-color:var(--green)}
 .panel{display:none;padding:22px 0 60px}.panel.active{display:block}
@@ -67,8 +67,8 @@ hr.dv{border:none;border-top:1px solid var(--border);margin:10px 0}
 .tbl tr:last-child td{border-bottom:none}.tbl tr:hover td{background:rgba(255,255,255,.02)}
 .tbl-hi td{background:rgba(0,212,170,.06)!important}
 .frow{display:grid;grid-template-columns:1fr 1fr 1fr 1fr auto;gap:10px;align-items:end}
-select,input[type=date]{background:var(--bg4);border:1px solid var(--border);color:var(--text);padding:7px 10px;border-radius:8px;font-family:var(--mono);font-size:.82rem;outline:none;width:100%}
-select:focus,input[type=date]:focus{border-color:var(--green)}
+select,input[type=date],input[type=text]{background:var(--bg4);border:1px solid var(--border);color:var(--text);padding:7px 10px;border-radius:8px;font-family:var(--mono);font-size:.82rem;outline:none;width:100%}
+select:focus,input[type=date]:focus,input[type=text]:focus{border-color:var(--green)}
 .btn{padding:7px 14px;border-radius:8px;border:none;cursor:pointer;font-family:var(--font);font-size:.77rem;font-weight:600;transition:all .15s}
 .btn-p{background:var(--green);color:var(--bg)}.btn-p:hover{background:var(--green2)}
 .btn-d{background:rgba(255,87,87,.12);color:var(--red);border:1px solid rgba(255,87,87,.25)}
@@ -84,402 +84,457 @@ select:focus,input[type=date]:focus{border-color:var(--green)}
 <body>
 <header><div class="w">
   <div class="hdr">
-    <div><div class="logo">ACTU-BASICS FINANCE STRATEGY</div><div class="logo-sub">Actuaire · Belgique · <span id="live-date"></span></div></div>
-    <div class="live"><span class="dot"></span><span id="last-update">Chargement...</span></div>
+    <div>
+      <div class="logo">ACTU-BASICS FINANCE STRATEGY</div>
+      <div class="logo-sub">Actuary · Belgium · <span id="live-date"></span></div>
+    </div>
+    <div class="live"><span class="dot"></span><span id="last-update">Loading...</span></div>
   </div>
   <div class="tabs">
-    <button class="tab active" onclick="go('dash')">📊 Dashboard</button>
-    <button class="tab" onclick="go('portfolio')">💼 Portefeuille</button>
-    <button class="tab" onclick="go('proj')">📈 Projections</button>
-    <button class="tab" onclick="go('strategie')">🎯 Stratégie ETF</button>
-    <button class="tab" onclick="go('ibkr')">⚙️ Automatisation IBKR</button>
-    <button class="tab" onclick="go('vie')">🌍 Plan de vie</button>
+    <button class="tab active" onclick="go('dash')">Dashboard</button>
+    <button class="tab" onclick="go('portfolio')">Portfolio</button>
+    <button class="tab" onclick="go('proj')">Projections</button>
+    <button class="tab" onclick="go('strategy')">ETF Strategy</button>
+    <button class="tab" onclick="go('ibkr')">IBKR Setup</button>
+    <button class="tab" onclick="go('life')">Life Plan</button>
   </div>
 </div></header>
 
 <div class="w">
 
-<!-- ═══ DASHBOARD ═══ -->
+<!-- DASHBOARD -->
 <div id="panel-dash" class="panel active">
-  <div class="sec">Mes paramètres</div>
+  <div class="sec">My parameters</div>
   <div class="g4" id="dash-params"></div>
   <div class="g4" id="dash-kpis"></div>
   <div class="g2">
-    <div class="card"><div class="ct">Budget mensuel</div><div class="ch"><canvas id="c-budget"></canvas></div></div>
+    <div class="card"><div class="ct">Monthly budget</div><div class="ch"><canvas id="c-budget"></canvas></div></div>
     <div class="card">
-      <div class="ct">Portefeuille · Stratégie définitive</div>
+      <div class="ct">Current position - May 22, 2026</div>
       <div style="background:rgba(83,74,183,.12);border:1px solid rgba(83,74,183,.3);border-radius:8px;padding:10px 12px;margin-bottom:8px">
         <div style="display:flex;justify-content:space-between;align-items:center">
-          <div><div class="mono fw7" style="color:#534AB7;font-size:.9rem">SPYI — Position héritage</div>
-          <div class="note">500 parts · 11.50€ · 5 750€ · NE JAMAIS VENDRE</div></div>
-          <div style="font-size:.68rem;font-family:var(--mono);background:rgba(83,74,183,.2);color:#534AB7;padding:2px 8px;border-radius:10px">Intouché ✓</div>
+          <div>
+            <div class="mono fw7" style="color:#534AB7;font-size:.9rem">SPYI - Heritage position</div>
+            <div class="note">500 shares at 11.50 EUR = 5,750 EUR - NEVER SELL</div>
+          </div>
+          <span class="badge bg" style="font-size:.6rem">Untouched</span>
         </div>
       </div>
-      <div class="ct" style="margin-bottom:6px">Nouveaux versements — 550€/mois</div>
+      <div class="ct" style="margin-bottom:6px">Monthly investments - 800 EUR/month</div>
       <div id="dash-monthly"></div>
-      <div class="note" style="margin-top:6px">TER moyen nouveaux versements : <strong style="color:var(--text)">~0.21%/an</strong> · Commissions : <strong style="color:var(--text)">5€/mois</strong> (4 × 1.25€ = <strong style="color:var(--green)">0.63% du versement</strong>)</div>
+      <div class="note" style="margin-top:6px">Avg TER: <strong style="color:var(--text)">~0.21%/yr</strong> · Commissions: <strong style="color:var(--text)">5 EUR/mo</strong> (4 x 1.25 EUR = 0.63%)</div>
     </div>
   </div>
   <div class="card">
-    <div class="ct">Allocation cible — 7 ETFs complémentaires</div>
-    <div class="g7" id="dash-alloc"></div>
+    <div class="ct">Target allocation - 4 ETFs (new monthly investments)</div>
+    <div class="g4" id="dash-alloc"></div>
   </div>
 </div>
 
-<!-- ═══ PORTEFEUILLE ═══ -->
+<!-- PORTFOLIO -->
 <div id="panel-portfolio" class="panel">
-  <div class="sec">Cours en temps réel</div>
+  <div class="sec">Live prices</div>
   <div id="price-grid" style="display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:16px"></div>
-  <div class="sec">Ajouter un achat</div>
+
+  <div class="sec">Google Sheets sync</div>
+  <div class="card" style="margin-bottom:14px">
+    <div class="ct">Sync across all devices</div>
+    <div style="font-size:.8rem;color:var(--muted);line-height:1.6;margin-bottom:10px">
+      Configure Google Sheets to sync your trades across PC, phone and tablet automatically.
+    </div>
+    <div id="gs-status" style="margin-bottom:10px;font-size:.75rem;color:var(--muted)">Not configured - data stored locally only</div>
+    <div class="g2" style="margin-bottom:10px">
+      <div class="sb">
+        <label>CSV URL (read)</label>
+        <input type="text" id="gs-csv" placeholder="https://docs.google.com/spreadsheets/d/.../pub?output=csv">
+      </div>
+      <div class="sb">
+        <label>Apps Script URL (write)</label>
+        <input type="text" id="gs-script" placeholder="https://script.google.com/macros/s/.../exec">
+      </div>
+    </div>
+    <div style="display:flex;gap:8px;flex-wrap:wrap">
+      <button class="btn btn-p" onclick="saveGs()">Save config</button>
+      <button class="btn" style="background:rgba(59,142,234,.15);color:var(--blue);border:1px solid rgba(59,142,234,.3)" onclick="syncGs()">Sync now</button>
+      <button class="btn" style="background:rgba(155,127,232,.15);color:var(--purple);border:1px solid rgba(155,127,232,.3)" onclick="showGsGuide()">Setup guide</button>
+    </div>
+  </div>
+
+  <!-- Google Sheets Guide -->
+  <div id="gs-guide" class="card" style="margin-bottom:14px;display:none">
+    <div class="ct">Google Sheets setup - 3 steps</div>
+    <div style="display:flex;flex-direction:column;gap:10px">
+      <div style="border-left:3px solid var(--green);padding:10px 14px;background:rgba(0,212,170,.04);border-radius:0 10px 10px 0">
+        <div style="font-weight:700;font-size:.85rem;margin-bottom:6px">Step 1 - Create the Sheet</div>
+        <div style="font-size:.78rem;color:var(--muted);line-height:1.6">
+          1. Go to <a href="https://sheets.google.com" target="_blank" style="color:var(--blue)">sheets.google.com</a> and create a new sheet<br>
+          2. Name it <strong style="color:var(--text)">Actu-Basics Portfolio</strong><br>
+          3. Create exactly these 4 columns: <code style="background:var(--bg4);padding:1px 5px;border-radius:3px;font-family:var(--mono);font-size:.78rem">Date | ETF | Parts | Prix</code>
+        </div>
+      </div>
+      <div style="border-left:3px solid var(--blue);padding:10px 14px;background:rgba(59,142,234,.04);border-radius:0 10px 10px 0">
+        <div style="font-weight:700;font-size:.85rem;margin-bottom:6px">Step 2 - Publish as CSV (read access)</div>
+        <div style="font-size:.78rem;color:var(--muted);line-height:1.6">
+          1. In your Sheet: <strong style="color:var(--text)">File > Share > Publish to web</strong><br>
+          2. Select <strong style="color:var(--text)">"Sheet1"</strong> and format <strong style="color:var(--text)">"Comma-separated values (.csv)"</strong><br>
+          3. Click <strong style="color:var(--text)">"Publish"</strong> and copy the URL<br>
+          4. Paste this URL in the <strong style="color:var(--text)">"CSV URL"</strong> field above
+        </div>
+      </div>
+      <div style="border-left:3px solid var(--purple);padding:10px 14px;background:rgba(155,127,232,.04);border-radius:0 10px 10px 0">
+        <div style="font-weight:700;font-size:.85rem;margin-bottom:6px">Step 3 - Apps Script (write from app)</div>
+        <div style="font-size:.78rem;color:var(--muted);line-height:1.6">
+          1. In your Sheet: <strong style="color:var(--text)">Extensions > Apps Script</strong><br>
+          2. Replace all code with the script below:<br>
+          <pre id="gs-code" style="background:var(--bg4);padding:10px;border-radius:6px;font-family:var(--mono);font-size:.7rem;color:#e2e8f0;overflow-x:auto;margin:6px 0;white-space:pre-wrap">function doPost(e) {
+  const sheet = SpreadsheetApp.getActiveSpreadsheet().getActiveSheet();
+  const data = JSON.parse(e.postData.contents);
+  if(data.action === 'add') {
+    sheet.appendRow([data.date, data.etf, data.parts, data.prix]);
+  } else if(data.action === 'delete') {
+    const rows = sheet.getDataRange().getValues();
+    for(let i = rows.length - 1; i >= 1; i--) {
+      if(rows[i][0] == data.date && rows[i][1] == data.etf &&
+         rows[i][2] == data.parts && rows[i][3] == data.prix) {
+        sheet.deleteRow(i + 1); break;
+      }
+    }
+  }
+  return ContentService.createTextOutput(JSON.stringify({status:'ok'}))
+    .setMimeType(ContentService.MimeType.JSON);
+}
+function doGet(e) {
+  return ContentService.createTextOutput(JSON.stringify({status:'ok'}))
+    .setMimeType(ContentService.MimeType.JSON);
+}</pre>
+          3. Click <strong style="color:var(--text)">Deploy > New deployment</strong><br>
+          4. Type: <strong style="color:var(--text)">"Web app"</strong> - Access: <strong style="color:var(--text)">"Anyone"</strong><br>
+          5. Copy the deployment URL and paste in <strong style="color:var(--text)">"Apps Script URL"</strong> above
+        </div>
+        <button onclick="copyGsCode()" class="btn" style="margin-top:6px;background:rgba(155,127,232,.15);color:var(--purple);border:1px solid rgba(155,127,232,.3);font-size:.72rem">Copy Apps Script code</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="sec">Add a trade</div>
   <div class="card" style="margin-bottom:14px">
     <div class="frow">
       <div class="sb"><label>Date</label><input type="date" id="t-date"></div>
       <div class="sb"><label>ETF</label><select id="t-etf"></select></div>
-      <div class="sb"><label>Nombre de parts</label><div class="sb-w"><button class="sb-b" onclick="sp('t-parts',-0.001)">−</button><input type="number" id="t-parts" step="0.001" min="0" placeholder="0.000"><button class="sb-b" onclick="sp('t-parts',0.001)">+</button></div></div>
-      <div class="sb"><label>Prix achat (€)</label><div class="sb-w"><button class="sb-b" onclick="sp('t-price',-0.01)">−</button><input type="number" id="t-price" step="0.01" min="0" placeholder="0.00"><button class="sb-b" onclick="sp('t-price',0.01)">+</button></div></div>
-      <button class="btn btn-p" onclick="addT()" style="align-self:flex-end">+ Ajouter</button>
+      <div class="sb"><label>Shares</label><div class="sb-w"><button class="sb-b" onclick="sp('t-parts',-0.001)">-</button><input type="number" id="t-parts" step="0.001" min="0" placeholder="0.000"><button class="sb-b" onclick="sp('t-parts',0.001)">+</button></div></div>
+      <div class="sb"><label>Buy price (EUR)</label><div class="sb-w"><button class="sb-b" onclick="sp('t-price',-0.01)">-</button><input type="number" id="t-price" step="0.01" min="0" placeholder="0.00"><button class="sb-b" onclick="sp('t-price',0.01)">+</button></div></div>
+      <button class="btn btn-p" onclick="addT()" style="align-self:flex-end">+ Add</button>
     </div>
   </div>
+
   <div class="g4" id="ptf-kpis"></div>
   <div class="g2">
-    <div class="card"><div class="ct">Allocation actuelle</div><div class="ch"><canvas id="c-alloc"></canvas></div></div>
-    <div class="card"><div class="ct">Gains/Pertes cumulés</div><div class="ch"><canvas id="c-pnl"></canvas></div></div>
+    <div class="card"><div class="ct">Portfolio allocation</div><div class="ch"><canvas id="c-alloc"></canvas></div></div>
+    <div class="card"><div class="ct">Cumulative P&L</div><div class="ch"><canvas id="c-pnl"></canvas></div></div>
   </div>
   <div class="card">
-    <div class="ct">Historique des achats</div>
+    <div class="ct">Trade history</div>
     <div style="overflow-x:auto"><table class="tbl"><thead><tr>
-      <th>Date</th><th>ETF</th><th>Parts</th><th>Prix achat</th><th>Investi</th><th>Prix actuel</th><th>Valeur</th><th>Gain/Perte €</th><th>%</th><th></th>
+      <th>Date</th><th>ETF</th><th>Shares</th><th>Buy price</th><th>Invested</th><th>Current price</th><th>Value</th><th>P&L EUR</th><th>%</th><th></th>
     </tr></thead><tbody id="trades-body">
-      <tr><td colspan="10" style="text-align:center;color:var(--muted);padding:20px">Aucun achat enregistré.</td></tr>
+      <tr><td colspan="10" style="text-align:center;color:var(--muted);padding:20px">No trades recorded yet.</td></tr>
     </tbody></table></div>
   </div>
 </div>
 
-<!-- ═══ PROJECTIONS ═══ -->
+<!-- PROJECTIONS -->
 <div id="panel-proj" class="panel">
-  <div class="sec">Paramètres</div>
+  <div class="sec">Simulation parameters</div>
   <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:10px" id="proj-p1"></div>
   <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:16px" id="proj-p2"></div>
   <div id="lib-bloc" style="margin-bottom:14px"></div>
   <div class="g4" id="proj-kpis"></div>
   <div class="card" style="margin-bottom:14px">
-    <div class="ct">Capital projeté — 3 scénarios</div>
+    <div class="ct">Capital growth - 3 scenarios</div>
     <div class="ch" style="height:300px"><canvas id="c-proj"></canvas></div>
   </div>
   <div class="card">
-    <div class="ct">Jalons jusqu'à la liberté financière</div>
+    <div class="ct">Milestones to financial freedom</div>
     <div style="overflow-x:auto"><table class="tbl"><thead><tr>
-      <th>Dans</th><th>Année</th><th>Versement/mois</th><th>Scénario bas</th><th>Réaliste</th><th>Scénario haut</th><th>% objectif</th><th>Revenu passif/mois</th>
+      <th>In</th><th>Year</th><th>Monthly invest</th><th>Low scenario</th><th>Realistic</th><th>High scenario</th><th>% goal</th><th>Passive income/mo</th>
     </tr></thead><tbody id="proj-tbody"></tbody></table></div>
   </div>
 </div>
 
-<!-- ═══ STRATÉGIE ETF ═══ -->
-<div id="panel-strategie" class="panel">
-  <div class="sec">L'allocation finale validée</div>
-  <div style="overflow-x:auto;margin-bottom:16px"><table class="tbl" id="strat-table">
-    <thead><tr><th>ETF</th><th>ISIN</th><th>Bourse IBKR</th><th>TER</th><th>Encours</th><th>Allocation</th><th>550€/mois</th><th>Rôle</th><th>Logique</th></tr></thead>
+<!-- ETF STRATEGY -->
+<div id="panel-strategy" class="panel">
+  <div class="sec">Final validated allocation</div>
+  <div style="overflow-x:auto;margin-bottom:16px"><table class="tbl">
+    <thead><tr><th>ETF</th><th>ISIN</th><th>Exchange</th><th>TER</th><th>AUM</th><th>Allocation</th><th>800 EUR/mo</th><th>Role</th><th>Logic</th></tr></thead>
     <tbody id="strat-tbody"></tbody>
   </table></div>
 
   <div class="g2">
+    <div class="card"><div class="ct">Target allocation</div><div class="ch"><canvas id="c-strat-pie"></canvas></div></div>
     <div class="card">
-      <div class="ct">Répartition cible</div>
-      <div class="ch"><canvas id="c-strat-pie"></canvas></div>
-    </div>
-    <div class="card">
-      <div class="ct">Impact des frais sur 20 ans</div>
+      <div class="ct">Fee impact over 20 years</div>
       <div class="ch"><canvas id="c-fees"></canvas></div>
-      <div class="note" style="margin-top:6px">Base : 5 750€ + 550€/mois · 7%/an brut</div>
+      <div class="note" style="margin-top:6px">Base: 5,750 EUR + 800 EUR/mo · 7%/yr gross</div>
     </div>
   </div>
 
   <div class="card">
-    <div class="ct">Évolution de la stratégie dans le temps</div>
+    <div class="ct">Strategy evolution over time</div>
     <div style="display:flex;flex-direction:column;gap:8px">
-        <div style="border-left:3px solid var(--green);padding:12px 14px;background:rgba(0,212,170,.04);border-radius:0 10px 10px 0">
-        <div class="fw7" style="font-size:.88rem;margin-bottom:6px">Phase actuelle — dès maintenant · XDWD 40% + EMIM 25% + IUSN 20% + ZPRV 15%</div>
+      <div style="border-left:3px solid var(--green);padding:12px 14px;background:rgba(0,212,170,.04);border-radius:0 10px 10px 0">
+        <div class="fw7" style="font-size:.88rem;margin-bottom:6px">Now - ongoing · XDWD 40% + EMIM 25% + IUSN 20% + ZPRV 15%</div>
         <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:6px">
-          <div style="background:rgba(0,0,0,.2);border-radius:6px;padding:7px 9px;font-size:.72rem"><div style="color:var(--muted)">XDWD · 320€/mois</div><div class="mono" style="color:#1D9E75">Monde développé 0.12%</div></div>
-          <div style="background:rgba(0,0,0,.2);border-radius:6px;padding:7px 9px;font-size:.72rem"><div style="color:var(--muted)">EMIM · 200€/mois</div><div class="mono" style="color:#3b8eea">Émergents Asie/Inde</div></div>
-          <div style="background:rgba(0,0,0,.2);border-radius:6px;padding:7px 9px;font-size:.72rem"><div style="color:var(--muted)">IUSN · 160€/mois</div><div class="mono" style="color:#f59f00">Small cap premium</div></div>
-          <div style="background:rgba(0,0,0,.2);border-radius:6px;padding:7px 9px;font-size:.72rem"><div style="color:var(--muted)">ZPRV · 120€/mois</div><div class="mono" style="color:#e91e8c">Value + size premium</div></div>
+          <div style="background:rgba(0,0,0,.2);border-radius:6px;padding:7px 9px;font-size:.72rem"><div style="color:var(--muted)">XDWD - 320 EUR/mo</div><div class="mono" style="color:#1D9E75">MSCI World 0.12%</div></div>
+          <div style="background:rgba(0,0,0,.2);border-radius:6px;padding:7px 9px;font-size:.72rem"><div style="color:var(--muted)">EMIM - 200 EUR/mo</div><div class="mono" style="color:#3b8eea">Emerging markets</div></div>
+          <div style="background:rgba(0,0,0,.2);border-radius:6px;padding:7px 9px;font-size:.72rem"><div style="color:var(--muted)">IUSN - 160 EUR/mo</div><div class="mono" style="color:#f59f00">Small cap premium</div></div>
+          <div style="background:rgba(0,0,0,.2);border-radius:6px;padding:7px 9px;font-size:.72rem"><div style="color:var(--muted)">ZPRV - 120 EUR/mo</div><div class="mono" style="color:#e91e8c">Value + size</div></div>
         </div>
-        <div class="note">4 lignes · TER moyen ~0.21% · SPYI reste intouché et continue de croître seul. Ces 4 ETFs reçoivent tous les nouveaux versements.</div>
+        <div class="note">4 lines - SPYI heritage untouched, growing on its own. New investments only go to these 4 ETFs.</div>
         <div style="margin-top:6px;background:rgba(83,74,183,.08);border:1px solid rgba(83,74,183,.2);border-radius:6px;padding:7px 10px;font-size:.73rem;color:var(--muted)">
-          <strong style="color:#534AB7">SPYI héritage :</strong> 500 parts à 5 750€. Ne se vend jamais. Sa part relative diminue progressivement au fil des années — de ~50% du portefeuille total aujourd'hui vers ~20% dans 10 ans. C'est normal et voulu.
+          <strong style="color:#534AB7">SPYI heritage:</strong> 500 shares at 5,750 EUR. Never sold. Its weight decreases naturally over time: ~50% today, ~20% in 10 years.
         </div>
       </div>
       <div style="border-left:3px solid var(--blue);padding:12px 14px;background:rgba(59,142,234,.04);border-radius:0 10px 10px 0">
-        <div class="fw7" style="font-size:.88rem;margin-bottom:6px">Phase 2 · An 3–7 · Mêmes 4 ETFs · Versement monte à 800–1 200€/mois</div>
-        <div style="display:grid;grid-template-columns:repeat(5,1fr);gap:6px;margin-bottom:6px">
-          <div style="background:rgba(0,0,0,.2);border-radius:6px;padding:6px 8px;font-size:.68rem"><div style="color:var(--muted)">SPYI 35%</div><div class="mono" style="color:#534AB7">Héritage</div></div>
-          <div style="background:rgba(0,0,0,.2);border-radius:6px;padding:6px 8px;font-size:.68rem"><div style="color:var(--muted)">XDWD 25%</div><div class="mono" style="color:#1D9E75">0.12% — nouveaux</div></div>
-          <div style="background:rgba(0,0,0,.2);border-radius:6px;padding:6px 8px;font-size:.68rem"><div style="color:var(--muted)">EMIM 15%</div><div class="mono" style="color:#3b8eea">Émergents</div></div>
-          <div style="background:rgba(0,0,0,.2);border-radius:6px;padding:6px 8px;font-size:.68sm"><div style="color:var(--muted)">IUSN 15%</div><div class="mono" style="color:#f59f00">Small cap</div></div>
-          <div style="background:rgba(0,0,0,.2);border-radius:6px;padding:6px 8px;font-size:.68rem"><div style="color:var(--muted)">ZPRV 10%</div><div class="mono" style="color:#e91e8c">Value</div></div>
-        </div>
-        <div class="note">Tu ne vends pas SPYI — tu diriges les nouveaux versements vers XDWD + EMIM + IUSN + ZPRV. SPYI représente 35% au départ puis diminue naturellement. TER moyen ~0.17%.</div>
-        <div style="margin-top:6px;background:rgba(0,212,170,.06);border:1px solid rgba(0,212,170,.15);border-radius:6px;padding:7px 10px;font-size:.73rem;color:var(--muted)">
-          💡 <strong style="color:var(--text)">Pourquoi XDWD plutôt que SPPW ou SC0J ?</strong> XDWD a 18.8 Md€ d'encours — le plus solide des trois alternatives MSCI World à 0.12%. Tous trackent le même index, cherche sur IBKR par ISIN IE00BJ0KDQ92.
-        </div>
+        <div class="fw7" style="font-size:.88rem;margin-bottom:4px">Phase 2 - Year 3-7 (income >= 800 EUR/mo, same allocation)</div>
+        <div class="note">Monthly investment increases proportionally as salary rises. Apply the 80/20 rule: 80% of each raise goes to IBKR, 20% to lifestyle.</div>
       </div>
       <div style="border-left:3px solid var(--purple);padding:12px 14px;background:rgba(155,127,232,.04);border-radius:0 10px 10px 0">
-        <div class="fw7" style="font-size:.88rem;margin-bottom:6px">Phase 3 · An 7+ · Capital > 100k€ · Portefeuille mature</div>
-        <div class="note" style="margin-bottom:6px">Arrêter d'acheter SPYI — concentrer tous les versements sur XDWD + EMIM + IUSN + ZPRV. Le SPYI existant reste intact, il continue de croître seul. Rééquilibrage annuel en janvier en redirectant les versements vers la poche sous-représentée. TER cible : ~0.17%.</div>
-        <div style="background:rgba(239,159,39,.06);border:1px solid rgba(239,159,39,.15);border-radius:6px;padding:7px 10px;font-size:.73rem;color:var(--muted)">
-          ⚠ <strong style="color:var(--text)">Si Canada :</strong> ouvrir un TFSA dès l'arrivée — y loger XDWD + EMIM en priorité (0% d'impôt sur tous les gains à vie).
-          <strong style="color:var(--text)"> Si Luxembourg :</strong> fiscalité identique à la Belgique, pas de changement nécessaire.
-        </div>
+        <div class="fw7" style="font-size:.88rem;margin-bottom:4px">Phase 3 - Year 7+ (capital > 100k EUR, stable residence)</div>
+        <div class="note">Annual rebalancing in January by redirecting new contributions to the underweighted position. Target TER: ~0.17%. If Canada: maximize TFSA first (0% tax forever).</div>
       </div>
     </div>
   </div>
 
   <div class="card" style="margin-top:14px">
-    <div class="ct">Note fiscale Belgique — 0% sur les plus-values</div>
+    <div class="ct">Belgian tax note - 0% capital gains</div>
     <div style="font-size:.82rem;color:var(--muted);line-height:1.7">
-      <p>Tous les ETFs de cette liste sont des ETFs <strong style="color:var(--text)">actions pures UCITS accumulants</strong> domiciliés en Irlande → <strong style="color:var(--green)">0% d'impôt sur les plus-values en Belgique</strong> à la vente.</p>
-      <p style="margin-top:6px"><strong style="color:var(--amber)">Exception : SGLD (or physique)</strong> — c'est un ETC, pas un ETF actions. Fiscalement traité différemment mais également exonéré de plus-value en Belgique pour un particulier en gestion normale. À confirmer avec un comptable si montants importants.</p>
-      <p style="margin-top:6px">La TOB (taxe sur opérations boursières) de 0.12–0.35% est prélevée automatiquement par IBKR sur chaque transaction pour les résidents belges.</p>
+      <p>All ETFs are <strong style="color:var(--text)">pure equity UCITS accumulating</strong> domiciled in Ireland: <strong style="color:var(--green)">0% capital gains tax in Belgium</strong> on sale.</p>
+      <p style="margin-top:6px">The TOB (stock exchange tax) of 0.12-0.35% is automatically collected by IBKR for Belgian residents on each transaction.</p>
     </div>
   </div>
 </div>
 
-<!-- ═══ AUTOMATISATION IBKR ═══ -->
+<!-- IBKR SETUP -->
 <div id="panel-ibkr" class="panel">
-  <div class="sec">Automatiser ses investissements sur IBKR</div>
+  <div class="sec">Automate your investments on IBKR</div>
 
   <div style="background:linear-gradient(135deg,rgba(0,212,170,.07),rgba(59,142,234,.05));border:1px solid rgba(0,212,170,.25);border-radius:14px;padding:16px 20px;margin-bottom:16px;font-size:.82rem;color:var(--muted);line-height:1.7">
-    <strong style="color:var(--text)">Objectif :</strong> acheter automatiquement tes 7 ETFs chaque mois sans intervention manuelle. IBKR propose deux méthodes : les <strong style="color:var(--green)">Recurring Investments</strong> (achats récurrents) et les <strong style="color:var(--blue)">ordres programmés</strong>. Voici comment les configurer.
+    <strong style="color:var(--text)">Goal:</strong> buy your 4 ETFs automatically every month. IBKR offers <strong style="color:var(--green)">Recurring Investments</strong> (automated purchases) and <strong style="color:var(--blue)">manual monthly orders</strong>. Both are described below.
   </div>
 
-  <!-- Méthode 1 -->
   <div class="card" style="margin-bottom:14px">
-    <div class="ct">Méthode 1 — Recurring Investments (recommandé) ✓</div>
+    <div class="ct">Method 1 - Recurring Investments (recommended)</div>
     <div style="font-size:.82rem;color:var(--muted);line-height:1.8;margin-bottom:14px">
-      IBKR propose une fonctionnalité native d'investissement récurrent. Tu définis un montant en euros, une fréquence, et IBKR achète automatiquement les parts entières possibles et garde le reste en cash.
+      IBKR has a native recurring investment feature. Set an amount, frequency and day - IBKR buys automatically each month.
     </div>
     <div style="display:flex;flex-direction:column;gap:8px">
       <div style="display:flex;gap:12px;align-items:flex-start;padding:10px;background:var(--bg4);border-radius:8px">
         <div style="background:var(--green);color:var(--bg);border-radius:50%;width:22px;height:22px;display:flex;align-items:center;justify-content:center;font-size:.72rem;font-weight:700;flex-shrink:0">1</div>
-        <div><div style="font-size:.82rem;font-weight:600;margin-bottom:2px">Ouvrir IBKR → Menu "Invest" → "Recurring Investments"</div><div class="note">Disponible sur l'appli mobile IBKR et sur Client Portal (web). Sur mobile : icône "+" → "Recurring Investment".</div></div>
+        <div><div style="font-size:.82rem;font-weight:600;margin-bottom:2px">Open IBKR > Menu "Invest" > "Recurring Investments"</div><div class="note">Available on IBKR mobile app and Client Portal (web).</div></div>
       </div>
       <div style="display:flex;gap:12px;align-items:flex-start;padding:10px;background:var(--bg4);border-radius:8px">
         <div style="background:var(--green);color:var(--bg);border-radius:50%;width:22px;height:22px;display:flex;align-items:center;justify-content:center;font-size:.72rem;font-weight:700;flex-shrink:0">2</div>
-        <div><div style="font-size:.82rem;font-weight:600;margin-bottom:2px">Rechercher l'ETF par ISIN ou ticker</div><div class="note">Exemple : tape "IE00B3YLTY66" ou "SPYI" → sélectionne "SPYI — XETRA (EUR)". Toujours vérifier que la bourse affichée est bien en EUR (XETRA ou AEB).</div></div>
+        <div><div style="font-size:.82rem;font-weight:600;margin-bottom:2px">Search the ETF by ISIN or ticker</div><div class="note">Example: type "IE00BJ0KDQ92" or "XDWD" > select "XDWD - XETRA (EUR)". Always verify the exchange shows EUR.</div></div>
       </div>
       <div style="display:flex;gap:12px;align-items:flex-start;padding:10px;background:var(--bg4);border-radius:8px">
         <div style="background:var(--green);color:var(--bg);border-radius:50%;width:22px;height:22px;display:flex;align-items:center;justify-content:center;font-size:.72rem;font-weight:700;flex-shrink:0">3</div>
-        <div><div style="font-size:.82rem;font-weight:600;margin-bottom:2px">Configurer : montant · fréquence · jour</div><div class="note">Montant : le montant mensuel alloué (ex: 330€ pour SPYI). Fréquence : Mensuel. Jour : le 1er du mois (ou le 2 si le 1er est férié). IBKR ajuste automatiquement.</div></div>
+        <div><div style="font-size:.82rem;font-weight:600;margin-bottom:2px">Configure: amount, frequency, day</div><div class="note">Amount: the monthly allocation (e.g. 320 EUR for XDWD). Frequency: Monthly. Day: 1st of the month.</div></div>
       </div>
       <div style="display:flex;gap:12px;align-items:flex-start;padding:10px;background:var(--bg4);border-radius:8px">
         <div style="background:var(--green);color:var(--bg);border-radius:50%;width:22px;height:22px;display:flex;align-items:center;justify-content:center;font-size:.72rem;font-weight:700;flex-shrink:0">4</div>
-        <div><div style="font-size:.82rem;font-weight:600;margin-bottom:2px">Répéter pour chaque ETF</div><div class="note">Créer 7 ordres récurrents distincts. Le cash doit être disponible sur le compte au moment de l'exécution — programme le virement bancaire quelques jours avant.</div></div>
+        <div><div style="font-size:.82rem;font-weight:600;margin-bottom:2px">Repeat for each of the 4 ETFs</div><div class="note">Create 4 separate recurring orders. Cash must be available on the account - set up your bank transfer a few days before.</div></div>
       </div>
     </div>
     <div style="margin-top:10px;background:rgba(0,212,170,.06);border:1px solid rgba(0,212,170,.2);border-radius:8px;padding:8px 12px;font-size:.75rem;color:var(--muted)">
-      ✓ <strong style="color:var(--text)">Avantage :</strong> IBKR n'applique pas de commission supplémentaire sur les Recurring Investments pour certains ETFs. Vérifie dans l'appli si tes ETFs sont éligibles (icône "0 commission").
+      Note: IBKR may charge 0 commission on Recurring Investments for eligible ETFs. Check in the app for the "0 commission" icon.
     </div>
   </div>
 
-  <!-- Tableau des ordres -->
   <div class="card" style="margin-bottom:14px">
-    <div class="ct">Configuration des 7 ordres récurrents</div>
+    <div class="ct">The 4 recurring orders to configure</div>
     <div style="overflow-x:auto"><table class="tbl">
-      <thead><tr><th>ETF</th><th>ISIN (à rechercher)</th><th>Bourse</th><th>Montant/mois</th><th>Fréquence</th><th>Jour</th><th>Type d'ordre</th></tr></thead>
+      <thead><tr><th>ETF</th><th>ISIN (search by)</th><th>Exchange</th><th>Amount/mo</th><th>Frequency</th><th>Day</th><th>Order type</th></tr></thead>
       <tbody id="ibkr-orders"></tbody>
     </table></div>
-    <div class="note" style="margin-top:8px">💡 SPYI (5 750€ · 500 parts) — position héritage, aucun ordre récurrent à créer dessus. Il croît seul. Ces 4 ordres récurrents couvrent 100% des 550€ mensuels.</div>
+    <div class="note" style="margin-top:8px">SPYI (5,750 EUR - 500 shares): heritage position, no recurring order needed. It grows on its own.</div>
   </div>
 
-  <!-- Méthode 2 -->
   <div class="card" style="margin-bottom:14px">
-    <div class="ct">Méthode 2 — Virement automatique + achat manuel le 1er du mois</div>
+    <div class="ct">Method 2 - Auto bank transfer + manual monthly order</div>
     <div style="font-size:.82rem;color:var(--muted);line-height:1.7">
-      Si tu préfères contrôler chaque achat (tu l'as dit — pas de biais émotionnel possible car ta liberté > émotions) :
-      <ol style="margin:10px 0 0 20px;display:flex;flex-direction:column;gap:6px">
-        <li>Programme un virement automatique mensuel de <strong style="color:var(--text)">550€ le 25 de chaque mois</strong> depuis Hello Bank vers IBKR (arrive en 2–3 jours, disponible pour le 1er).</li>
-        <li>Le 1er de chaque mois, ouvre IBKR et passe 6–7 ordres Market sur les ETFs selon l'allocation.</li>
-        <li>Durée totale : 10 minutes par mois. Commission : 1.25€ × 7 = 8.75€.</li>
+      <ol style="margin:8px 0 0 20px;display:flex;flex-direction:column;gap:6px">
+        <li>Set up an automatic bank transfer of <strong style="color:var(--text)">800 EUR on the 25th of each month</strong> from Hello Bank to IBKR (SEPA, arrives in 1-2 days).</li>
+        <li>On the 1st of each month, open IBKR and place 4 Market orders per the allocation table above.</li>
+        <li>Total time: ~10 minutes per month. Commission: 1.25 EUR x 4 = 5 EUR.</li>
       </ol>
     </div>
   </div>
 
-  <!-- Paramétrage technique -->
-  <div class="card" style="margin-bottom:14px">
-    <div class="ct">Paramétrage technique des ordres sur IBKR</div>
+  <div class="card">
+    <div class="ct">Technical order settings</div>
     <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
       <div>
-        <div style="font-size:.78rem;font-weight:600;margin-bottom:8px;color:var(--text)">Type d'ordre recommandé</div>
+        <div style="font-size:.78rem;font-weight:600;margin-bottom:8px;color:var(--text)">Order type</div>
         <div style="font-size:.8rem;color:var(--muted);line-height:1.7">
-          <p>→ <strong style="color:var(--green)">Ordre Market</strong> : exécution immédiate au prix du marché. Simple, rapide. Léger slippage possible en cas de faible liquidité.</p>
-          <p style="margin-top:6px">→ <strong style="color:var(--blue)">Ordre Limit</strong> : tu fixes un prix maximum. Plus de contrôle mais risque de non-exécution si le marché monte au-dessus.</p>
-          <p style="margin-top:6px">→ <strong style="color:var(--amber)">Recommandation :</strong> Ordre Market pour les ETFs liquides (SPYI, SPYL, EMIM). Limit sur XAIX et IUSN (moins liquides).</p>
+          <p><strong style="color:var(--green)">Market order</strong>: immediate execution at market price. Simple and fast. Slight slippage possible for less liquid ETFs.</p>
+          <p style="margin-top:6px"><strong style="color:var(--blue)">Limit order</strong>: you set a max price. More control but risk of non-execution if the market moves up.</p>
+          <p style="margin-top:6px"><strong style="color:var(--amber)">Recommendation:</strong> Market for XDWD, EMIM, IUSN (liquid). Limit for ZPRV (less liquid, ~75 EUR/share).</p>
         </div>
       </div>
       <div>
-        <div style="font-size:.78rem;font-weight:600;margin-bottom:8px;color:var(--text)">Devises et frais de change</div>
+        <div style="font-size:.78rem;font-weight:600;margin-bottom:8px;color:var(--text)">Currency & fees</div>
         <div style="font-size:.8rem;color:var(--muted);line-height:1.7">
-          <p>→ Tous tes ETFs cotent en <strong style="color:var(--green)">EUR sur XETRA ou AEB</strong> → zéro frais de change si ton compte IBKR est en EUR.</p>
-          <p style="margin-top:6px">→ SGLD cote en USD sur LSE. Si tu l'achètes, IBKR convertit EUR→USD (~0.002% de frais). Alternative : cherche <strong style="color:var(--text)">8PSG sur XETRA</strong> — c'est SGLD en EUR.</p>
-          <p style="margin-top:6px">→ TOB prélevée automatiquement par IBKR pour les résidents belges (0.12–0.35% selon l'ETF).</p>
+          <p>All 4 ETFs trade in <strong style="color:var(--green)">EUR on XETRA (XDWD, IUSN, ZPRV) or AEB Amsterdam (EMIM)</strong> - zero currency conversion needed.</p>
+          <p style="margin-top:6px">TOB (Belgian stock exchange tax) is automatically collected by IBKR: 0.12-0.35% per transaction depending on the ETF.</p>
         </div>
       </div>
     </div>
   </div>
-
-  <!-- Virement automatique -->
-  <div class="card">
-    <div class="ct">Configurer le virement automatique depuis Hello Bank</div>
-    <div style="display:flex;flex-direction:column;gap:8px">
-      <div style="display:flex;gap:12px;align-items:flex-start;padding:10px;background:var(--bg4);border-radius:8px">
-        <div style="background:var(--blue);color:var(--bg);border-radius:50%;width:22px;height:22px;display:flex;align-items:center;justify-content:center;font-size:.72rem;font-weight:700;flex-shrink:0">1</div>
-        <div><div style="font-size:.82rem;font-weight:600;margin-bottom:2px">Trouver l'IBAN de ton compte IBKR</div><div class="note">IBKR → Menu "Transférer des fonds" → "Dépôt" → ton IBAN IBKR est affiché (format IE ou LU selon ton compte).</div></div>
-      </div>
-      <div style="display:flex;gap:12px;align-items:flex-start;padding:10px;background:var(--bg4);border-radius:8px">
-        <div style="background:var(--blue);color:var(--bg);border-radius:50%;width:22px;height:22px;display:flex;align-items:center;justify-content:center;font-size:.72rem;font-weight:700;flex-shrink:0">2</div>
-        <div><div style="font-size:.82rem;font-weight:600;margin-bottom:2px">Hello Bank → Paiements → Ordre permanent</div><div class="note">Montant : 550€. Date d'exécution : le 25 de chaque mois. Bénéficiaire : ton IBAN IBKR. Référence : "Investissement ETF".</div></div>
-      </div>
-      <div style="display:flex;gap:12px;align-items:flex-start;padding:10px;background:var(--bg4);border-radius:8px">
-        <div style="background:var(--blue);color:var(--bg);border-radius:50%;width:22px;height:22px;display:flex;align-items:center;justify-content:center;font-size:.72rem;font-weight:700;flex-shrink:0">3</div>
-        <div><div style="font-size:.82rem;font-weight:600;margin-bottom:2px">Délai de réception</div><div class="note">SEPA : 1–2 jours ouvrables. Le 25 → disponible sur IBKR le 26–27 → prêt pour les achats du 1er du mois suivant.</div></div>
-      </div>
-    </div>
-  </div>
 </div>
 
-<!-- ═══ PLAN DE VIE ═══ -->
-<div id="panel-vie" class="panel">
-  <div class="sec">Statut Canada — décision imminente</div>
+<!-- LIFE PLAN -->
+<div id="panel-life" class="panel">
+
+  <div class="sec">Canada status - decision imminent</div>
   <div style="background:linear-gradient(135deg,rgba(0,212,170,.08),rgba(59,142,234,.05));border:1px solid rgba(0,212,170,.3);border-radius:12px;padding:14px 18px;margin-bottom:14px">
     <div class="g4">
-      <div style="background:rgba(0,0,0,.2);border-radius:8px;padding:10px;text-align:center"><div class="mono fw7 tg" style="font-size:1.1rem">420 pts</div><div class="note">Score CRS</div></div>
-      <div style="background:rgba(0,0,0,.2);border-radius:8px;padding:10px;text-align:center"><div class="mono fw7 ta" style="font-size:1.1rem">400 pts</div><div class="note">Seuil avril 2026</div></div>
-      <div style="background:rgba(0,0,0,.2);border-radius:8px;padding:10px;text-align:center"><div class="mono fw7 tb" style="font-size:1.1rem">Mars 2026</div><div class="note">Biométrie faite</div></div>
-      <div style="background:rgba(0,0,0,.2);border-radius:8px;padding:10px;text-align:center"><div class="mono fw7 tp" style="font-size:1.1rem">4–8 sem.</div><div class="note">Délai décision</div></div>
+      <div style="background:rgba(0,0,0,.2);border-radius:8px;padding:10px;text-align:center"><div class="mono fw7 tg" style="font-size:1.1rem">420 pts</div><div class="note">CRS score</div></div>
+      <div style="background:rgba(0,0,0,.2);border-radius:8px;padding:10px;text-align:center"><div class="mono fw7 ta" style="font-size:1.1rem">400 pts</div><div class="note">Francophone threshold</div></div>
+      <div style="background:rgba(0,0,0,.2);border-radius:8px;padding:10px;text-align:center"><div class="mono fw7 tb" style="font-size:1.1rem">Mar 2026</div><div class="note">Biometrics done</div></div>
+      <div style="background:rgba(0,0,0,.2);border-radius:8px;padding:10px;text-align:center"><div class="mono fw7 tp" style="font-size:1.1rem">4-8 wks</div><div class="note">Estimated decision</div></div>
     </div>
-    <div style="margin-top:10px;font-size:.78rem;color:var(--muted)">⚡ Vérifie <a href="https://ircc.canada.ca" style="color:var(--blue)" target="_blank">ircc.canada.ca</a> chaque jour. Si approbation → 60 jours pour accepter. Réserve 2 500€ disponible sur Hello Bank.</div>
+    <div style="margin-top:10px;font-size:.78rem;color:var(--muted)">Check <a href="https://ircc.canada.ca" style="color:var(--blue)" target="_blank">ircc.canada.ca</a> daily. If approved: 60 days to accept. Reserve of 2,500 EUR available in Hello Bank.</div>
   </div>
 
-  <div class="sec">Top 5 destinations — stratégie d'investissement par pays</div>
+  <div class="sec">Top 5 destinations - investment strategy per country</div>
   <div id="dest-list" style="margin-bottom:16px"></div>
 
-  <div class="sec">Actions prioritaires</div>
+  <div class="sec">Priority actions</div>
   <div id="plan-list" style="margin-bottom:16px"></div>
 
-  <div class="sec">Les 5 règles inviolables</div>
+  <div class="sec">5 unbreakable rules</div>
   <div id="rules-list"></div>
-</div>
 
+</div>
 </div><!-- /w -->
 <div id="toast"></div>
 
 <script>
-const YEAR=2026;
-const S={trades:JSON.parse(localStorage.getItem('lf_v3')||'[]'),prices:{},ch:{}};
-const save=()=>localStorage.setItem('lf_v3',JSON.stringify(S.trades));
-const fmt=(v,d=0)=>(+v).toLocaleString('fr-FR',{minimumFractionDigits:d,maximumFractionDigits:d});
-const fmtE=(v,d=0)=>fmt(v,d)+' €';
-const clr=v=>v>=0?'var(--green)':'var(--red)';
-const sign=v=>v>=0?'+':'';
+const YEAR = 2026;
+const S = {
+  trades: JSON.parse(localStorage.getItem('lf_v3') || '[]'),
+  prices: {},
+  ch: {}
+};
+const save = () => localStorage.setItem('lf_v3', JSON.stringify(S.trades));
+const fmt = (v, d=0) => (+v).toLocaleString('fr-FR', {minimumFractionDigits:d, maximumFractionDigits:d});
+const fmtE = (v, d=0) => fmt(v, d) + ' EUR';
+const clr = v => v >= 0 ? 'var(--green)' : 'var(--red)';
+const sign = v => v >= 0 ? '+' : '';
 
-// ═══ DATA ═══
-// SPYI = héritage, intouché, continue de croître seul
-const SPYI_HERITAGE = {
-  etf:'SPYI', parts:500, prix:11.50, total:5750,
-  isin:'IE00B3YLTY66', ter:0.17, bourse:'XETRA', color:'#534AB7',
-  note:'Position initiale · 22 mai 2026 · Ne jamais vendre'
+const CSV_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vQlPZ1yfa1iSMixgd4VUgaHusfDLITdX5NexGC-V8JkCh0Jk5Y94QtX8fMcn-Z-O6Ve0mW10jE5CPge/pub?gid=0&single=true&output=csv';
+
+const EXCHANGE = {
+  SPYI:'DE', XDWD:'DE', IUSN:'DE', ZPRV:'DE', XAIX:'DE',
+  SPYL:'DE', C50:'DE', EMIM:'AS', VWCE:'AS', IWDA:'AS',
+  SGLD:'AS', CEBZ:'DE', QUS5:'DE',
 };
 
-// Nouveaux versements mensuels — 800€/mois
-const ALLOC=[
-  {etf:'XDWD',pct:40,mnt:320,isin:'IE00BJ0KDQ92',ter:0.12,enc:'18.8 Md€',bourse:'XETRA',color:'#1D9E75',role:'Monde développé — coeur',desc:'MSCI World · TER 0.12% · alternative optimale à WRDU'},
-  {etf:'EMIM',pct:25,mnt:200,isin:'IE00BKM4GZ66',ter:0.18,enc:'~20 Md€', bourse:'AEB',  color:'#3b8eea',role:'Émergents — Asie/Inde/Chine',desc:'MSCI EM IMI · 3 000 titres · tu contrôles le poids'},
-  {etf:'IUSN',pct:20,mnt:160,isin:'IE00BF4RFH31',ter:0.35,enc:'~6.8 Md€',bourse:'XETRA',color:'#f59f00',role:'Prime small caps',desc:'MSCI World Small Cap · WSML en EUR · facteur size'},
-  {etf:'ZPRV',pct:15,mnt:120,isin:'IE00BSPLC413',ter:0.30,enc:'841 M€', bourse:'XETRA',color:'#e91e8c',role:'Prime value + size US',desc:'MSCI USA Small Cap Value Weighted · double prime académique'},
+const ALLOC = [
+  {etf:'XDWD',pct:40,mnt:320,isin:'IE00BJ0KDQ92',ter:0.12,enc:'18.8B',bourse:'XETRA',color:'#1D9E75',role:'Developed world core',desc:'MSCI World - 0.12% TER - best WRDU alternative'},
+  {etf:'EMIM',pct:25,mnt:200,isin:'IE00BKM4GZ66',ter:0.18,enc:'~20B', bourse:'AEB',  color:'#3b8eea',role:'Emerging markets',desc:'MSCI EM IMI - Asia/India/China - 3,000 stocks'},
+  {etf:'IUSN',pct:20,mnt:160,isin:'IE00BF4RFH31',ter:0.35,enc:'~6.8B',bourse:'XETRA',color:'#f59f00',role:'Small cap premium',desc:'MSCI World Small Cap - WSML in EUR'},
+  {etf:'ZPRV',pct:15,mnt:120,isin:'IE00BSPLC413',ter:0.30,enc:'841M', bourse:'XETRA',color:'#e91e8c',role:'Value + size premium',desc:'MSCI USA Small Cap Value Weighted'},
 ];
 
-// Phase 2 allocation (an 3-7, versement >= 800€/mois)
-const ALLOC_P2=[
-  {etf:'SPYI',pct:35,mnt:280,isin:'IE00B3YLTY66',ter:0.17,enc:'5.7 Md€', bourse:'XETRA',color:'#534AB7',role:'Base mondiale (héritage)',desc:'Déjà en portefeuille — continue de croître'},
-  {etf:'XDWD',pct:25,mnt:200,isin:'IE00BJ0KDQ92',ter:0.12,enc:'18.8 Md€',bourse:'XETRA',color:'#1D9E75',role:'Monde développé 0.12%',desc:'= WRDU/MWRE · meilleure alternative · nouveaux versements'},
-  {etf:'EMIM',pct:15,mnt:120,isin:'IE00BKM4GZ66',ter:0.18,enc:'~20 Md€',bourse:'AEB',  color:'#3b8eea',role:'Émergents — contrôle poids',desc:'Asie · Inde · Chine · 3 000 titres'},
-  {etf:'IUSN',pct:15,mnt:120,isin:'IE00BF4RFH31',ter:0.35,enc:'~6.8 Md€',bourse:'XETRA',color:'#f59f00',role:'Prime small caps',desc:'MSCI World Small Cap'},
-  {etf:'ZPRV',pct:10,mnt: 80,isin:'IE00BSPLC413',ter:0.30,enc:'841 M€', bourse:'XETRA',color:'#e91e8c',role:'Prime value + size US',desc:'MSCI USA Small Cap Value Weighted'},
+const SPYI_POS = {etf:'SPYI',isin:'IE00B3YLTY66',ter:0.17,enc:'5.7B',bourse:'XETRA',color:'#534AB7'};
+
+const IBKR_ORDERS = [
+  {etf:'XDWD',isin:'IE00BJ0KDQ92',bourse:'XETRA',mnt:320,note:'Market order - ~15 shares/mo'},
+  {etf:'EMIM',isin:'IE00BKM4GZ66',bourse:'AEB',  mnt:200,note:'Market order - ~4 shares/mo at ~46 EUR'},
+  {etf:'IUSN',isin:'IE00BF4RFH31',bourse:'XETRA',mnt:160,note:'Market order - ~14 shares/mo'},
+  {etf:'ZPRV',isin:'IE00BSPLC413',bourse:'XETRA',mnt:120,note:'Limit order - ~1-2 shares/mo at ~75 EUR'},
 ];
 
-const TER_MWY=ALLOC.reduce((s,e)=>s+e.ter*(e.pct/100),0);
+const TER_MWY = ALLOC.reduce((s,e) => s + e.ter * (e.pct/100), 0);
 
-const TABS=['dash','portfolio','proj','strategie','ibkr','vie'];
+const TABS = ['dash','portfolio','proj','strategy','ibkr','life'];
 function go(n){
-  document.querySelectorAll('.tab').forEach((t,i)=>t.classList.toggle('active',TABS[i]===n));
-  document.querySelectorAll('.panel').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('.tab').forEach((t,i) => t.classList.toggle('active', TABS[i]===n));
+  document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
   document.getElementById('panel-'+n).classList.add('active');
-  if(n==='proj')drawProj();
-  if(n==='strategie'){drawStratPie();drawFees();}
+  if(n==='proj') drawProj();
+  if(n==='strategy'){drawStratPie(); drawFees();}
 }
-function sp(id,d){const el=document.getElementById(id);const dc=Math.abs(d)<1?String(d).replace('-','').split('.')[1]?.length||0:0;el.value=Math.max(0,+(+el.value+d).toFixed(dc));el.dispatchEvent(new Event('input'));}
 
-function mkSpin(id,lbl,min,max,step,val,unit,cb){
-  return`<div class="sb"><label>${lbl}</label><div class="sb-w">
-    <button class="sb-b" onclick="sp('${id}',-(${step}))">−</button>
+function sp(id, d){
+  const el = document.getElementById(id);
+  const dc = Math.abs(d) < 1 ? String(d).replace('-','').split('.')[1]?.length||0 : 0;
+  el.value = Math.max(0, +(+el.value+d).toFixed(dc));
+  el.dispatchEvent(new Event('input'));
+}
+
+function mkSpin(id, lbl, min, max, step, val, unit, cb){
+  return `<div class="sb"><label>${lbl}</label><div class="sb-w">
+    <button class="sb-b" onclick="sp('${id}',-(${step}))">-</button>
     <input type="number" id="${id}" min="${min}" max="${max}" step="${step}" value="${val}" oninput="${cb||''}">
-    ${unit?`<span class="sb-u">${unit}</span>`:''}
+    ${unit ? `<span class="sb-u">${unit}</span>` : ''}
     <button class="sb-b" onclick="sp('${id}',${step})">+</button>
-  </div></div>`;}
+  </div></div>`;
+}
 
-// ═══ DASHBOARD ═══
+// DASHBOARD
 function initDash(){
-  document.getElementById('dash-params').innerHTML=[
-    mkSpin('p-rev','Revenu net/mois',500,10000,50,2500,'€','updateDash()'),
-    mkSpin('p-dep','Dépenses fixes/mois',500,4000,25,1950,'€','updateDash()'),
-    mkSpin('p-inv','Versement IBKR',50,3000,50,800,'€','updateDash()'),
-    mkSpin('p-obj','Objectif liberté',100000,2000000,25000,750000,'€','updateDash()'),
+  document.getElementById('dash-params').innerHTML = [
+    mkSpin('p-rev','Net income/mo',500,10000,50,2500,'EUR','updateDash()'),
+    mkSpin('p-dep','Fixed expenses/mo',500,4000,25,1950,'EUR','updateDash()'),
+    mkSpin('p-inv','IBKR investment',50,3000,50,800,'EUR','updateDash()'),
+    mkSpin('p-obj','Freedom target',100000,2000000,25000,750000,'EUR','updateDash()'),
   ].join('');
 
-  document.getElementById('dash-monthly').innerHTML=ALLOC.map(a=>`
+  document.getElementById('dash-monthly').innerHTML = ALLOC.map(a => `
     <div style="display:flex;align-items:center;gap:8px;margin:4px 0">
       <div style="width:${a.pct*2}px;height:6px;border-radius:3px;background:${a.color};flex-shrink:0"></div>
       <span class="mono fw7" style="color:${a.color};min-width:40px;font-size:.78rem">${a.etf}</span>
-      <span style="font-size:.72rem;color:var(--muted)">${a.pct}% · ${a.mnt}€</span>
+      <span style="font-size:.72rem;color:var(--muted)">${a.pct}% - ${a.mnt} EUR</span>
     </div>`).join('');
 
-  document.getElementById('dash-alloc').innerHTML=ALLOC.map(a=>`
+  document.getElementById('dash-alloc').innerHTML = ALLOC.map(a => `
     <div style="background:var(--bg4);border-radius:8px;padding:10px;text-align:center;border-top:3px solid ${a.color}">
       <div class="mono fw7" style="color:${a.color};font-size:.88rem">${a.etf}</div>
       <div style="font-size:.65rem;color:var(--text);margin:3px 0">${a.pct}%</div>
-      <div style="font-size:.6rem;color:var(--muted)">${a.mnt}€/mois</div>
+      <div style="font-size:.6rem;color:var(--muted)">${a.mnt} EUR/mo</div>
       <div style="font-size:.58rem;color:var(--dim);margin-top:1px">TER ${(a.ter*100).toFixed(2)}%</div>
     </div>`).join('');
 }
 
 function updateDash(){
-  const rev=+(document.getElementById('p-rev')?.value)||2500;
-  const dep=+(document.getElementById('p-dep')?.value)||1950;
-  const inv=+(document.getElementById('p-inv')?.value)||550;
-  const obj=+(document.getElementById('p-obj')?.value)||750000;
-  const marg=Math.max(0,rev-dep);
-  const anLib=anneExacte(5750,inv,7,3,900,obj);
+  const rev = +(document.getElementById('p-rev')?.value)||2500;
+  const dep = +(document.getElementById('p-dep')?.value)||1950;
+  const inv = +(document.getElementById('p-inv')?.value)||800;
+  const obj = +(document.getElementById('p-obj')?.value)||750000;
+  const anLib = anneExacte(5750, inv, 7, 3, 900, obj);
 
-  document.getElementById('dash-kpis').innerHTML=`
-    <div class="kpi"><div class="kv tg">${fmtE(rev)}</div><div class="kl">Revenu net</div></div>
-    <div class="kpi"><div class="kv ta">${fmtE(dep)}</div><div class="kl">Dépenses fixes</div><div class="ks">${fmt(dep/rev*100,1)}% du revenu</div></div>
-    <div class="kpi"><div class="kv tb">${fmtE(inv)}</div><div class="kl">Versement IBKR</div><div class="ks">${fmt(inv/rev*100,1)}% du revenu</div></div>
-    <div class="kpi"><div class="kv tp">${anLib?anLib.toFixed(1)+' ans':'> 50 ans'}</div><div class="kl">Avant liberté</div><div class="ks">${anLib?'vers '+(YEAR+Math.ceil(anLib)):'—'}</div></div>`;
+  document.getElementById('dash-kpis').innerHTML = `
+    <div class="kpi"><div class="kv tg">${fmtE(rev)}</div><div class="kl">Net income</div></div>
+    <div class="kpi"><div class="kv ta">${fmtE(dep)}</div><div class="kl">Fixed expenses</div><div class="ks">${fmt(dep/rev*100,1)}% of income</div></div>
+    <div class="kpi"><div class="kv tb">${fmtE(inv)}</div><div class="kl">IBKR investment</div><div class="ks">${fmt(inv/rev*100,1)}% of income</div></div>
+    <div class="kpi"><div class="kv tp">${anLib ? anLib.toFixed(1)+' yrs' : '> 50 yrs'}</div><div class="kl">To financial freedom</div><div class="ks">${anLib ? 'around '+(YEAR+Math.ceil(anLib)) : '-'}</div></div>`;
 
-  if(S.ch.budget)S.ch.budget.destroy();
-  const mnte=Math.max(0,marg-inv);
-  S.ch.budget=new Chart(document.getElementById('c-budget').getContext('2d'),{type:'doughnut',
-    data:{labels:['Dépenses fixes','Investi IBKR','Marge restante'],
+  if(S.ch.budget) S.ch.budget.destroy();
+  const mnte = Math.max(0, rev - dep - inv);
+  S.ch.budget = new Chart(document.getElementById('c-budget').getContext('2d'), {
+    type:'doughnut',
+    data:{labels:['Fixed expenses','IBKR investment','Remaining margin'],
       datasets:[{data:[dep,inv,mnte],backgroundColor:['#ff5757','#00d4aa','#4a6080'],borderColor:'#080b10',borderWidth:2}]},
     options:{plugins:{legend:{labels:{color:'#e2e8f0',font:{family:'Syne',size:10}}}},cutout:'55%',responsive:true}
   });
 }
 
-// ═══ STRATÉGIE ═══
+// STRATEGY TABLE
 function initStratTable(){
-  const totMnt=ALLOC.reduce((s,a)=>s+a.mnt,0);
-  document.getElementById('strat-tbody').innerHTML=ALLOC.map(a=>`
+  const totMnt = ALLOC.reduce((s,a) => s+a.mnt, 0);
+  document.getElementById('strat-tbody').innerHTML = ALLOC.map(a => `
     <tr>
       <td class="mono fw7" style="color:${a.color}">${a.etf}</td>
       <td class="mono" style="font-size:.68rem">${a.isin}</td>
@@ -487,87 +542,89 @@ function initStratTable(){
       <td class="mono ${a.ter<=0.12?'tg':a.ter>=0.35?'ta':''}">${(a.ter*100).toFixed(2)}%</td>
       <td class="mono">${a.enc}</td>
       <td><span class="badge bg">${a.pct}%</span></td>
-      <td class="mono">${a.mnt}€</td>
+      <td class="mono">${a.mnt} EUR</td>
       <td style="font-size:.75rem;font-weight:600">${a.role}</td>
       <td style="font-size:.72rem;color:var(--muted)">${a.desc}</td>
-    </tr>`).join('');
-  document.getElementById('strat-tbody').innerHTML+=`
+    </tr>`).join('') + `
     <tr style="border-top:1px solid var(--border)">
-      <td colspan="4" class="mono" style="color:var(--muted)">TER moyen pondéré : <strong style="color:var(--text)">${(TER_MWY*100).toFixed(3)}%/an</strong></td>
+      <td colspan="4" class="mono" style="color:var(--muted)">Avg weighted TER: <strong style="color:var(--text)">${(TER_MWY*100).toFixed(3)}%/yr</strong></td>
       <td></td><td><span class="badge bg">100%</span></td>
-      <td class="mono fw7 tg">${totMnt}€</td>
-      <td colspan="2" style="font-size:.72rem;color:var(--muted)">Commissions : 7–8 ordres × 1.25€ = ~8.75€/mois</td>
+      <td class="mono fw7 tg">${totMnt} EUR</td>
+      <td colspan="2" style="font-size:.72rem;color:var(--muted)">+ SPYI 5,750 EUR (heritage, untouched)</td>
     </tr>`;
 }
 
 function drawStratPie(){
-  if(S.ch.sp)S.ch.sp.destroy();
-  S.ch.sp=new Chart(document.getElementById('c-strat-pie').getContext('2d'),{type:'doughnut',
-    data:{labels:ALLOC.map(a=>a.etf+' '+a.pct+'%'),datasets:[{data:ALLOC.map(a=>a.pct),backgroundColor:ALLOC.map(a=>a.color),borderColor:'#080b10',borderWidth:3}]},
-    options:{plugins:{legend:{labels:{color:'#e2e8f0',font:{family:'Syne',size:10}}}},cutout:'48%',responsive:true}
+  if(S.ch.sp) S.ch.sp.destroy();
+  S.ch.sp = new Chart(document.getElementById('c-strat-pie').getContext('2d'), {
+    type:'doughnut',
+    data:{
+      labels: ALLOC.map(a => a.etf+' '+a.pct+'%'),
+      datasets:[{data:ALLOC.map(a=>a.pct),backgroundColor:ALLOC.map(a=>a.color),borderColor:'#080b10',borderWidth:3}]
+    },
+    options:{plugins:{legend:{labels:{color:'#e2e8f0',font:{family:'Syne',size:11}}}},cutout:'48%',responsive:true}
   });
 }
 drawStratPie();
 
 function drawFees(){
-  const calc=ter=>{const tm=(0.07-ter)/12;let c=5750,h=[5750];for(let i=1;i<=240;i++){c=c*(1+tm)+550;if(i%12===0)h.push(Math.round(c));}return h;};
-  const labels=Array.from({length:21},(_,i)=>i===0?'Auj.':'An '+i);
-  if(S.ch.fees)S.ch.fees.destroy();
-  S.ch.fees=new Chart(document.getElementById('c-fees').getContext('2d'),{type:'line',
-    data:{labels,datasets:[
-      {label:`Portfolio pondéré (${(TER_MWY*100).toFixed(2)}%)`,data:calc(TER_MWY),borderColor:'#00d4aa',borderWidth:3,fill:false,tension:0.3,pointRadius:0},
-      {label:'SPYL seul (0.03%)',data:calc(0.0003),borderColor:'#EF9F27',borderWidth:1.5,borderDash:[5,3],fill:false,tension:0.3,pointRadius:0},
-      {label:'Fonds actif (1.50%)',data:calc(0.015),borderColor:'#ff5757',borderWidth:1.5,borderDash:[3,3],fill:false,tension:0.3,pointRadius:0},
+  const calc = ter => {
+    const tm = (0.07-ter)/12; let c = 5750, h = [5750];
+    for(let i=1;i<=240;i++){c=c*(1+tm)+800;if(i%12===0)h.push(Math.round(c));}
+    return h;
+  };
+  const labels = Array.from({length:21},(_,i) => i===0?'Now':'Yr '+i);
+  if(S.ch.fees) S.ch.fees.destroy();
+  S.ch.fees = new Chart(document.getElementById('c-fees').getContext('2d'), {
+    type:'line',
+    data:{labels, datasets:[
+      {label:`Portfolio avg (${(TER_MWY*100).toFixed(2)}%)`,data:calc(TER_MWY),borderColor:'#00d4aa',borderWidth:3,fill:false,tension:0.3,pointRadius:0},
+      {label:'SPYI only (0.17%)',data:calc(0.0017),borderColor:'#534AB7',borderDash:[5,3],borderWidth:1.5,fill:false,tension:0.3,pointRadius:0},
+      {label:'Active fund (1.50%)',data:calc(0.015),borderColor:'#ff5757',borderDash:[3,3],borderWidth:1.5,fill:false,tension:0.3,pointRadius:0},
     ]},
     options:{responsive:true,maintainAspectRatio:false,
       plugins:{legend:{labels:{color:'#8892b0',font:{family:'Syne',size:9}}}},
-      scales:{x:{ticks:{color:'#4a6080',font:{family:'JetBrains Mono',size:9}},grid:{color:'rgba(30,45,64,.4)'}},
-              y:{ticks:{color:'#4a6080',font:{family:'JetBrains Mono',size:9},callback:v=>fmtE(v)},grid:{color:'rgba(30,45,64,.4)'}}}
+      scales:{
+        x:{ticks:{color:'#4a6080',font:{family:'JetBrains Mono',size:9}},grid:{color:'rgba(30,45,64,.4)'}},
+        y:{ticks:{color:'#4a6080',font:{family:'JetBrains Mono',size:9},callback:v=>fmt(v)+' EUR'},grid:{color:'rgba(30,45,64,.4)'}}
+      }
     }
   });
 }
 
-// ═══ IBKR ORDERS ═══
+// IBKR ORDERS TABLE
 function initIbkrOrders(){
-  // Show phase 1 orders (3 ETFs) + note about phase 2
-const phase1=[
-  {etf:'XDWD',isin:'IE00BJ0KDQ92',bourse:'XETRA',mnt:320,note:'Ordre Market · ~15 parts/mois · prioritaire'},
-  {etf:'EMIM',isin:'IE00BKM4GZ66',bourse:'AEB',  mnt:200,note:'Ordre Market · ~4 parts/mois à ~46€'},
-  {etf:'IUSN',isin:'IE00BF4RFH31',bourse:'XETRA',mnt:160,note:'Ordre Market · ~14 parts/mois'},
-  {etf:'ZPRV',isin:'IE00BSPLC413',bourse:'XETRA',mnt:120,note:'Ordre Limit · ~1-2 parts/mois à ~75€'},
-];
-document.getElementById('ibkr-orders').innerHTML=phase1.map(a=>{
-    const note=a.etf==='XAIX'?'⚠ Accumuler 7 mois':a.etf==='SGLD'?'Cherche 8PSG sur XETRA pour EUR':'—';
-    return`<tr>
-      <td class="mono fw7" style="color:${a.color}">${a.etf}</td>
+  document.getElementById('ibkr-orders').innerHTML = IBKR_ORDERS.map(a => `
+    <tr>
+      <td class="mono fw7" style="color:${ALLOC.find(x=>x.etf===a.etf)?.color||'#888'}">${a.etf}</td>
       <td class="mono" style="font-size:.68rem">${a.isin}</td>
       <td class="mono" style="font-size:.72rem">${a.bourse}</td>
-      <td class="mono tg fw7">${a.mnt}€</td>
-      <td>Mensuel</td>
-      <td>1er du mois</td>
-      <td style="font-size:.72rem;color:var(--muted)">${note}</td>
-    </tr>`;
-  }).join('');
+      <td class="mono tg fw7">${a.mnt} EUR</td>
+      <td>Monthly</td>
+      <td>1st of month</td>
+      <td style="font-size:.72rem;color:var(--muted)">${a.note}</td>
+    </tr>`).join('');
 }
 
-// ═══ PORTFOLIO ═══
-const ALL_TICKERS=['SPYI'].concat(ALLOC.map(a=>a.etf)).concat(['VWCE','IWDA','CEBZ','C50','QUS5','SPYL']);
-function initPortfolio(){
-  document.getElementById('t-etf').innerHTML=ALL_TICKERS.map(t=>`<option>${t}</option>`).join('');
-  document.getElementById('t-date').value=new Date().toISOString().split('T')[0];
+// PORTFOLIO
+const ALL_TICKERS = ['SPYI'].concat(ALLOC.map(a=>a.etf)).concat(['VWCE','IWDA','CEBZ','C50','QUS5','SPYL']);
 
-  const PRICE_ETFS=[
-    {etf:'SPYI',role:'Position héritage · 500 parts',color:'#534AB7'},
+function initPortfolio(){
+  document.getElementById('t-etf').innerHTML = ALL_TICKERS.map(t => `<option>${t}</option>`).join('');
+  document.getElementById('t-date').value = new Date().toISOString().split('T')[0];
+
+  const PRICE_ETFS = [
+    {etf:'SPYI', role:'Heritage - 500 shares', color:'#534AB7', bourse:'XETRA'},
     ...ALLOC
   ];
-  document.getElementById('price-grid').innerHTML=PRICE_ETFS.map(a=>`
+  document.getElementById('price-grid').innerHTML = PRICE_ETFS.map(a => `
     <div class="kpi" id="pk-${a.etf}" style="cursor:pointer" onclick="showChart('${a.etf}','${a.color}')">
-      <div style="display:flex;justify-content:space-between;align-items:center">
-        <div class="mono" style="font-size:.62rem;color:var(--muted)">${a.etf} · ${a.bourse}</div>
-        <span style="font-size:.58rem;color:var(--muted);font-family:var(--mono)">30j ↗</span>
+      <div style="display:flex;justify-content:space-between">
+        <div class="mono" style="font-size:.62rem;color:var(--muted)">${a.etf} - ${a.bourse}</div>
+        <span style="font-size:.58rem;color:var(--muted);font-family:var(--mono)">30d</span>
       </div>
       <div style="display:flex;align-items:baseline;gap:5px;margin:2px 0">
-        <span class="mono" style="font-size:1rem;font-weight:500;color:${a.color}" id="pv-${a.etf}">—</span>
+        <span class="mono" style="font-size:1rem;font-weight:500;color:${a.color}" id="pv-${a.etf}">-</span>
         <span class="mono" style="font-size:.7rem" id="pc-${a.etf}"><span class="spin"></span></span>
       </div>
       <canvas id="spark-${a.etf}" height="36" style="width:100%;display:block;margin-top:4px"></canvas>
@@ -576,275 +633,232 @@ function initPortfolio(){
 }
 
 function addT(){
-  const d=document.getElementById('t-date').value;
-  const etf=document.getElementById('t-etf').value;
-  const parts=+(document.getElementById('t-parts').value)||0;
-  const price=+(document.getElementById('t-price').value)||0;
-  if(!d||!parts||!price){toast('Remplis tous les champs','var(--red)');return;}
-  S.trades.push({id:Date.now(),date:d,etf,parts,price});save();refreshPtf();
-  document.getElementById('t-parts').value='';document.getElementById('t-price').value='';
-  toast('Achat enregistré ✓');
+  const d = document.getElementById('t-date').value;
+  const etf = document.getElementById('t-etf').value;
+  const parts = +(document.getElementById('t-parts').value)||0;
+  const price = +(document.getElementById('t-price').value)||0;
+  if(!d||!parts||!price){toast('Fill all fields','var(--red)');return;}
+  const trade = {id:Date.now(), date:d, etf, parts, price};
+  S.trades.push(trade); save(); refreshPtf();
+  writeToSheet('add', trade);
+  document.getElementById('t-parts').value = '';
+  document.getElementById('t-price').value = '';
+  toast('Trade saved');
 }
-function deleteT(id){S.trades=S.trades.filter(t=>t.id!==id);save();refreshPtf();toast('Supprimé','var(--amber)');}
+
+function deleteT(id){
+  const trade = S.trades.find(t => t.id===id);
+  S.trades = S.trades.filter(t => t.id!==id); save(); refreshPtf();
+  if(trade) writeToSheet('delete', trade);
+  toast('Deleted','var(--amber)');
+}
 
 function refreshPtf(){
-  const body=document.getElementById('trades-body');
-  const etfColors=Object.fromEntries(ALLOC.map(a=>[a.etf,a.color]));
+  const body = document.getElementById('trades-body');
+  const etfColors = Object.fromEntries([{etf:'SPYI',color:'#534AB7'},...ALLOC].map(a=>[a.etf,a.color]));
   if(!S.trades.length){
-    body.innerHTML='<tr><td colspan="10" style="text-align:center;color:var(--muted);padding:20px">Aucun achat. Ajoute ton premier investissement.</td></tr>';
-    document.getElementById('ptf-kpis').innerHTML='';return;
+    body.innerHTML = '<tr><td colspan="10" style="text-align:center;color:var(--muted);padding:20px">No trades recorded. Add your first investment above.</td></tr>';
+    document.getElementById('ptf-kpis').innerHTML = ''; return;
   }
-  let totI=0,totV=0;const etfT={};
-  const rows=S.trades.sort((a,b)=>a.date.localeCompare(b.date)).map(t=>{
-    const inv=t.parts*t.price,px=S.prices[t.etf],val=px?t.parts*px:null;
-    const pnl=val!==null?val-inv:null,pct=pnl!==null?pnl/inv*100:null;
-    totI+=inv;if(val!==null){totV+=val;etfT[t.etf]=(etfT[t.etf]||0)+val;}else etfT[t.etf]=(etfT[t.etf]||0)+inv;
-    return`<tr>
+  let totI=0, totV=0;
+  const etfT = {};
+  const rows = S.trades.sort((a,b)=>a.date.localeCompare(b.date)).map(t => {
+    const inv = t.parts*t.price;
+    const px = S.prices[t.etf];
+    const val = px ? t.parts*px : null;
+    const pnl = val!==null ? val-inv : null;
+    const pct = pnl!==null ? pnl/inv*100 : null;
+    totI += inv;
+    if(val!==null){totV+=val; etfT[t.etf]=(etfT[t.etf]||0)+val;}
+    else etfT[t.etf]=(etfT[t.etf]||0)+inv;
+    return `<tr>
       <td class="mono">${t.date}</td>
       <td><span class="badge bb" style="background:rgba(0,0,0,.3);border-color:${etfColors[t.etf]||'var(--border)'};color:${etfColors[t.etf]||'var(--text)'}">${t.etf}</span></td>
-      <td class="mono">${fmt(t.parts,3)}</td><td class="mono">${fmt(t.price,2)} €</td>
-      <td class="mono">${fmt(inv,2)} €</td>
-      <td class="mono">${px?fmt(px,2)+' €':'<span class="spin"></span>'}</td>
-      <td class="mono">${val!==null?fmt(val,2)+' €':'—'}</td>
-      <td style="color:${clr(pnl||0)};font-family:var(--mono)">${pnl!==null?sign(pnl)+fmt(pnl,2)+' €':'—'}</td>
-      <td><span class="badge ${(pct||0)>=0?'bg':'br'}">${pct!==null?sign(pct)+fmt(pct,2)+'%':'—'}</span></td>
-      <td><button class="btn btn-d btn-sm" onclick="deleteT(${t.id})">✕</button></td>
+      <td class="mono">${fmt(t.parts,3)}</td>
+      <td class="mono">${fmt(t.price,2)} EUR</td>
+      <td class="mono">${fmt(inv,2)} EUR</td>
+      <td class="mono">${px ? fmt(px,2)+' EUR' : '<span class="spin"></span>'}</td>
+      <td class="mono">${val!==null ? fmt(val,2)+' EUR' : '-'}</td>
+      <td style="color:${clr(pnl||0)};font-family:var(--mono)">${pnl!==null ? sign(pnl)+fmt(pnl,2)+' EUR' : '-'}</td>
+      <td><span class="badge ${(pct||0)>=0?'bg':'br'}">${pct!==null ? sign(pct)+fmt(pct,2)+'%' : '-'}</span></td>
+      <td><button class="btn btn-d btn-sm" onclick="deleteT(${t.id})">x</button></td>
     </tr>`;
   });
-  body.innerHTML=rows.join('');
-  const pnlT=totV-totI,pctT=totI>0?pnlT/totI*100:0;
-  document.getElementById('ptf-kpis').innerHTML=`
-    <div class="kpi"><div class="kv tb">${fmtE(totI,2)}</div><div class="kl">Total investi</div></div>
-    <div class="kpi"><div class="kv tg">${fmtE(totV||totI,2)}</div><div class="kl">Valeur actuelle</div></div>
-    <div class="kpi"><div class="kv" style="color:${clr(pnlT)}">${sign(pnlT)}${fmtE(pnlT,2)}</div><div class="kl">Plus/Moins-value €</div></div>
+  body.innerHTML = rows.join('');
+  const pnlT = totV-totI, pctT = totI>0 ? pnlT/totI*100 : 0;
+  document.getElementById('ptf-kpis').innerHTML = `
+    <div class="kpi"><div class="kv tb">${fmtE(totI,2)}</div><div class="kl">Total invested</div></div>
+    <div class="kpi"><div class="kv tg">${fmtE(totV||totI,2)}</div><div class="kl">Current value</div></div>
+    <div class="kpi"><div class="kv" style="color:${clr(pnlT)}">${sign(pnlT)}${fmtE(pnlT,2)}</div><div class="kl">P&L EUR</div></div>
     <div class="kpi"><div class="kv" style="color:${clr(pctT)}">${sign(pctT)}${fmt(pctT,2)}%</div><div class="kl">Performance</div></div>`;
 
-  const colors=ALLOC.map(a=>a.color).concat(['#00d4aa','#3b8eea','#ff5757']);
-  const etfKeys=Object.keys(etfT);
-  if(S.ch.alloc)S.ch.alloc.destroy();
-  S.ch.alloc=new Chart(document.getElementById('c-alloc').getContext('2d'),{type:'doughnut',
-    data:{labels:etfKeys,datasets:[{data:etfKeys.map(k=>etfT[k]),backgroundColor:etfKeys.map(k=>etfColors[k]||'#888'),borderColor:'#080b10',borderWidth:3}]},
+  const colors = [{etf:'SPYI',color:'#534AB7'},...ALLOC].map(a=>a.color);
+  const etfKeys = Object.keys(etfT);
+  if(S.ch.alloc) S.ch.alloc.destroy();
+  S.ch.alloc = new Chart(document.getElementById('c-alloc').getContext('2d'), {
+    type:'doughnut',
+    data:{labels:etfKeys, datasets:[{data:etfKeys.map(k=>etfT[k]), backgroundColor:etfKeys.map(k=>etfColors[k]||'#888'), borderColor:'#080b10', borderWidth:3}]},
     options:{plugins:{legend:{labels:{color:'#e2e8f0',font:{family:'Syne',size:11}}}},cutout:'55%',responsive:true}
   });
 
-  let cum=0;
-  const sorted=[...S.trades].sort((a,b)=>a.date.localeCompare(b.date));
-  const pnlData=sorted.map(t=>{const px=S.prices[t.etf];if(px)cum+=(t.parts*px)-(t.parts*t.price);return Math.round(cum);});
-  if(S.ch.pnl)S.ch.pnl.destroy();
-  S.ch.pnl=new Chart(document.getElementById('c-pnl').getContext('2d'),{type:'line',
-    data:{labels:sorted.map(t=>t.date),datasets:[{label:'Gain/Perte cumulé',data:pnlData,borderColor:pnlT>=0?'#00d4aa':'#ff5757',backgroundColor:pnlT>=0?'rgba(0,212,170,.08)':'rgba(255,87,87,.06)',borderWidth:2.5,fill:true,tension:0.4,pointRadius:3}]},
-    options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},
-      scales:{x:{ticks:{color:'#4a6080',font:{family:'JetBrains Mono',size:9}},grid:{display:false}},
-              y:{ticks:{color:'#4a6080',font:{family:'JetBrains Mono',size:9},callback:v=>v>=0?'+'+fmtE(v):fmtE(v)},grid:{color:'rgba(30,45,64,.4)'}}}
+  let cum = 0;
+  const sorted = [...S.trades].sort((a,b)=>a.date.localeCompare(b.date));
+  const pnlData = sorted.map(t => {
+    const px = S.prices[t.etf];
+    if(px) cum += (t.parts*px)-(t.parts*t.price);
+    return Math.round(cum);
+  });
+  if(S.ch.pnl) S.ch.pnl.destroy();
+  S.ch.pnl = new Chart(document.getElementById('c-pnl').getContext('2d'), {
+    type:'line',
+    data:{labels:sorted.map(t=>t.date), datasets:[{label:'Cumulative P&L', data:pnlData, borderColor:pnlT>=0?'#00d4aa':'#ff5757', backgroundColor:pnlT>=0?'rgba(0,212,170,.08)':'rgba(255,87,87,.06)', borderWidth:2.5, fill:true, tension:0.4, pointRadius:3}]},
+    options:{responsive:true,maintainAspectRatio:false, plugins:{legend:{display:false}},
+      scales:{
+        x:{ticks:{color:'#4a6080',font:{family:'JetBrains Mono',size:9}},grid:{display:false}},
+        y:{ticks:{color:'#4a6080',font:{family:'JetBrains Mono',size:9},callback:v=>v>=0?'+'+fmtE(v):fmtE(v)},grid:{color:'rgba(30,45,64,.4)'}}
+      }
     }
   });
 }
 
-// ═══ PROJECTIONS ═══
+// PROJECTIONS
 function initProj(){
-  document.getElementById('proj-p1').innerHTML=[
-    mkSpin('pj-cap','Capital initial IBKR',0,50000,500,5750,'€','drawProj()'),
-    mkSpin('pj-men','Versement mensuel',50,3000,50,800,'€','drawProj()'),
-    mkSpin('pj-tx','Rendement annuel',2,15,0.5,7,'%','drawProj()'),
-    mkSpin('pj-obj','Objectif liberté',100000,2000000,25000,750000,'€','drawProj()'),
+  document.getElementById('proj-p1').innerHTML = [
+    mkSpin('pj-cap','Initial IBKR capital',0,50000,500,5750,'EUR','drawProj()'),
+    mkSpin('pj-men','Monthly investment',50,3000,50,800,'EUR','drawProj()'),
+    mkSpin('pj-tx','Annual return',2,15,0.5,7,'%','drawProj()'),
+    mkSpin('pj-obj','Freedom target',100000,2000000,25000,750000,'EUR','drawProj()'),
   ].join('');
-  document.getElementById('proj-p2').innerHTML=[
-    mkSpin('pj-ban','Boost versement à (an)',1,15,1,3,'','drawProj()'),
-    mkSpin('pj-bmo','Versement après boost',100,5000,50,900,'€','drawProj()'),
-    mkSpin('pj-cib','Liberté + famille (€)',100000,2000000,25000,900000,'€','drawProj()'),
+  document.getElementById('proj-p2').innerHTML = [
+    mkSpin('pj-ban','Boost investment at (yr)',1,15,1,3,'','drawProj()'),
+    mkSpin('pj-bmo','Investment after boost',100,5000,50,1200,'EUR','drawProj()'),
+    mkSpin('pj-env','Family transfers/mo',0,1000,25,300,'EUR','drawProj()'),
   ].join('');
 }
 
-function anneExacte(init,men,tx,bAn,bMen,obj){
-  const tm=tx/100/12;let cap=init;
+function anneExacte(init, men, tx, bAn, bMen, obj){
+  const tm = tx/100/12; let cap = init;
   for(let m=1;m<=600;m++){cap=cap*(1+tm)+(m<=bAn*12?men:bMen);if(cap>=obj)return+(m/12).toFixed(2);}
   return null;
 }
-function projCalc(init,men,tx,ans,bAn,bMen){
-  const tm=tx/100/12;let cap=init,h=[init],tv=0;
+function projCalc(init, men, tx, ans, bAn, bMen){
+  const tm = tx/100/12; let cap=init, h=[init], tv=0;
   for(let m=1;m<=ans*12;m++){const v=m<=bAn*12?men:bMen;cap=cap*(1+tm)+v;tv+=v;if(m%12===0)h.push(Math.round(cap));}
-  return{h,tv};
+  return {h, tv};
 }
 
 function drawProj(){
-  const cap=+(document.getElementById('pj-cap')?.value)||5750;
-  const men=+(document.getElementById('pj-men')?.value)||550;
-  const tx= +(document.getElementById('pj-tx')?.value)||7;
-  const obj=+(document.getElementById('pj-obj')?.value)||750000;
-  const bAn=+(document.getElementById('pj-ban')?.value)||3;
-  const bMo=+(document.getElementById('pj-bmo')?.value)||900;
+  const cap = +(document.getElementById('pj-cap')?.value)||5750;
+  const men = +(document.getElementById('pj-men')?.value)||800;
+  const tx  = +(document.getElementById('pj-tx')?.value)||7;
+  const obj = +(document.getElementById('pj-obj')?.value)||750000;
+  const bAn = +(document.getElementById('pj-ban')?.value)||3;
+  const bMo = +(document.getElementById('pj-bmo')?.value)||1200;
 
-  const anR=anneExacte(cap,men,tx,bAn,bMo,obj);
-  const anP=anneExacte(cap,men,Math.max(1,tx-2),99,men,obj);
-  const anO=anneExacte(cap,men,tx+1,bAn,bMo*1.3,obj);
-  const dateLib=anR?YEAR+Math.ceil(anR):null;
+  const anR = anneExacte(cap,men,tx,bAn,bMo,obj);
+  const anP = anneExacte(cap,men,Math.max(1,tx-2),99,men,obj);
+  const anO = anneExacte(cap,men,tx+1,bAn,bMo*1.3,obj);
+  const dateLib = anR ? YEAR+Math.ceil(anR) : null;
 
-  document.getElementById('lib-bloc').innerHTML=`
+  document.getElementById('lib-bloc').innerHTML = `
     <div style="background:linear-gradient(135deg,rgba(0,212,170,.08),rgba(59,142,234,.05));border:1px solid rgba(0,212,170,.25);border-radius:14px;padding:16px 20px;display:grid;grid-template-columns:1fr 2fr 1fr;gap:14px;align-items:center">
       <div style="text-align:center">
-        <div style="font-size:.6rem;font-family:var(--mono);color:var(--muted);text-transform:uppercase;margin-bottom:4px">Scénario bas</div>
-        <div class="mono fw7 tr" style="font-size:1.3rem">${anP?anP.toFixed(1)+' ans':'> 50 ans'}</div>
-        <div class="note">${anP?'vers '+(YEAR+Math.ceil(anP)):'—'}</div>
+        <div style="font-size:.6rem;font-family:var(--mono);color:var(--muted);text-transform:uppercase;margin-bottom:4px">Low scenario</div>
+        <div class="mono fw7 tr" style="font-size:1.3rem">${anP ? anP.toFixed(1)+' yrs' : '> 50 yrs'}</div>
+        <div class="note">${anP ? 'around '+(YEAR+Math.ceil(anP)) : '-'}</div>
       </div>
       <div style="text-align:center;border-left:1px solid var(--border);border-right:1px solid var(--border);padding:0 18px">
-        <div style="font-size:.6rem;font-family:var(--mono);color:var(--green);text-transform:uppercase;margin-bottom:5px">✦ Réaliste</div>
-        <div class="mono fw7 tg" style="font-size:2.2rem;line-height:1">${anR?anR.toFixed(1)+' ans':'> 50 ans'}</div>
-        <div style="font-size:.92rem;font-weight:700;margin-top:4px">${dateLib?'🎯 Liberté en '+dateLib:'—'}</div>
-        <div class="note" style="margin-top:3px">${fmtE(men)} → ${fmtE(bMo)}/mois à l'an ${bAn} · ${tx}%/an</div>
+        <div style="font-size:.6rem;font-family:var(--mono);color:var(--green);text-transform:uppercase;margin-bottom:5px">Realistic</div>
+        <div class="mono fw7 tg" style="font-size:2.2rem;line-height:1">${anR ? anR.toFixed(1)+' yrs' : '> 50 yrs'}</div>
+        <div style="font-size:.92rem;font-weight:700;margin-top:4px">${dateLib ? 'Freedom in '+dateLib : '-'}</div>
+        <div class="note" style="margin-top:3px">${fmtE(men)} > ${fmtE(bMo)}/mo at yr ${bAn} - ${tx}%/yr</div>
       </div>
       <div style="text-align:center">
-        <div style="font-size:.6rem;font-family:var(--mono);color:var(--muted);text-transform:uppercase;margin-bottom:4px">Scénario haut</div>
-        <div class="mono fw7 tb" style="font-size:1.3rem">${anO?anO.toFixed(1)+' ans':'> 50 ans'}</div>
-        <div class="note">${anO?'vers '+(YEAR+Math.ceil(anO)):'—'}</div>
+        <div style="font-size:.6rem;font-family:var(--mono);color:var(--muted);text-transform:uppercase;margin-bottom:4px">High scenario</div>
+        <div class="mono fw7 tb" style="font-size:1.3rem">${anO ? anO.toFixed(1)+' yrs' : '> 50 yrs'}</div>
+        <div class="note">${anO ? 'around '+(YEAR+Math.ceil(anO)) : '-'}</div>
       </div>
     </div>`;
 
-  const maxAn=Math.min(50,Math.max(20,anR?Math.ceil(anR)+2:25));
-  const pess=projCalc(cap,men,Math.max(1,tx-2),maxAn,99,men);
-  const real=projCalc(cap,men,tx,maxAn,bAn,bMo);
-  const opti=projCalc(cap,men,tx+1,maxAn,bAn,bMo*1.3);
-  const fr=real.h[real.h.length-1];
+  const maxAn = Math.min(50, Math.max(20, anR ? Math.ceil(anR)+2 : 25));
+  const pess = projCalc(cap,men,Math.max(1,tx-2),maxAn,99,men);
+  const real = projCalc(cap,men,tx,maxAn,bAn,bMo);
+  const opti = projCalc(cap,men,tx+1,maxAn,bAn,bMo*1.3);
+  const fr = real.h[real.h.length-1];
 
-  document.getElementById('proj-kpis').innerHTML=`
-    <div class="kpi"><div class="kv tg">${fmtE(fr)}</div><div class="kl">Capital final réaliste</div></div>
-    <div class="kpi"><div class="kv tb">${fmtE(real.tv+cap)}</div><div class="kl">Total versé</div></div>
-    <div class="kpi"><div class="kv tp">${fmtE(fr-real.tv-cap)}</div><div class="kl">Gains des marchés</div></div>
-    <div class="kpi"><div class="kv tg">${fmtE(fr*0.04/12)}</div><div class="kl">Revenu passif/mois</div></div>`;
+  document.getElementById('proj-kpis').innerHTML = `
+    <div class="kpi"><div class="kv tg">${fmtE(fr)}</div><div class="kl">Final capital</div></div>
+    <div class="kpi"><div class="kv tb">${fmtE(real.tv+cap)}</div><div class="kl">Total invested</div></div>
+    <div class="kpi"><div class="kv tp">${fmtE(fr-real.tv-cap)}</div><div class="kl">Market gains</div></div>
+    <div class="kpi"><div class="kv tg">${fmtE(fr*0.04/12)}</div><div class="kl">Passive income/mo</div></div>`;
 
-  const glPlugin={id:'gl',afterDraw(c){
-    if(!anR)return;
-    const{ctx:cx,chartArea:a,scales:sc}=c;
-    const x=sc.x.getPixelForValue(Math.min(Math.ceil(anR),maxAn));if(!x)return;
-    cx.save();cx.strokeStyle='rgba(0,212,170,.7)';cx.lineWidth=1.5;cx.setLineDash([4,3]);
-    cx.beginPath();cx.moveTo(x,a.top);cx.lineTo(x,a.bottom);cx.stroke();
-    cx.fillStyle='#00d4aa';cx.font='700 10px Syne';cx.textAlign='left';
-    cx.fillText('🎯 '+dateLib,x+4,a.top+14);cx.restore();
+  const glPlugin = {id:'gl', afterDraw(c){
+    if(!anR) return;
+    const {ctx:cx, chartArea:a, scales:sc} = c;
+    const x = sc.x.getPixelForValue(Math.min(Math.ceil(anR), maxAn));
+    if(!x) return;
+    cx.save(); cx.strokeStyle='rgba(0,212,170,.7)'; cx.lineWidth=1.5; cx.setLineDash([4,3]);
+    cx.beginPath(); cx.moveTo(x,a.top); cx.lineTo(x,a.bottom); cx.stroke();
+    cx.fillStyle='#00d4aa'; cx.font='700 10px Syne'; cx.textAlign='left';
+    cx.fillText('Freedom '+dateLib, x+4, a.top+14); cx.restore();
   }};
-  const labels=Array.from({length:maxAn+1},(_,i)=>i===0?'Auj.':'An '+i);
-  if(S.ch.proj)S.ch.proj.destroy();
-  S.ch.proj=new Chart(document.getElementById('c-proj').getContext('2d'),{type:'line',plugins:[glPlugin],
-    data:{labels,datasets:[
-      {label:`Bas (${Math.max(1,tx-2)}%/an)`,data:pess.h,borderColor:'#ff5757',backgroundColor:'rgba(255,87,87,.04)',borderWidth:1.5,borderDash:[4,4],fill:true,tension:0.3,pointRadius:0},
-      {label:`Réaliste (${tx}%/an)`,data:real.h,borderColor:'#00d4aa',backgroundColor:'rgba(0,212,170,.07)',borderWidth:2.5,fill:true,tension:0.3,pointRadius:0},
-      {label:`Haut (${tx+1}%/an)`,data:opti.h,borderColor:'#3b8eea',borderDash:[6,3],borderWidth:1.5,fill:false,tension:0.3,pointRadius:0},
-      {label:`Objectif ${fmtE(obj)}`,data:Array(maxAn+1).fill(obj),borderColor:'#f5a623',borderWidth:1.5,borderDash:[8,4],fill:false,pointRadius:0},
+  const labels = Array.from({length:maxAn+1},(_,i) => i===0?'Now':'Yr '+i);
+  if(S.ch.proj) S.ch.proj.destroy();
+  S.ch.proj = new Chart(document.getElementById('c-proj').getContext('2d'), {
+    type:'line', plugins:[glPlugin],
+    data:{labels, datasets:[
+      {label:`Low (${Math.max(1,tx-2)}%/yr)`, data:pess.h, borderColor:'#ff5757', backgroundColor:'rgba(255,87,87,.04)', borderWidth:1.5, borderDash:[4,4], fill:true, tension:0.3, pointRadius:0},
+      {label:`Realistic (${tx}%/yr)`, data:real.h, borderColor:'#00d4aa', backgroundColor:'rgba(0,212,170,.07)', borderWidth:2.5, fill:true, tension:0.3, pointRadius:0},
+      {label:`High (${tx+1}%/yr)`, data:opti.h, borderColor:'#3b8eea', borderDash:[6,3], borderWidth:1.5, fill:false, tension:0.3, pointRadius:0},
+      {label:`Target ${fmtE(obj)}`, data:Array(maxAn+1).fill(obj), borderColor:'#f5a623', borderWidth:1.5, borderDash:[8,4], fill:false, pointRadius:0},
     ]},
-    options:{responsive:true,maintainAspectRatio:false,
+    options:{responsive:true, maintainAspectRatio:false,
       plugins:{legend:{labels:{color:'#8892b0',font:{family:'Syne',size:10},boxWidth:14}}},
-      scales:{x:{ticks:{color:'#4a6080',font:{family:'JetBrains Mono',size:9},maxTicksLimit:12},grid:{color:'rgba(30,45,64,.4)'}},
-              y:{ticks:{color:'#4a6080',font:{family:'JetBrains Mono',size:9},callback:v=>fmtE(v)},grid:{color:'rgba(30,45,64,.4)'}}}
+      scales:{
+        x:{ticks:{color:'#4a6080',font:{family:'JetBrains Mono',size:9},maxTicksLimit:12},grid:{color:'rgba(30,45,64,.4)'}},
+        y:{ticks:{color:'#4a6080',font:{family:'JetBrains Mono',size:9},callback:v=>fmt(v)+' EUR'},grid:{color:'rgba(30,45,64,.4)'}}
+      }
     }
   });
 
-  const maxJ=anR?Math.ceil(anR):Math.min(maxAn,30);
-  const jals=new Set();
-  for(let i=1;i<=Math.min(5,maxJ);i++)jals.add(i);
-  for(let i=6;i<=maxJ;i+=2)jals.add(i);
-  if(anR)jals.add(Math.ceil(anR));
-  const pF=projCalc(cap,men,Math.max(1,tx-2),maxJ,99,men);
-  const rF=projCalc(cap,men,tx,maxJ,bAn,bMo);
-  const oF=projCalc(cap,men,tx+1,maxJ,bAn,bMo*1.3);
-  document.getElementById('proj-tbody').innerHTML=[...jals].sort((a,b)=>a-b).map(j=>{
-    const isLib=anR&&j===Math.ceil(anR);
-    const vJ=j<=bAn?men:bMo;
-    const pct=Math.min(100,(rF.h[Math.min(j,rF.h.length-1)]||0)/obj*100);
-    return`<tr class="${isLib?'tbl-hi':''}">
-      <td class="mono">${j} an${j>1?'s':''}</td><td class="mono tb">${YEAR+j}</td>
-      <td class="mono">${fmtE(vJ)}/mois</td>
+  const maxJ = anR ? Math.ceil(anR) : Math.min(maxAn,30);
+  const jals = new Set();
+  for(let i=1;i<=Math.min(5,maxJ);i++) jals.add(i);
+  for(let i=6;i<=maxJ;i+=2) jals.add(i);
+  if(anR) jals.add(Math.ceil(anR));
+  const pF = projCalc(cap,men,Math.max(1,tx-2),maxJ,99,men);
+  const rF = projCalc(cap,men,tx,maxJ,bAn,bMo);
+  const oF = projCalc(cap,men,tx+1,maxJ,bAn,bMo*1.3);
+  document.getElementById('proj-tbody').innerHTML = [...jals].sort((a,b)=>a-b).map(j => {
+    const isLib = anR && j===Math.ceil(anR);
+    const vJ = j<=bAn ? men : bMo;
+    const pct = Math.min(100, (rF.h[Math.min(j,rF.h.length-1)]||0)/obj*100);
+    return `<tr class="${isLib?'tbl-hi':''}">
+      <td class="mono">${j} yr${j>1?'s':''}</td>
+      <td class="mono tb">${YEAR+j}</td>
+      <td class="mono">${fmtE(vJ)}/mo</td>
       <td class="mono tr">${fmtE(pF.h[Math.min(j,pF.h.length-1)]||0)}</td>
       <td class="mono tg fw7">${fmtE(rF.h[Math.min(j,rF.h.length-1)]||0)}</td>
       <td class="mono tb">${fmtE(oF.h[Math.min(j,oF.h.length-1)]||0)}</td>
       <td><span class="badge ${pct>=100?'bg':pct>=60?'ba':'br'}">${fmt(pct,0)}%</span></td>
-      <td class="mono tp">${fmtE((rF.h[Math.min(j,rF.h.length-1)]||0)*0.04/12)}/mois${isLib?' 🎯':''}</td>
+      <td class="mono tp">${fmtE((rF.h[Math.min(j,rF.h.length-1)]||0)*0.04/12)}/mo${isLib?' *':''}</td>
     </tr>`;
   }).join('');
 }
 
-// ═══ PLAN DE VIE ═══
-const DESTS=[
-  {f:'🇨🇦',p:'Canada — Montréal',sc:96,c:'#1D9E75',
-   rp:'Dossier en cours ✓',sal:'2 100–3 400 €',sal_s:'5 500–7 500 €',pv:'50% imposables',env:'TFSA 0% à vie',lib:'~13 ans',
-   action:'Ouvrir TFSA dès l\'arrivée · IBKR unchanged · Cotiser RRSP · 0% PV sur gains antérieurs à l\'arrivée'},
-  {f:'🇱🇺',p:'Luxembourg',sc:88,c:'#3b8eea',
-   rp:'7 ans de travail',sal:'3 000–3 500 €',sal_s:'6 000–8 000 €',pv:'0% actions',env:'Compte-titres IBKR',lib:'~11 ans',
-   action:'Fiscalité identique à BE · IBKR unchanged · Versement monte à 1 200–1 500€ avec salaire LUX'},
-  {f:'🇮🇪',p:'Irlande — Dublin',sc:82,c:'#9b7fe8',
-   rp:'5 ans',sal:'2 900–3 800 €',sal_s:'5 000–7 000 €',pv:'CGT 33%',env:'Compte-titres',lib:'~13 ans',
-   action:'VENDRE avant départ depuis BE (0% PV) · Racheter en Irlande · Buy & hold absolu'},
-  {f:'🇩🇪',p:'Allemagne — Munich',sc:78,c:'#EF9F27',
-   rp:'5 ans',sal:'2 700–3 500 €',sal_s:'5 000–7 000 €',pv:'26.4% Abgeltung',env:'Compte-titres',lib:'~13 ans',
-   action:'VENDRE TOUT avant départ (0% BE) · Racheter immédiatement en DE · Repart de 0% PV'},
-  {f:'🇨🇭',p:'Suisse Romande',sc:55,c:'#ff5757',
-   rp:'12 ans · quota strict',sal:'4 500–6 300 €',sal_s:'7 000–10 000 €',pv:'0% plus-values',env:'Compte-titres',lib:'~10 ans',
-   action:'0% PV = idéal pour réaliser les gains accumulés · Accessible avec passeport EU ou CA · Objectif 5–10 ans'},
-];
-
-document.getElementById('dest-list').innerHTML=DESTS.map((d,i)=>`
-  <div style="border:${i===0?'1.5px solid var(--green)':'1px solid var(--border)'};border-radius:12px;padding:13px 16px;background:var(--bg3);margin-bottom:10px">
-    <div style="display:flex;align-items:center;gap:10px;margin-bottom:8px">
-      <div style="width:28px;height:28px;border-radius:50%;background:${d.c};color:var(--bg);display:flex;align-items:center;justify-content:center;font-weight:800;font-size:.75rem;flex-shrink:0">${i+1}</div>
-      <div style="flex:1"><div style="font-weight:700;font-size:.95rem">${d.f} ${d.p}</div><div class="note">RP: ${d.rp} · Plus-values: ${d.pv} · Enveloppe: ${d.env} · Liberté: ${d.lib}</div></div>
-      <div class="mono fw7" style="color:${d.c};font-size:1.1rem">${d.sc}/100</div>
-    </div>
-    <div style="background:rgba(0,0,0,.2);border-radius:6px;padding:7px 10px;font-size:.75rem;color:var(--muted)">
-      <strong style="color:var(--text)">Stratégie investissement :</strong> ${d.action}
-    </div>
-    <div style="height:4px;background:var(--border);border-radius:3px;overflow:hidden;margin-top:8px">
-      <div style="height:100%;width:${d.sc}%;background:${d.c};border-radius:3px"></div>
-    </div>
-  </div>`).join('');
-
-const PLAN=[
-  {n:'1',c:'var(--red)',t:'Vérifier IRCC chaque jour',d:'ircc.canada.ca · Décision imminente. Si approbation → 60 jours pour accepter. Réserve 2 500€ disponible.'},
-  {n:'2',c:'var(--red)',t:'Conversation avec ta copine — ce weekend',d:'La décision peut arriver dans 4 semaines. Michelin Canada (Ontario / Nouvelle-Écosse) pour sa thèse CIFRE.'},
-  {n:'3',c:'var(--amber)',t:'Configurer les ordres récurrents IBKR',d:'7 ordres Recurring Investments. Virement automatique 550€ le 25 du mois depuis Hello Bank.'},
-  {n:'4',c:'var(--amber)',t:'S\'inscrire à l\'IELTS B2',d:'ielts.org · ~250€ · +20–50 pts CRS Canada · +20–30% valeur salariale internationale.'},
-  {n:'5',c:'var(--blue)',t:'Python + ML actuariel',d:'Les actuaires maîtrisant l\'IA gagnent 20–30% de plus. Coursera, DataCamp. Différenciateur clé 2026–2030.'},
-];
-document.getElementById('plan-list').innerHTML=PLAN.map(a=>`
-  <div style="display:flex;gap:12px;padding:10px 0;border-bottom:1px solid rgba(30,45,64,.4);align-items:flex-start">
-    <div style="width:24px;height:24px;border-radius:50%;background:rgba(0,0,0,.3);color:${a.c};border:1px solid ${a.c};display:flex;align-items:center;justify-content:center;font-size:.7rem;font-weight:700;flex-shrink:0">${a.n}</div>
-    <div><div style="font-size:.83rem;font-weight:700;margin-bottom:2px">${a.t}</div><div class="note">${a.d}</div></div>
-  </div>`).join('');
-
-const RULES=[
-  {c:'var(--green)',t:'📈 Chaque augmentation → 80% vers IBKR',d:'80% de chaque hausse de salaire → augmenter le versement mensuel. 20% → qualité de vie. C\'est la règle qui détermine si tu atteins la liberté à 40 ou 55 ans.'},
-  {c:'var(--green)',t:'🧱 Ne jamais vendre en crise',d:'−40% sur le marché = soldes sur tes ETFs. Tu achètes. Le marché mondial a récupéré 100% de toutes ses crises. La crise est ton alliée si tu continues d\'acheter.'},
-  {c:'var(--blue)',t:'🌍 Famille Cameroun = enveloppe séparée et sacrée',d:'300€/mois d\'envois = engagement moral. Ce n\'est pas une variable d\'ajustement. Jamais prélevé sur le portefeuille ETF.'},
-  {c:'var(--blue)',t:'📆 Regarder le portefeuille max 2 fois par an',d:'Janvier et juillet. Les décisions émotionnelles détruisent 1.5%/an de rendement (Dalbar 2023). Ton objectif de liberté est plus fort que tes émotions.'},
-  {c:'var(--amber)',t:'🚗 Garder la Clio jusqu\'au bout',d:'Pas de remplacement par un modèle plus cher. 15 000€ de voiture = 15 000€ de liberté financière en moins. Répare, entretiens, garde.'},
-];
-document.getElementById('rules-list').innerHTML=RULES.map(r=>`
-  <div style="border-left:3px solid ${r.c};padding:11px 14px;background:var(--bg3);border-radius:0 10px 10px 0;margin-bottom:8px">
-    <div style="font-size:.86rem;font-weight:700;margin-bottom:3px">${r.t}</div>
-    <div class="note">${r.d}</div>
-  </div>`).join('');
-
-// ═══ LIVE PRICES ═══
-// Exchange suffix map
-const EXCHANGE = {
-  SPYI:'DE', XDWD:'DE', IUSN:'DE', ZPRV:'DE', XAIX:'DE',
-  SPYL:'DE', C50:'DE', SGLD:'AS', EMIM:'AS', VWCE:'AS',
-  IWDA:'AS', CEBZ:'DE', QUS5:'DE',
-};
+// LIVE PRICES + SPARKLINES
+const HIST = {};
 
 async function fetchP(ticker){
   const ex = EXCHANGE[ticker] || 'DE';
-  const yt = `${ticker}.${ex}`;
-  const yfUrl = `https://query1.finance.yahoo.com/v8/finance/chart/${yt}?interval=1d&range=5d`;
-
-  // 4 strategies in order
+  const yt = ticker + '.' + ex;
+  const yfUrl = 'https://query1.finance.yahoo.com/v8/finance/chart/' + yt + '?interval=1d&range=2d';
   const strategies = [
-    // 1. Direct (works on GitHub Pages, not on claude.ai)
     () => fetch(yfUrl, {mode:'cors'}),
-    // 2. corsproxy.io
-    () => fetch(`https://corsproxy.io/?url=${encodeURIComponent(yfUrl)}`),
-    // 3. Corsfix — unlimited free
-    () => fetch(`https://proxy.corsfix.com/?${encodeURIComponent(yfUrl)}`),
-    // 4. allorigins
-    () => fetch(`https://api.allorigins.win/raw?url=${encodeURIComponent(yfUrl)}`),
+    () => fetch('https://corsproxy.io/?url=' + encodeURIComponent(yfUrl)),
+    () => fetch('https://proxy.corsfix.com/?' + encodeURIComponent(yfUrl)),
+    () => fetch('https://api.allorigins.win/raw?url=' + encodeURIComponent(yfUrl)),
   ];
-
   for(const strategy of strategies){
     try{
       const r = await Promise.race([strategy(), new Promise((_,rej)=>setTimeout(rej,4000))]);
@@ -854,207 +868,345 @@ async function fetchP(ticker){
       if(!result) continue;
       const closes = result.indicators?.quote?.[0]?.close?.filter(v=>v!=null);
       if(!closes || closes.length < 2) continue;
-      return {
-        price: closes[closes.length-1],
-        change: (closes[closes.length-1]-closes[closes.length-2])/closes[closes.length-2]*100
-      };
+      return {price: closes[closes.length-1], change: (closes[closes.length-1]-closes[closes.length-2])/closes[closes.length-2]*100};
     } catch{ continue; }
   }
   return null;
 }
 
-// ═══ SPARKLINES & CHARTS ═══
-const HIST = {}; // cache history data
-
-async function fetchHistory(ticker, range='1mo'){
-  const ex = EXCHANGE[ticker]||'DE';
-  const yt = `${ticker}.${ex}`;
-  const yfUrl = `https://query1.finance.yahoo.com/v8/finance/chart/${yt}?interval=1d&range=${range}`;
+async function fetchHistory(ticker){
+  const ex = EXCHANGE[ticker] || 'DE';
+  const yt = ticker + '.' + ex;
+  const yfUrl = 'https://query1.finance.yahoo.com/v8/finance/chart/' + yt + '?interval=1d&range=1mo';
   const strategies = [
-    ()=>fetch(yfUrl,{mode:'cors'}),
-    ()=>fetch(`https://corsproxy.io/?url=${encodeURIComponent(yfUrl)}`),
-    ()=>fetch(`https://proxy.corsfix.com/?${encodeURIComponent(yfUrl)}`),
-    ()=>fetch(`https://api.allorigins.win/raw?url=${encodeURIComponent(yfUrl)}`),
+    () => fetch(yfUrl, {mode:'cors'}),
+    () => fetch('https://corsproxy.io/?url=' + encodeURIComponent(yfUrl)),
+    () => fetch('https://proxy.corsfix.com/?' + encodeURIComponent(yfUrl)),
+    () => fetch('https://api.allorigins.win/raw?url=' + encodeURIComponent(yfUrl)),
   ];
   for(const s of strategies){
     try{
-      const r=await Promise.race([s(),new Promise((_,rej)=>setTimeout(rej,5000))]);
-      if(!r||!r.ok) continue;
-      const j=await r.json();
-      const res=j?.chart?.result?.[0];
+      const r = await Promise.race([s(), new Promise((_,rej)=>setTimeout(rej,5000))]);
+      if(!r || !r.ok) continue;
+      const j = await r.json();
+      const res = j?.chart?.result?.[0];
       if(!res) continue;
-      const ts=res.timestamp||[];
-      const closes=res.indicators?.quote?.[0]?.close||[];
-      const pairs=ts.map((t,i)=>({t:t*1000,v:closes[i]})).filter(p=>p.v!=null);
-      if(pairs.length<5) continue;
+      const ts = res.timestamp || [];
+      const closes = res.indicators?.quote?.[0]?.close || [];
+      const pairs = ts.map((t,i) => ({t:t*1000, v:closes[i]})).filter(p=>p.v!=null);
+      if(pairs.length < 5) continue;
       return pairs;
-    }catch{continue;}
+    } catch{ continue; }
   }
   return null;
 }
 
 function drawSparkline(ticker, color, data){
-  const canvas=document.getElementById('spark-'+ticker);
+  const canvas = document.getElementById('spark-'+ticker);
   if(!canvas) return;
-  const ctx=canvas.getContext('2d');
-  const W=canvas.offsetWidth||canvas.parentElement?.offsetWidth||120;
-  canvas.width=W; canvas.height=36;
-  const vals=data.map(d=>d.v);
-  const min=Math.min(...vals), max=Math.max(...vals), range2=max-min||1;
-  const pad=3;
-  const up=vals[vals.length-1]>=vals[0];
-  const lineColor=up?'#00d4aa':'#ff5757';
-  const fillColor=up?'rgba(0,212,170,0.12)':'rgba(255,87,87,0.12)';
-
+  const ctx = canvas.getContext('2d');
+  const W = canvas.offsetWidth || canvas.parentElement?.offsetWidth || 120;
+  canvas.width = W; canvas.height = 36;
+  const vals = data.map(d => d.v);
+  const min = Math.min(...vals), max = Math.max(...vals), range = max-min||1;
+  const pad = 3;
+  const up = vals[vals.length-1] >= vals[0];
+  const lineColor = up ? '#00d4aa' : '#ff5757';
+  const fillColor = up ? 'rgba(0,212,170,0.12)' : 'rgba(255,87,87,0.12)';
   ctx.clearRect(0,0,W,36);
-  const pts=vals.map((v,i)=>({
-    x:pad+(i/(vals.length-1))*(W-2*pad),
-    y:pad+(1-(v-min)/range2)*(36-2*pad)
+  const pts = vals.map((v,i) => ({
+    x: pad+(i/(vals.length-1))*(W-2*pad),
+    y: pad+(1-(v-min)/range)*(36-2*pad)
   }));
-
-  // Fill
+  ctx.beginPath(); ctx.moveTo(pts[0].x,36);
+  pts.forEach(p => ctx.lineTo(p.x,p.y));
+  ctx.lineTo(pts[pts.length-1].x,36); ctx.closePath();
+  ctx.fillStyle = fillColor; ctx.fill();
   ctx.beginPath();
-  ctx.moveTo(pts[0].x,36);
-  pts.forEach(p=>ctx.lineTo(p.x,p.y));
-  ctx.lineTo(pts[pts.length-1].x,36);
-  ctx.closePath();
-  ctx.fillStyle=fillColor;
-  ctx.fill();
-
-  // Line
-  ctx.beginPath();
-  pts.forEach((p,i)=>i===0?ctx.moveTo(p.x,p.y):ctx.lineTo(p.x,p.y));
-  ctx.strokeStyle=lineColor;
-  ctx.lineWidth=1.5;
-  ctx.stroke();
+  pts.forEach((p,i) => i===0 ? ctx.moveTo(p.x,p.y) : ctx.lineTo(p.x,p.y));
+  ctx.strokeStyle = lineColor; ctx.lineWidth = 1.5; ctx.stroke();
 }
 
-// Modal full chart
 function showChart(ticker, color){
-  const hist=HIST[ticker];
-  if(!hist||hist.length<2) return;
-  const existing=document.getElementById('chart-modal');
+  const hist = HIST[ticker];
+  if(!hist || hist.length < 2) return;
+  const existing = document.getElementById('chart-modal');
   if(existing) existing.remove();
-
-  const modal=document.createElement('div');
-  modal.id='chart-modal';
-  modal.style.cssText='position:fixed;inset:0;background:rgba(0,0,0,.75);z-index:9998;display:flex;align-items:center;justify-content:center;padding:20px';
-  modal.innerHTML=`
+  const modal = document.createElement('div');
+  modal.id = 'chart-modal';
+  modal.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,.75);z-index:9998;display:flex;align-items:center;justify-content:center;padding:20px';
+  modal.innerHTML = `
     <div style="background:#131920;border:1px solid #1e2d40;border-radius:16px;padding:20px;width:100%;max-width:700px;position:relative">
       <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px">
         <div>
           <div style="font-weight:800;font-size:1.1rem;font-family:var(--mono);color:${color}">${ticker}</div>
-          <div style="font-size:.72rem;color:#4a6080;font-family:var(--mono)">Historique 30 jours · EUR</div>
+          <div style="font-size:.72rem;color:#4a6080;font-family:var(--mono)">30-day history - EUR</div>
         </div>
-        <button onclick="document.getElementById('chart-modal').remove()" style="background:rgba(255,87,87,.15);border:1px solid rgba(255,87,87,.3);color:#ff5757;border-radius:8px;padding:4px 12px;cursor:pointer;font-family:var(--font);font-size:.8rem">✕ Fermer</button>
+        <button onclick="document.getElementById('chart-modal').remove()" style="background:rgba(255,87,87,.15);border:1px solid rgba(255,87,87,.3);color:#ff5757;border-radius:8px;padding:4px 12px;cursor:pointer;font-family:var(--font);font-size:.8rem">Close</button>
       </div>
-      <div style="position:relative;height:260px">
-        <canvas id="modal-chart"></canvas>
-      </div>
+      <div style="position:relative;height:260px"><canvas id="modal-chart"></canvas></div>
       <div id="modal-stats" style="display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-top:12px"></div>
     </div>`;
   document.body.appendChild(modal);
-  modal.addEventListener('click',e=>{if(e.target===modal)modal.remove();});
-
-  const vals=hist.map(d=>d.v);
-  const labels=hist.map(d=>new Date(d.t).toLocaleDateString('fr-FR',{day:'2-digit',month:'2-digit'}));
-  const first=vals[0], last=vals[vals.length-1];
-  const chg=((last-first)/first*100).toFixed(2);
-  const up=last>=first;
-  const lineClr=up?'#00d4aa':'#ff5757';
-
+  modal.addEventListener('click', e => {if(e.target===modal) modal.remove();});
+  const vals = hist.map(d => d.v);
+  const labels = hist.map(d => new Date(d.t).toLocaleDateString('en-GB',{day:'2-digit',month:'2-digit'}));
+  const first = vals[0], last = vals[vals.length-1];
+  const chg = ((last-first)/first*100).toFixed(2);
+  const up = last >= first;
+  const lineClr = up ? '#00d4aa' : '#ff5757';
   if(S.ch.modal) S.ch.modal.destroy();
-  S.ch.modal=new Chart(document.getElementById('modal-chart').getContext('2d'),{
+  S.ch.modal = new Chart(document.getElementById('modal-chart').getContext('2d'), {
     type:'line',
-    data:{labels,datasets:[{
-      data:vals,borderColor:lineClr,
-      backgroundColor:up?'rgba(0,212,170,0.08)':'rgba(255,87,87,0.08)',
-      borderWidth:2,fill:true,tension:0.3,pointRadius:0,
-      pointHoverRadius:4,pointHoverBackgroundColor:lineClr,
-    }]},
-    options:{responsive:true,maintainAspectRatio:false,
+    data:{labels, datasets:[{data:vals, borderColor:lineClr, backgroundColor:up?'rgba(0,212,170,0.08)':'rgba(255,87,87,0.08)', borderWidth:2, fill:true, tension:0.3, pointRadius:0, pointHoverRadius:4, pointHoverBackgroundColor:lineClr}]},
+    options:{responsive:true, maintainAspectRatio:false,
       interaction:{mode:'index',intersect:false},
       plugins:{
         legend:{display:false},
-        tooltip:{
-          backgroundColor:'#1a2230',borderColor:'#1e2d40',borderWidth:1,
-          titleColor:'#e2e8f0',bodyColor:'#4a6080',
-          callbacks:{label:ctx=>`  ${fmt(ctx.raw,2)} €`}
-        }
+        tooltip:{backgroundColor:'#1a2230',borderColor:'#1e2d40',borderWidth:1,titleColor:'#e2e8f0',bodyColor:'#4a6080',
+          callbacks:{label:ctx => '  ' + fmt(ctx.raw,2) + ' EUR'}}
       },
       scales:{
         x:{ticks:{color:'#4a6080',font:{family:'JetBrains Mono',size:9},maxTicksLimit:8},grid:{color:'rgba(30,45,64,.4)'}},
-        y:{ticks:{color:'#4a6080',font:{family:'JetBrains Mono',size:9},callback:v=>fmt(v,2)+'€'},grid:{color:'rgba(30,45,64,.4)'},position:'right'}
+        y:{ticks:{color:'#4a6080',font:{family:'JetBrains Mono',size:9},callback:v=>fmt(v,2)+' EUR'},grid:{color:'rgba(30,45,64,.4)'},position:'right'}
       }
     }
   });
-
-  const min=Math.min(...vals), max=Math.max(...vals);
-  document.getElementById('modal-stats').innerHTML=`
+  const min = Math.min(...vals), max = Math.max(...vals);
+  document.getElementById('modal-stats').innerHTML = `
     <div style="background:#1a2230;border-radius:8px;padding:8px;text-align:center">
-      <div style="font-size:.65rem;color:#4a6080">Actuel</div>
-      <div style="font-family:var(--mono);font-size:.9rem;color:${lineClr}">${fmt(last,2)} €</div>
+      <div style="font-size:.65rem;color:#4a6080">Current</div>
+      <div style="font-family:var(--mono);font-size:.9rem;color:${lineClr}">${fmt(last,2)} EUR</div>
     </div>
     <div style="background:#1a2230;border-radius:8px;padding:8px;text-align:center">
-      <div style="font-size:.65rem;color:#4a6080">Perf. 30j</div>
+      <div style="font-size:.65rem;color:#4a6080">30d perf.</div>
       <div style="font-family:var(--mono);font-size:.9rem;color:${up?'#00d4aa':'#ff5757'}">${up?'+':''}${chg}%</div>
     </div>
     <div style="background:#1a2230;border-radius:8px;padding:8px;text-align:center">
-      <div style="font-size:.65rem;color:#4a6080">Plus bas</div>
-      <div style="font-family:var(--mono);font-size:.9rem;color:#e2e8f0">${fmt(min,2)} €</div>
+      <div style="font-size:.65rem;color:#4a6080">Low</div>
+      <div style="font-family:var(--mono);font-size:.9rem;color:#e2e8f0">${fmt(min,2)} EUR</div>
     </div>
     <div style="background:#1a2230;border-radius:8px;padding:8px;text-align:center">
-      <div style="font-size:.65rem;color:#4a6080">Plus haut</div>
-      <div style="font-family:var(--mono);font-size:.9rem;color:#e2e8f0">${fmt(max,2)} €</div>
+      <div style="font-size:.65rem;color:#4a6080">High</div>
+      <div style="font-family:var(--mono);font-size:.9rem;color:#e2e8f0">${fmt(max,2)} EUR</div>
     </div>`;
 }
 
 async function loadPrices(){
-  document.getElementById('last-update').textContent='Chargement...';
+  document.getElementById('last-update').textContent = 'Loading...';
   const tickers = ['SPYI', ...ALLOC.map(a=>a.etf)];
   const unique = [...new Set(tickers)];
   for(const ticker of unique){
-    // Fetch current price
     const d = await fetchP(ticker);
     const ev = document.getElementById('pv-'+ticker);
     const ec = document.getElementById('pc-'+ticker);
     if(!ev) continue;
     if(d){
       S.prices[ticker] = d.price;
-      ev.textContent = fmt(d.price,2)+' €';
+      ev.textContent = fmt(d.price,2) + ' EUR';
       const up = d.change >= 0;
-      if(ec) ec.innerHTML = `<span style="color:${up?'var(--green)':'var(--red)'}">${up?'▲':'▼'} ${Math.abs(d.change).toFixed(2)}%</span>`;
+      if(ec) ec.innerHTML = '<span style="color:'+(up?'var(--green)':'var(--red)')+'">'+(up?'up':'dn')+' '+Math.abs(d.change).toFixed(2)+'%</span>';
     } else {
-      ev.textContent = 'N/D';
-      if(ec) ec.innerHTML = '<span style="color:var(--muted)">—</span>';
+      ev.textContent = 'N/A';
+      if(ec) ec.innerHTML = '<span style="color:var(--muted)">-</span>';
     }
-    // Fetch 30-day history for sparkline
-    const hist = await fetchHistory(ticker, '1mo');
+    const hist = await fetchHistory(ticker);
     if(hist && hist.length > 5){
       HIST[ticker] = hist;
-      const etfInfo = [...ALLOC, SPYI_HERITAGE].find(a=>a.etf===ticker);
-      const color = etfInfo?.color || '#00d4aa';
-      drawSparkline(ticker, color, hist);
+      const col = [{etf:'SPYI',color:'#534AB7'},...ALLOC].find(a=>a.etf===ticker)?.color || '#00d4aa';
+      drawSparkline(ticker, col, hist);
     }
   }
-  const now = new Date();
-  document.getElementById('last-update').textContent = 'Màj '+now.toLocaleTimeString('fr-FR',{hour:'2-digit',minute:'2-digit'});
+  document.getElementById('last-update').textContent = 'Updated ' + new Date().toLocaleTimeString('en-GB',{hour:'2-digit',minute:'2-digit'});
   refreshPtf();
 }
 
-function toast(m,c='var(--green)'){const t=document.getElementById('toast');t.innerHTML=`<span style="color:${c}">${m}</span>`;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),2600);}
+// GOOGLE SHEETS SYNC
+const GS_CSV_KEY = 'gs_csv_url';
+const GS_SCRIPT_KEY = 'gs_script_url';
 
-// ═══ INIT ═══
-document.getElementById('live-date').textContent=new Date().toLocaleDateString('fr-FR',{day:'numeric',month:'long',year:'numeric'});
-document.getElementById('t-date').value=new Date().toISOString().split('T')[0];
+function saveGs(){
+  const csv = document.getElementById('gs-csv').value.trim();
+  const script = document.getElementById('gs-script').value.trim();
+  if(csv) localStorage.setItem(GS_CSV_KEY, csv);
+  if(script) localStorage.setItem(GS_SCRIPT_KEY, script);
+  updateGsStatus();
+  toast('Config saved');
+  if(csv) syncGs();
+}
+
+function loadGs(){
+  const csv = localStorage.getItem(GS_CSV_KEY) || '';
+  const script = localStorage.getItem(GS_SCRIPT_KEY) || '';
+  const ce = document.getElementById('gs-csv');
+  const se = document.getElementById('gs-script');
+  if(ce && csv) ce.value = csv;
+  if(se && script) se.value = script;
+  updateGsStatus();
+}
+
+function updateGsStatus(){
+  const csv = localStorage.getItem(GS_CSV_KEY);
+  const script = localStorage.getItem(GS_SCRIPT_KEY);
+  const el = document.getElementById('gs-status');
+  if(!el) return;
+  if(csv && script){
+    el.innerHTML = '<span style="color:var(--green);font-size:.75rem">Active - read + write configured</span>';
+  } else if(csv){
+    el.innerHTML = '<span style="color:var(--amber);font-size:.75rem">Read-only - configure Apps Script for write access</span>';
+  } else {
+    el.innerHTML = '<span style="color:var(--muted);font-size:.75rem">Not configured - data stored locally only</span>';
+  }
+}
+
+async function syncGs(){
+  const csvUrl = localStorage.getItem(GS_CSV_KEY);
+  if(!csvUrl){toast('Configure CSV URL first','var(--amber)');return;}
+  const el = document.getElementById('gs-status');
+  if(el) el.innerHTML = '<span style="color:var(--blue);font-size:.75rem">Syncing...</span>';
+  try{
+    const proxyUrl = 'https://corsproxy.io/?url=' + encodeURIComponent(csvUrl);
+    const r = await fetch(proxyUrl);
+    if(!r.ok) throw new Error('Read error');
+    const csv = await r.text();
+    const rows = csv.trim().split('\n').slice(1);
+    const trades = rows.filter(r=>r.trim()).map((row,idx) => {
+      const cols = row.split(',');
+      const date = cols[0]?.trim().replace(/"/g,'');
+      const etf  = cols[1]?.trim().replace(/"/g,'');
+      const parts = parseFloat(cols[2]);
+      const prix  = parseFloat(cols[3]);
+      if(!date||!etf||isNaN(parts)||isNaN(prix)) return null;
+      return {id:Date.now()+idx, date, etf, parts, price:prix};
+    }).filter(Boolean);
+    S.trades = trades; save(); refreshPtf(); updateGsStatus();
+    toast(trades.length + ' trade(s) synced');
+  } catch(e){
+    if(el) el.innerHTML = '<span style="color:var(--red);font-size:.75rem">Sync error - check CSV URL</span>';
+    toast('Sync error','var(--red)');
+  }
+}
+
+async function writeToSheet(action, trade){
+  const scriptUrl = localStorage.getItem(GS_SCRIPT_KEY);
+  if(!scriptUrl) return;
+  try{
+    await fetch(scriptUrl, {
+      method:'POST', mode:'no-cors',
+      headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({action, date:trade.date, etf:trade.etf, parts:trade.parts, prix:trade.price})
+    });
+  } catch(e){}
+}
+
+function showGsGuide(){
+  const g = document.getElementById('gs-guide');
+  if(g) g.style.display = g.style.display==='none' ? 'block' : 'none';
+}
+
+function copyGsCode(){
+  const code = document.getElementById('gs-code')?.textContent;
+  if(!code) return;
+  navigator.clipboard.writeText(code)
+    .then(()=>toast('Code copied'))
+    .catch(()=>toast('Select and copy manually','var(--amber)'));
+}
+
+// LIFE PLAN
+const DESTS = [
+  {f:'CA', p:'Canada - Montreal', sc:96, c:'#1D9E75', rp:'Application in progress',
+   sal:'2,100-3,400 EUR', sal_s:'5,500-7,500 EUR', pv:'50% taxable', lib:'~13 yrs',
+   action:'Open TFSA on arrival - IBKR unchanged - contribute to RRSP from first salary - 0% tax on pre-arrival gains'},
+  {f:'LU', p:'Luxembourg', sc:88, c:'#3b8eea', rp:'7 yrs of work',
+   sal:'3,000-3,500 EUR', sal_s:'6,000-8,000 EUR', pv:'0% on equities', lib:'~11 yrs',
+   action:'Same tax as Belgium - IBKR unchanged - investment rises to 1,200-1,500 EUR/mo'},
+  {f:'IE', p:'Ireland - Dublin', sc:82, c:'#9b7fe8', rp:'5 yrs',
+   sal:'2,900-3,800 EUR', sal_s:'5,000-7,000 EUR', pv:'CGT 33%', lib:'~13 yrs',
+   action:'SELL before leaving Belgium (0% tax) - repurchase in Ireland - strict buy and hold'},
+  {f:'DE', p:'Germany - Munich', sc:78, c:'#EF9F27', rp:'5 yrs',
+   sal:'2,700-3,500 EUR', sal_s:'5,000-7,000 EUR', pv:'26.4% flat tax', lib:'~13 yrs',
+   action:'SELL EVERYTHING before leaving Belgium (0% tax) - repurchase immediately in Germany'},
+  {f:'CH', p:'Switzerland - Geneva', sc:55, c:'#ff5757', rp:'12 yrs - strict quota',
+   sal:'4,500-6,300 EUR', sal_s:'7,000-10,000 EUR', pv:'0% capital gains', lib:'~10 yrs',
+   action:'0% CGT ideal to realize accumulated gains - accessible with EU/CA passport - target in 5-10 yrs'},
+];
+
+document.getElementById('dest-list').innerHTML = DESTS.map((d,i) => `
+  <div style="border:${i===0?'1.5px solid var(--green)':'1px solid var(--border)'};border-radius:12px;padding:13px 16px;background:var(--bg3);margin-bottom:10px">
+    <div style="display:flex;align-items:center;gap:10px;margin-bottom:8px">
+      <div style="width:28px;height:28px;border-radius:50%;background:${d.c};color:var(--bg);display:flex;align-items:center;justify-content:center;font-weight:800;font-size:.75rem;flex-shrink:0">${i+1}</div>
+      <div style="flex:1"><div style="font-weight:700;font-size:.95rem">${d.p}</div>
+        <div class="note">Residency: ${d.rp} - CGT: ${d.pv} - Freedom: ${d.lib}</div></div>
+      <div class="mono fw7" style="color:${d.c};font-size:1.1rem">${d.sc}/100</div>
+    </div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:8px">
+      <div style="background:rgba(0,0,0,.15);border-radius:6px;padding:7px 9px;font-size:.72rem">
+        <div style="color:var(--muted)">Junior salary</div><div class="mono">${d.sal}</div>
+      </div>
+      <div style="background:rgba(0,0,0,.15);border-radius:6px;padding:7px 9px;font-size:.72rem">
+        <div style="color:var(--muted)">Senior salary</div><div class="mono" style="color:${d.c}">${d.sal_s}</div>
+      </div>
+    </div>
+    <div style="background:rgba(0,0,0,.2);border-radius:6px;padding:7px 10px;font-size:.75rem;color:var(--muted)">
+      <strong style="color:var(--text)">Investment strategy:</strong> ${d.action}
+    </div>
+    <div style="height:4px;background:var(--border);border-radius:3px;overflow:hidden;margin-top:8px">
+      <div style="height:100%;width:${d.sc}%;background:${d.c};border-radius:3px"></div>
+    </div>
+  </div>`).join('');
+
+const PLAN = [
+  {n:'1',c:'var(--red)',  t:'Check IRCC portal daily',        d:'ircc.canada.ca - Decision imminent. If approved: 60 days to accept. 2,500 EUR reserve available in Hello Bank.'},
+  {n:'2',c:'var(--red)',  t:'Talk to your partner this weekend',d:'Decision could arrive in 4 weeks. Need to know if you go together. Michelin Canada (Ontario, Nova Scotia) is a concrete option for her CIFRE thesis.'},
+  {n:'3',c:'var(--amber)','t':'Configure IBKR recurring orders',d:'4 recurring orders: XDWD 320 EUR + EMIM 200 EUR + IUSN 160 EUR + ZPRV 120 EUR. Auto bank transfer 800 EUR on the 25th from Hello Bank.'},
+  {n:'4',c:'var(--amber)','t':'Register for IELTS B2',         d:'ielts.org - ~250 EUR - +20-50 CRS points for Canada + +20-30% salary value internationally.'},
+  {n:'5',c:'var(--blue)',  t:'Learn Python + actuarial ML',    d:'Actuaries mastering AI earn 20-30% more. Coursera, DataCamp. Key differentiator 2026-2030.'},
+];
+document.getElementById('plan-list').innerHTML = PLAN.map(a => `
+  <div style="display:flex;gap:12px;padding:10px 0;border-bottom:1px solid rgba(30,45,64,.4);align-items:flex-start">
+    <div style="width:24px;height:24px;border-radius:50%;background:rgba(0,0,0,.3);color:${a.c};border:1px solid ${a.c};display:flex;align-items:center;justify-content:center;font-size:.7rem;font-weight:700;flex-shrink:0">${a.n}</div>
+    <div><div style="font-size:.83rem;font-weight:700;margin-bottom:2px">${a.t}</div><div class="note">${a.d}</div></div>
+  </div>`).join('');
+
+const RULES = [
+  {c:'var(--green)',t:'80/20 rule on every raise',     d:'80% of every salary increase goes to IBKR investment. 20% to lifestyle improvement. This single rule determines if you reach freedom at 40 or 55.'},
+  {c:'var(--green)',t:'Never sell during a crisis',    d:'-40% market drop = your ETFs on sale. Keep buying. The global market has recovered 100% of every crisis in history. The crash is your best friend.'},
+  {c:'var(--blue)', t:'Family Cameroon = separate budget',d:'300 EUR/month transfers = a moral commitment. Never taken from the ETF portfolio. Fixed budget, untouchable.'},
+  {c:'var(--blue)', t:'Check portfolio max 2x per year',d:'January and July only. Emotional decisions destroy an average of 1.5%/yr of returns (Dalbar 2023). Your freedom goal is stronger than your emotions.'},
+  {c:'var(--amber)','t':'Keep the Clio until it dies',  d:'No upgrade to a more expensive car. 15,000 EUR car = 15,000 EUR less financial freedom. Repair, maintain, keep it.'},
+];
+document.getElementById('rules-list').innerHTML = RULES.map(r => `
+  <div style="border-left:3px solid ${r.c};padding:11px 14px;background:var(--bg3);border-radius:0 10px 10px 0;margin-bottom:8px">
+    <div style="font-size:.86rem;font-weight:700;margin-bottom:3px">${r.t}</div>
+    <div class="note">${r.d}</div>
+  </div>`).join('');
+
+// TOAST
+function toast(m, c='var(--green)'){
+  const t = document.getElementById('toast');
+  t.innerHTML = '<span style="color:'+c+'">'+m+'</span>';
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 2600);
+}
+
+// INIT
+document.getElementById('live-date').textContent = new Date().toLocaleDateString('en-GB',{day:'numeric',month:'long',year:'numeric'});
+document.getElementById('t-date').value = new Date().toISOString().split('T')[0];
+
 initDash();
 initStratTable();
 initIbkrOrders();
 initPortfolio();
 initProj();
 updateDash();
+
+// Pre-load Google Sheets CSV URL
+if(!localStorage.getItem(GS_CSV_KEY)) localStorage.setItem(GS_CSV_KEY, CSV_URL);
+loadGs();
+syncGs();
+
 loadPrices();
-setInterval(loadPrices,60000);
+setInterval(loadPrices, 60000);
 </script>
 </body>
 </html>
