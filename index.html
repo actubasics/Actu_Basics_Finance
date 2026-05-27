@@ -561,13 +561,17 @@ function initPortfolio(){
     ...ALLOC
   ];
   document.getElementById('price-grid').innerHTML=PRICE_ETFS.map(a=>`
-    <div class="kpi" id="pk-${a.etf}">
-      <div class="mono" style="font-size:.62rem;color:var(--muted)">${a.etf} · ${a.bourse}</div>
-      <div style="display:flex;align-items:baseline;gap:5px">
+    <div class="kpi" id="pk-${a.etf}" style="cursor:pointer" onclick="showChart('${a.etf}','${a.color}')">
+      <div style="display:flex;justify-content:space-between;align-items:center">
+        <div class="mono" style="font-size:.62rem;color:var(--muted)">${a.etf} · ${a.bourse}</div>
+        <span style="font-size:.58rem;color:var(--muted);font-family:var(--mono)">30j ↗</span>
+      </div>
+      <div style="display:flex;align-items:baseline;gap:5px;margin:2px 0">
         <span class="mono" style="font-size:1rem;font-weight:500;color:${a.color}" id="pv-${a.etf}">—</span>
         <span class="mono" style="font-size:.7rem" id="pc-${a.etf}"><span class="spin"></span></span>
       </div>
-      <div class="kl" style="font-size:.62rem">${a.role}</div>
+      <canvas id="spark-${a.etf}" height="36" style="width:100%;display:block;margin-top:4px"></canvas>
+      <div class="kl" style="font-size:.6rem;margin-top:2px">${a.role}</div>
     </div>`).join('');
 }
 
@@ -859,10 +863,158 @@ async function fetchP(ticker){
   return null;
 }
 
+// ═══ SPARKLINES & CHARTS ═══
+const HIST = {}; // cache history data
+
+async function fetchHistory(ticker, range='1mo'){
+  const ex = EXCHANGE[ticker]||'DE';
+  const yt = `${ticker}.${ex}`;
+  const yfUrl = `https://query1.finance.yahoo.com/v8/finance/chart/${yt}?interval=1d&range=${range}`;
+  const strategies = [
+    ()=>fetch(yfUrl,{mode:'cors'}),
+    ()=>fetch(`https://corsproxy.io/?url=${encodeURIComponent(yfUrl)}`),
+    ()=>fetch(`https://proxy.corsfix.com/?${encodeURIComponent(yfUrl)}`),
+    ()=>fetch(`https://api.allorigins.win/raw?url=${encodeURIComponent(yfUrl)}`),
+  ];
+  for(const s of strategies){
+    try{
+      const r=await Promise.race([s(),new Promise((_,rej)=>setTimeout(rej,5000))]);
+      if(!r||!r.ok) continue;
+      const j=await r.json();
+      const res=j?.chart?.result?.[0];
+      if(!res) continue;
+      const ts=res.timestamp||[];
+      const closes=res.indicators?.quote?.[0]?.close||[];
+      const pairs=ts.map((t,i)=>({t:t*1000,v:closes[i]})).filter(p=>p.v!=null);
+      if(pairs.length<5) continue;
+      return pairs;
+    }catch{continue;}
+  }
+  return null;
+}
+
+function drawSparkline(ticker, color, data){
+  const canvas=document.getElementById('spark-'+ticker);
+  if(!canvas) return;
+  const ctx=canvas.getContext('2d');
+  const W=canvas.offsetWidth||canvas.parentElement?.offsetWidth||120;
+  canvas.width=W; canvas.height=36;
+  const vals=data.map(d=>d.v);
+  const min=Math.min(...vals), max=Math.max(...vals), range2=max-min||1;
+  const pad=3;
+  const up=vals[vals.length-1]>=vals[0];
+  const lineColor=up?'#00d4aa':'#ff5757';
+  const fillColor=up?'rgba(0,212,170,0.12)':'rgba(255,87,87,0.12)';
+
+  ctx.clearRect(0,0,W,36);
+  const pts=vals.map((v,i)=>({
+    x:pad+(i/(vals.length-1))*(W-2*pad),
+    y:pad+(1-(v-min)/range2)*(36-2*pad)
+  }));
+
+  // Fill
+  ctx.beginPath();
+  ctx.moveTo(pts[0].x,36);
+  pts.forEach(p=>ctx.lineTo(p.x,p.y));
+  ctx.lineTo(pts[pts.length-1].x,36);
+  ctx.closePath();
+  ctx.fillStyle=fillColor;
+  ctx.fill();
+
+  // Line
+  ctx.beginPath();
+  pts.forEach((p,i)=>i===0?ctx.moveTo(p.x,p.y):ctx.lineTo(p.x,p.y));
+  ctx.strokeStyle=lineColor;
+  ctx.lineWidth=1.5;
+  ctx.stroke();
+}
+
+// Modal full chart
+function showChart(ticker, color){
+  const hist=HIST[ticker];
+  if(!hist||hist.length<2) return;
+  const existing=document.getElementById('chart-modal');
+  if(existing) existing.remove();
+
+  const modal=document.createElement('div');
+  modal.id='chart-modal';
+  modal.style.cssText='position:fixed;inset:0;background:rgba(0,0,0,.75);z-index:9998;display:flex;align-items:center;justify-content:center;padding:20px';
+  modal.innerHTML=`
+    <div style="background:#131920;border:1px solid #1e2d40;border-radius:16px;padding:20px;width:100%;max-width:700px;position:relative">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px">
+        <div>
+          <div style="font-weight:800;font-size:1.1rem;font-family:var(--mono);color:${color}">${ticker}</div>
+          <div style="font-size:.72rem;color:#4a6080;font-family:var(--mono)">Historique 30 jours · EUR</div>
+        </div>
+        <button onclick="document.getElementById('chart-modal').remove()" style="background:rgba(255,87,87,.15);border:1px solid rgba(255,87,87,.3);color:#ff5757;border-radius:8px;padding:4px 12px;cursor:pointer;font-family:var(--font);font-size:.8rem">✕ Fermer</button>
+      </div>
+      <div style="position:relative;height:260px">
+        <canvas id="modal-chart"></canvas>
+      </div>
+      <div id="modal-stats" style="display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-top:12px"></div>
+    </div>`;
+  document.body.appendChild(modal);
+  modal.addEventListener('click',e=>{if(e.target===modal)modal.remove();});
+
+  const vals=hist.map(d=>d.v);
+  const labels=hist.map(d=>new Date(d.t).toLocaleDateString('fr-FR',{day:'2-digit',month:'2-digit'}));
+  const first=vals[0], last=vals[vals.length-1];
+  const chg=((last-first)/first*100).toFixed(2);
+  const up=last>=first;
+  const lineClr=up?'#00d4aa':'#ff5757';
+
+  if(S.ch.modal) S.ch.modal.destroy();
+  S.ch.modal=new Chart(document.getElementById('modal-chart').getContext('2d'),{
+    type:'line',
+    data:{labels,datasets:[{
+      data:vals,borderColor:lineClr,
+      backgroundColor:up?'rgba(0,212,170,0.08)':'rgba(255,87,87,0.08)',
+      borderWidth:2,fill:true,tension:0.3,pointRadius:0,
+      pointHoverRadius:4,pointHoverBackgroundColor:lineClr,
+    }]},
+    options:{responsive:true,maintainAspectRatio:false,
+      interaction:{mode:'index',intersect:false},
+      plugins:{
+        legend:{display:false},
+        tooltip:{
+          backgroundColor:'#1a2230',borderColor:'#1e2d40',borderWidth:1,
+          titleColor:'#e2e8f0',bodyColor:'#4a6080',
+          callbacks:{label:ctx=>`  ${fmt(ctx.raw,2)} €`}
+        }
+      },
+      scales:{
+        x:{ticks:{color:'#4a6080',font:{family:'JetBrains Mono',size:9},maxTicksLimit:8},grid:{color:'rgba(30,45,64,.4)'}},
+        y:{ticks:{color:'#4a6080',font:{family:'JetBrains Mono',size:9},callback:v=>fmt(v,2)+'€'},grid:{color:'rgba(30,45,64,.4)'},position:'right'}
+      }
+    }
+  });
+
+  const min=Math.min(...vals), max=Math.max(...vals);
+  document.getElementById('modal-stats').innerHTML=`
+    <div style="background:#1a2230;border-radius:8px;padding:8px;text-align:center">
+      <div style="font-size:.65rem;color:#4a6080">Actuel</div>
+      <div style="font-family:var(--mono);font-size:.9rem;color:${lineClr}">${fmt(last,2)} €</div>
+    </div>
+    <div style="background:#1a2230;border-radius:8px;padding:8px;text-align:center">
+      <div style="font-size:.65rem;color:#4a6080">Perf. 30j</div>
+      <div style="font-family:var(--mono);font-size:.9rem;color:${up?'#00d4aa':'#ff5757'}">${up?'+':''}${chg}%</div>
+    </div>
+    <div style="background:#1a2230;border-radius:8px;padding:8px;text-align:center">
+      <div style="font-size:.65rem;color:#4a6080">Plus bas</div>
+      <div style="font-family:var(--mono);font-size:.9rem;color:#e2e8f0">${fmt(min,2)} €</div>
+    </div>
+    <div style="background:#1a2230;border-radius:8px;padding:8px;text-align:center">
+      <div style="font-size:.65rem;color:#4a6080">Plus haut</div>
+      <div style="font-family:var(--mono);font-size:.9rem;color:#e2e8f0">${fmt(max,2)} €</div>
+    </div>`;
+}
+
 async function loadPrices(){
   document.getElementById('last-update').textContent='Chargement...';
   const tickers = ['SPYI', ...ALLOC.map(a=>a.etf)];
-  for(const ticker of [...new Set(tickers)]){
+  const unique = [...new Set(tickers)];
+  for(const ticker of unique){
+    // Fetch current price
     const d = await fetchP(ticker);
     const ev = document.getElementById('pv-'+ticker);
     const ec = document.getElementById('pc-'+ticker);
@@ -874,7 +1026,15 @@ async function loadPrices(){
       if(ec) ec.innerHTML = `<span style="color:${up?'var(--green)':'var(--red)'}">${up?'▲':'▼'} ${Math.abs(d.change).toFixed(2)}%</span>`;
     } else {
       ev.textContent = 'N/D';
-      if(ec) ec.innerHTML = '<span style="color:var(--muted)" title="Marché fermé ou données indisponibles">—</span>';
+      if(ec) ec.innerHTML = '<span style="color:var(--muted)">—</span>';
+    }
+    // Fetch 30-day history for sparkline
+    const hist = await fetchHistory(ticker, '1mo');
+    if(hist && hist.length > 5){
+      HIST[ticker] = hist;
+      const etfInfo = [...ALLOC, SPYI_HERITAGE].find(a=>a.etf===ticker);
+      const color = etfInfo?.color || '#00d4aa';
+      drawSparkline(ticker, color, hist);
     }
   }
   const now = new Date();
