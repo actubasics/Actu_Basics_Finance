@@ -2,1972 +2,899 @@
 <html lang="fr">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Liberté Financière</title>
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Actu-Basics Finance Strategy</title>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
 <style>
-@import url('https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=JetBrains+Mono:wght@300;400;500&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap');
 :root{
-  --bg:#080b10;--bg2:#0d1117;--bg3:#131920;--bg4:#1a2230;--bg5:#0f1a24;
-  --border:#1e2d40;--text:#e2e8f0;--muted:#4a6080;--dim:#2a3f55;
-  --green:#00d4aa;--green2:#00a880;--blue:#3b8eea;--amber:#f5a623;
-  --red:#ff5757;--purple:#9b7fe8;
+  --bg:#080b10;--bg3:#131920;--bg4:#1a2230;--border:#1e2d40;
+  --text:#e2e8f0;--muted:#4a6080;--dim:#2a3f55;
+  --green:#00d4aa;--green2:#00a880;--blue:#3b8eea;
+  --amber:#f5a623;--red:#ff5757;--purple:#9b7fe8;--pink:#e91e8c;
   --font:'Syne',sans-serif;--mono:'JetBrains Mono',monospace;
 }
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
-body{font-family:var(--font);background:var(--bg);color:var(--text);min-height:100vh;overflow-x:hidden}
+body{font-family:var(--font);background:var(--bg);color:var(--text);min-height:100vh}
 body::before{content:'';position:fixed;inset:0;z-index:0;
-  background-image:linear-gradient(rgba(0,212,170,.025) 1px,transparent 1px),linear-gradient(90deg,rgba(0,212,170,.025) 1px,transparent 1px);
+  background-image:linear-gradient(rgba(0,212,170,.025)1px,transparent 1px),linear-gradient(90deg,rgba(0,212,170,.025)1px,transparent 1px);
   background-size:48px 48px;pointer-events:none}
-.wrap{position:relative;z-index:1;max-width:1320px;margin:0 auto;padding:0 20px}
-
-/* HEADER */
-header{padding:20px 0 0;border-bottom:1px solid var(--border);background:linear-gradient(180deg,rgba(0,212,170,.04) 0%,transparent 100%)}
-.hdr{display:flex;align-items:flex-end;justify-content:space-between;padding-bottom:0}
-.logo{font-size:1rem;font-weight:800;letter-spacing:-.02em;background:linear-gradient(135deg,var(--green),var(--blue));-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.w{position:relative;z-index:1;max-width:1300px;margin:0 auto;padding:0 20px}
+header{padding:20px 0 0;border-bottom:1px solid var(--border)}
+.hdr{display:flex;align-items:flex-end;justify-content:space-between;margin-bottom:14px}
+.logo{font-size:1rem;font-weight:800;background:linear-gradient(135deg,var(--green),var(--blue));-webkit-background-clip:text;-webkit-text-fill-color:transparent}
 .logo-sub{font-size:.68rem;color:var(--muted);font-family:var(--mono);margin-top:1px}
-.live{display:flex;align-items:center;gap:6px;font-family:var(--mono);font-size:.65rem;color:var(--muted);padding:4px 10px;border:1px solid var(--border);border-radius:20px}
-.pulse{width:6px;height:6px;border-radius:50%;background:var(--green);animation:pulse 2s infinite}
-@keyframes pulse{0%,100%{opacity:1}50%{opacity:.3}}
-.tabs{display:flex;gap:0;border-bottom:1px solid var(--border);overflow-x:auto;padding-top:14px}
-.tab{font-family:var(--font);font-size:.78rem;font-weight:600;color:var(--muted);padding:9px 16px;cursor:pointer;border-bottom:2px solid transparent;white-space:nowrap;transition:all .2s;background:none;border-top:none;border-left:none;border-right:none;letter-spacing:.03em}
+.live{display:flex;align-items:center;gap:5px;font-family:var(--mono);font-size:.64rem;color:var(--muted);padding:3px 9px;border:1px solid var(--border);border-radius:20px}
+.dot{width:5px;height:5px;border-radius:50%;background:var(--green);animation:p 2s infinite}
+@keyframes p{0%,100%{opacity:1}50%{opacity:.3}}
+.tabs{display:flex;overflow-x:auto;gap:0}
+.tab{font-family:var(--font);font-size:.78rem;font-weight:600;color:var(--muted);padding:9px 16px;cursor:pointer;border-bottom:2px solid transparent;white-space:nowrap;background:none;border-top:none;border-left:none;border-right:none;transition:all .2s}
 .tab:hover{color:var(--text)}.tab.active{color:var(--green);border-bottom-color:var(--green)}
-
-/* PANELS */
-.panel{display:none;padding:24px 0 60px}.panel.active{display:block}
-
-/* NUMBER INPUT SPINBOX */
-.spinbox{display:flex;flex-direction:column;gap:3px}
-.spinbox label{font-size:.62rem;font-family:var(--mono);color:var(--muted);text-transform:uppercase;letter-spacing:.09em}
-.spin-wrap{display:flex;align-items:center;background:var(--bg4);border:1px solid var(--border);border-radius:8px;overflow:hidden;transition:border-color .2s}
-.spin-wrap:focus-within{border-color:var(--green)}
-.spin-wrap input[type=number]{flex:1;background:transparent;border:none;color:var(--text);font-family:var(--mono);font-size:.85rem;font-weight:500;padding:7px 10px;outline:none;-moz-appearance:textfield;min-width:0}
-.spin-wrap input[type=number]::-webkit-outer-spin-button,.spin-wrap input[type=number]::-webkit-inner-spin-button{-webkit-appearance:none}
-.spin-btn{width:28px;height:34px;background:var(--bg3);border:none;color:var(--muted);cursor:pointer;font-size:1rem;display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:all .15s;user-select:none}
-.spin-btn:hover{background:var(--bg4);color:var(--green)}
-.spin-btn:first-child{border-right:1px solid var(--border)}
-.spin-btn:last-child{border-left:1px solid var(--border)}
-.spin-unit{font-size:.7rem;color:var(--muted);padding:0 8px 0 4px;white-space:nowrap;font-family:var(--mono)}
-
-/* GRID LAYOUTS */
-.g2{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:16px}
-.g3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px;margin-bottom:16px}
-.g4{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:16px}
-.g5{display:grid;grid-template-columns:repeat(5,1fr);gap:12px;margin-bottom:16px}
-.g6{display:grid;grid-template-columns:repeat(6,1fr);gap:10px;margin-bottom:14px}
-
-/* CARDS */
-.card{background:var(--bg3);border:1px solid var(--border);border-radius:14px;padding:18px 20px}
-.card-title{font-size:.78rem;font-weight:700;color:var(--text);margin-bottom:14px;letter-spacing:.02em}
-.card-sm{background:var(--bg3);border:1px solid var(--border);border-radius:10px;padding:14px 16px}
-
-/* KPI CARDS */
-.kpi{background:var(--bg3);border:1px solid var(--border);border-radius:12px;padding:16px 18px}
-.kpi-val{font-size:1.5rem;font-weight:800;font-family:var(--mono);line-height:1;margin-bottom:3px}
-.kpi-lbl{font-size:.65rem;color:var(--muted);text-transform:uppercase;letter-spacing:.08em}
-.kpi-sub{font-size:.65rem;color:var(--dim);margin-top:3px;font-family:var(--mono)}
-
-/* SECTION LABEL */
-.sec{font-size:.62rem;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);margin-bottom:12px;font-family:var(--mono)}
-
-/* TABLE */
-.tbl{width:100%;border-collapse:collapse;font-size:.78rem}
-.tbl th{font-family:var(--mono);font-size:.62rem;color:var(--muted);text-transform:uppercase;letter-spacing:.09em;padding:8px 10px;text-align:left;border-bottom:1px solid var(--border);white-space:nowrap}
-.tbl td{padding:9px 10px;border-bottom:1px solid rgba(30,45,64,.5)}
-.tbl tr:last-child td{border-bottom:none}
-.tbl tr:hover td{background:rgba(255,255,255,.02)}
-.tbl-highlight td{background:rgba(0,212,170,.06)!important}
-
-/* BADGES */
-.badge{display:inline-block;font-size:.62rem;font-weight:700;padding:2px 7px;border-radius:20px;font-family:var(--mono);letter-spacing:.04em;white-space:nowrap}
-.b-g{background:rgba(0,212,170,.1);color:var(--green);border:1px solid rgba(0,212,170,.2)}
-.b-r{background:rgba(255,87,87,.1);color:var(--red);border:1px solid rgba(255,87,87,.2)}
-.b-a{background:rgba(245,166,35,.1);color:var(--amber);border:1px solid rgba(245,166,35,.2)}
-.b-b{background:rgba(59,142,234,.1);color:var(--blue);border:1px solid rgba(59,142,234,.2)}
-.b-p{background:rgba(155,127,232,.1);color:var(--purple);border:1px solid rgba(155,127,232,.2)}
-
-/* BUTTONS */
-.btn{padding:8px 16px;border-radius:8px;border:none;cursor:pointer;font-family:var(--font);font-size:.78rem;font-weight:600;transition:all .15s;letter-spacing:.03em}
-.btn-p{background:var(--green);color:var(--bg)}.btn-p:hover{background:var(--green2);transform:translateY(-1px)}
-.btn-d{background:rgba(255,87,87,.12);color:var(--red);border:1px solid rgba(255,87,87,.25)}.btn-d:hover{background:rgba(255,87,87,.22)}
+.panel{display:none;padding:22px 0 60px}.panel.active{display:block}
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:14px}
+.g3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;margin-bottom:14px}
+.g4{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:14px}
+.g7{display:grid;grid-template-columns:repeat(7,1fr);gap:8px;margin-bottom:12px}
+.card{background:var(--bg3);border:1px solid var(--border);border-radius:14px;padding:16px 18px}
+.ct{font-size:.8rem;font-weight:700;margin-bottom:12px}
+.sec{font-size:.62rem;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);margin:18px 0 10px;font-family:var(--mono)}
+.kpi{background:var(--bg3);border:1px solid var(--border);border-radius:12px;padding:14px 16px}
+.kv{font-size:1.5rem;font-weight:800;font-family:var(--mono);line-height:1;margin-bottom:3px}
+.kl{font-size:.65rem;color:var(--muted);text-transform:uppercase;letter-spacing:.07em}
+.ks{font-size:.65rem;color:var(--dim);margin-top:2px;font-family:var(--mono)}
+.tg{color:var(--green)}.tr{color:var(--red)}.ta{color:var(--amber)}.tb{color:var(--blue)}.tp{color:var(--purple)}
+.fw7{font-weight:700}.mono{font-family:var(--mono)}
+.note{font-size:.72rem;color:var(--muted);line-height:1.5}
+hr.dv{border:none;border-top:1px solid var(--border);margin:10px 0}
+.badge{display:inline-block;font-size:.63rem;font-weight:700;padding:2px 7px;border-radius:20px;font-family:var(--mono)}
+.bg{background:rgba(0,212,170,.1);color:var(--green);border:1px solid rgba(0,212,170,.2)}
+.bb{background:rgba(59,142,234,.1);color:var(--blue);border:1px solid rgba(59,142,234,.2)}
+.ba{background:rgba(245,166,35,.1);color:var(--amber);border:1px solid rgba(245,166,35,.2)}
+.br{background:rgba(255,87,87,.1);color:var(--red);border:1px solid rgba(255,87,87,.2)}
+.bp{background:rgba(155,127,232,.1);color:var(--purple);border:1px solid rgba(155,127,232,.2)}
+.sb{display:flex;flex-direction:column;gap:3px}
+.sb label{font-size:.62rem;font-family:var(--mono);color:var(--muted);text-transform:uppercase;letter-spacing:.08em}
+.sb-w{display:flex;align-items:center;background:var(--bg4);border:1px solid var(--border);border-radius:8px;overflow:hidden;transition:border-color .2s}
+.sb-w:focus-within{border-color:var(--green)}
+.sb-w input{flex:1;background:transparent;border:none;color:var(--text);font-family:var(--mono);font-size:.85rem;padding:7px 8px;outline:none;-moz-appearance:textfield;min-width:0;text-align:center}
+.sb-w input::-webkit-outer-spin-button,.sb-w input::-webkit-inner-spin-button{-webkit-appearance:none}
+.sb-b{width:28px;height:34px;background:var(--bg3);border:none;color:var(--muted);cursor:pointer;font-size:1rem;display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:all .15s;user-select:none}
+.sb-b:hover{color:var(--green)}.sb-b:first-child{border-right:1px solid var(--border)}.sb-b:last-child{border-left:1px solid var(--border)}
+.sb-u{font-size:.7rem;color:var(--muted);padding:0 6px 0 3px;font-family:var(--mono)}
+.tbl{width:100%;border-collapse:collapse;font-size:.79rem}
+.tbl th{font-family:var(--mono);font-size:.62rem;color:var(--muted);text-transform:uppercase;letter-spacing:.08em;padding:7px 10px;text-align:left;border-bottom:1px solid var(--border)}
+.tbl td{padding:8px 10px;border-bottom:1px solid rgba(30,45,64,.4)}
+.tbl tr:last-child td{border-bottom:none}.tbl tr:hover td{background:rgba(255,255,255,.02)}
+.tbl-hi td{background:rgba(0,212,170,.06)!important}
+.frow{display:grid;grid-template-columns:1fr 1fr 1fr 1fr auto;gap:10px;align-items:end}
+select,input[type=date]{background:var(--bg4);border:1px solid var(--border);color:var(--text);padding:7px 10px;border-radius:8px;font-family:var(--mono);font-size:.82rem;outline:none;width:100%}
+select:focus,input[type=date]:focus{border-color:var(--green)}
+.btn{padding:7px 14px;border-radius:8px;border:none;cursor:pointer;font-family:var(--font);font-size:.77rem;font-weight:600;transition:all .15s}
+.btn-p{background:var(--green);color:var(--bg)}.btn-p:hover{background:var(--green2)}
+.btn-d{background:rgba(255,87,87,.12);color:var(--red);border:1px solid rgba(255,87,87,.25)}
 .btn-sm{padding:4px 9px;font-size:.68rem}
-
-/* FORM ROW */
-.frow{display:grid;grid-template-columns:1fr 1fr 1fr 1fr auto;gap:10px;align-items:end;margin-bottom:12px}
-
-/* CHART */
-.chart-box{position:relative}.chart-box canvas{max-height:300px}
-
-/* ACTION LIST */
-.act{display:flex;gap:12px;padding:12px 0;border-bottom:1px solid rgba(30,45,64,.5);align-items:flex-start}
-.act:last-child{border-bottom:none}
-.act-num{width:26px;height:26px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:.7rem;font-weight:700;flex-shrink:0;font-family:var(--mono)}
-.urgent .act-num{background:rgba(255,87,87,.15);color:var(--red)}
-.soon .act-num{background:rgba(245,166,35,.15);color:var(--amber)}
-.later .act-num{background:rgba(59,142,234,.15);color:var(--blue)}
-.future .act-num{background:rgba(0,212,170,.15);color:var(--green)}
-.act-title{font-size:.85rem;font-weight:700;margin-bottom:3px}
-.act-detail{font-size:.77rem;color:var(--muted);line-height:1.5}
-.act-cta{font-size:.7rem;color:var(--blue);margin-top:4px;font-family:var(--mono)}
-
-/* RULE */
-.rule{border-left:3px solid;padding:12px 14px;background:var(--bg3);border-radius:0 10px 10px 0;margin-bottom:10px}
-.rule-title{font-size:.87rem;font-weight:700;margin-bottom:3px}
-.rule-text{font-size:.77rem;color:var(--muted);line-height:1.5}
-
-/* ETF COMPARE */
-.etfc{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:16px}
-.etfcard{border:1px solid var(--border);border-radius:12px;padding:18px;background:var(--bg3);position:relative;overflow:hidden}
-.etfcard.rec{border-color:rgba(0,212,170,.4)}
-.etfcard.rec::after{content:'RECOMMANDÉ';position:absolute;top:10px;right:-20px;background:var(--green);color:var(--bg);font-size:.58rem;font-weight:700;padding:3px 28px;transform:rotate(30deg);font-family:var(--mono)}
-.etf-row{display:flex;justify-content:space-between;padding:5px 0;border-bottom:1px solid rgba(30,45,64,.4);font-size:.77rem}
-.etf-row:last-child{border-bottom:none}
-
-/* SALARY PHASE */
-.sal-phase{border:1px solid var(--border);border-radius:12px;padding:16px 18px;background:var(--bg3)}
-.sal-phase-title{font-size:.82rem;font-weight:700;margin-bottom:10px;display:flex;align-items:center;gap:8px}
-
-/* LIBERTY BLOC */
-.lib-bloc{background:linear-gradient(135deg,rgba(0,212,170,.07),rgba(59,142,234,.05));border:1px solid rgba(0,212,170,.2);border-radius:14px;padding:20px 24px;margin-bottom:18px;display:grid;grid-template-columns:1fr 2fr 1fr;gap:16px;align-items:center}
-.lib-center{text-align:center;border-left:1px solid var(--border);border-right:1px solid var(--border);padding:0 20px}
-.lib-big{font-size:2.4rem;font-weight:800;color:var(--green);font-family:var(--mono);line-height:1}
-.lib-side{text-align:center}
-.lib-side-val{font-size:1.3rem;font-weight:700;font-family:var(--mono)}
-
-/* SPINNER */
-.spin{display:inline-block;width:11px;height:11px;border:2px solid var(--border);border-top-color:var(--green);border-radius:50%;animation:sp .7s linear infinite}
+.ch canvas{max-height:280px}
+.spin{display:inline-block;width:10px;height:10px;border:2px solid var(--border);border-top-color:var(--green);border-radius:50%;animation:sp .7s linear infinite}
 @keyframes sp{to{transform:rotate(360deg)}}
-
-/* TOAST */
-#toast{position:fixed;bottom:20px;right:20px;z-index:9999;background:var(--bg4);border:1px solid var(--border);border-radius:10px;padding:11px 16px;font-size:.8rem;transform:translateY(60px);transition:transform .3s;pointer-events:none}
+#toast{position:fixed;bottom:18px;right:18px;z-index:9999;background:var(--bg4);border:1px solid var(--border);border-radius:10px;padding:10px 14px;font-size:.8rem;transform:translateY(60px);transition:transform .3s;pointer-events:none}
 #toast.show{transform:translateY(0)}
-
-/* PRICE ROW */
-.prow{display:flex;align-items:baseline;gap:7px;margin:3px 0}
-.pval{font-family:var(--mono);font-size:1.05rem;font-weight:500}
-.pch{font-family:var(--mono);font-size:.7rem}
-
-/* PROGRESS */
-.prog-track{height:5px;background:var(--bg4);border-radius:3px;overflow:hidden;margin-top:5px}
-.prog-fill{height:100%;border-radius:3px;transition:width .8s ease}
-
-/* COUNTRY BAR */
-.cbar{height:7px;border-radius:3px;background:var(--bg4);overflow:hidden;margin-top:3px}
-.cbar-fill{height:100%;border-radius:3px}
-
-/* UTILS */
-.tg{color:var(--green)}.tr{color:var(--red)}.ta{color:var(--amber)}.tb{color:var(--blue)}.tp{color:var(--purple)}.tm{color:var(--muted)}
-.fw7{font-weight:700}.fw8{font-weight:800}.mono{font-family:var(--mono)}
-.mt8{margin-top:8px}.mt12{margin-top:12px}.mt16{margin-top:16px}.mt20{margin-top:20px}
-.mb8{margin-bottom:8px}.mb12{margin-bottom:12px}.mb16{margin-bottom:16px}
-hr.div{border:none;border-top:1px solid var(--border);margin:14px 0}
-.note{font-size:.7rem;color:var(--muted);font-family:var(--mono);margin-top:6px}
-@media(max-width:768px){.g4,.g5,.g6{grid-template-columns:1fr 1fr}.g3{grid-template-columns:1fr 1fr}.g2{grid-template-columns:1fr}.frow{grid-template-columns:1fr 1fr}.etfc{grid-template-columns:1fr}.lib-bloc{grid-template-columns:1fr}}
+@media(max-width:768px){.g4,.g7{grid-template-columns:1fr 1fr}.g3{grid-template-columns:1fr 1fr}.g2{grid-template-columns:1fr}.frow{grid-template-columns:1fr 1fr}}
 </style>
 </head>
 <body>
-
-<header>
-<div class="wrap">
+<header><div class="w">
   <div class="hdr">
-    <div>
-      <div class="logo">LIBERTÉ FINANCIÈRE</div>
-      <div class="logo-sub">Actuaire · Belgique · International · <span id="live-date"></span></div>
-    </div>
-    <div class="live"><span class="pulse"></span><span id="last-update">Chargement cours...</span></div>
+    <div><div class="logo">ACTU-BASICS FINANCE STRATEGY</div><div class="logo-sub">Actuaire · Belgique · <span id="live-date"></span></div></div>
+    <div class="live"><span class="dot"></span><span id="last-update">Chargement...</span></div>
   </div>
   <div class="tabs">
-    <button class="tab active" onclick="go('dashboard')">📊 Dashboard</button>
-    <button class="tab" onclick="go('salary')">💼 Projection salariale</button>
-    <button class="tab" onclick="go('portfolio')">📂 Portefeuille</button>
-    <button class="tab" onclick="go('projections')">📈 Projections</button>
-    <button class="tab" onclick="go('etfs')">⚖️ ETFs</button>
-    <button class="tab" onclick="go('countries')">🌍 Pays</button>
-    <button class="tab" onclick="go('plan')">📋 Plan d'action</button>
-    <button class="tab" onclick="go('rules')">📏 Règles d'or</button>
-    <button class="tab" onclick="go('residence')">🌍 Résidence & Carrière</button>
+    <button class="tab active" onclick="go('dash')">📊 Dashboard</button>
+    <button class="tab" onclick="go('portfolio')">💼 Portefeuille</button>
+    <button class="tab" onclick="go('proj')">📈 Projections</button>
+    <button class="tab" onclick="go('strategie')">🎯 Stratégie ETF</button>
+    <button class="tab" onclick="go('ibkr')">⚙️ Automatisation IBKR</button>
+    <button class="tab" onclick="go('vie')">🌍 Plan de vie</button>
   </div>
-</div>
-</header>
+</div></header>
 
-<div class="wrap">
+<div class="w">
 
-<!-- ══════════════════════════════════════════════
-     DASHBOARD
-══════════════════════════════════════════════ -->
-<div id="panel-dashboard" class="panel active">
-  <div class="sec mt20 mb8">Mes paramètres mensuels</div>
-  <div class="g6" id="dash-params"></div>
-
-  <div class="g4 mt8" id="dash-kpis"></div>
-
+<!-- ═══ DASHBOARD ═══ -->
+<div id="panel-dash" class="panel active">
+  <div class="sec">Mes paramètres</div>
+  <div class="g4" id="dash-params"></div>
+  <div class="g4" id="dash-kpis"></div>
   <div class="g2">
-    <div class="card"><div class="card-title">Budget mensuel</div><div class="chart-box"><canvas id="c-budget"></canvas></div></div>
-    <div class="card"><div class="card-title">Allocation des 10 000 €</div><div class="chart-box"><canvas id="c-repartition"></canvas></div></div>
-  </div>
-
-  <div class="card mt16">
-    <div class="card-title">Stratégie finale validée — Mai 2026</div>
-    <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:14px">
-      <div style="background:var(--bg4);border-radius:10px;padding:14px">
-        <div style="font-size:.65rem;font-family:var(--mono);color:var(--green);text-transform:uppercase;letter-spacing:.08em;margin-bottom:8px">Position initiale — 22 mai 2026</div>
-        <div style="font-size:1.1rem;font-weight:800;color:var(--green);font-family:var(--mono)">500 parts SPYI = 5 750 €</div>
-        <div style="font-size:.72rem;color:var(--muted);margin-top:4px">IE00B3YLTY66 · XETRA · TER 0.17%</div>
-        <div style="font-size:.72rem;color:var(--muted)">9 000 titres · développés + EM + small caps · ACC</div>
-        <div style="margin-top:10px;padding:8px;background:rgba(245,166,35,.08);border-radius:6px;font-size:.72rem;color:var(--amber)">Cash restant IBKR : ~270 € — accumule pour prochain achat</div>
+    <div class="card"><div class="ct">Budget mensuel</div><div class="ch"><canvas id="c-budget"></canvas></div></div>
+    <div class="card">
+      <div class="ct">Portefeuille · Stratégie définitive</div>
+      <div style="background:rgba(83,74,183,.12);border:1px solid rgba(83,74,183,.3);border-radius:8px;padding:10px 12px;margin-bottom:8px">
+        <div style="display:flex;justify-content:space-between;align-items:center">
+          <div><div class="mono fw7" style="color:#534AB7;font-size:.9rem">SPYI — Position héritage</div>
+          <div class="note">500 parts · 11.50€ · 5 750€ · NE JAMAIS VENDRE</div></div>
+          <div style="font-size:.68rem;font-family:var(--mono);background:rgba(83,74,183,.2);color:#534AB7;padding:2px 8px;border-radius:10px">Intouché ✓</div>
+        </div>
       </div>
-      <div style="background:var(--bg4);border-radius:10px;padding:14px">
-        <div style="font-size:.65rem;font-family:var(--mono);color:var(--blue);text-transform:uppercase;letter-spacing:.08em;margin-bottom:10px">Versements mensuels — 800 €/mois · 7 lignes</div>
-        <div style="display:flex;align-items:center;gap:6px;margin:3px 0"><div style="width:60px;height:5px;border-radius:3px;background:#534AB7"></div><span style="font-family:var(--mono);font-size:.75rem;color:var(--text)">SPYI</span><span style="font-size:.7rem;color:var(--muted)">50% · 400€ · base mondiale</span></div>
-        <div style="display:flex;align-items:center;gap:6px;margin:3px 0"><div style="width:12px;height:5px;border-radius:3px;background:#1D9E75"></div><span style="font-family:var(--mono);font-size:.75rem;color:var(--text)">EMIM</span><span style="font-size:.7rem;color:var(--muted)">10% · 80€ · Asie/Inde/Chine</span></div>
-        <div style="display:flex;align-items:center;gap:6px;margin:3px 0"><div style="width:12px;height:5px;border-radius:3px;background:#EF9F27"></div><span style="font-family:var(--mono);font-size:.75rem;color:var(--text)">SPYL</span><span style="font-size:.7rem;color:var(--muted)">10% · 80€ · S&P500 low cost</span></div>
-        <div style="display:flex;align-items:center;gap:6px;margin:3px 0"><div style="width:12px;height:5px;border-radius:3px;background:#e91e8c"></div><span style="font-family:var(--mono);font-size:.75rem;color:var(--text)">QUS5</span><span style="font-size:.7rem;color:var(--muted)">10% · 80€ · Apple/Google/Coca/PG</span></div>
-        <div style="display:flex;align-items:center;gap:6px;margin:3px 0"><div style="width:12px;height:5px;border-radius:3px;background:#3b8eea"></div><span style="font-family:var(--mono);font-size:.75rem;color:var(--text)">C50</span><span style="font-size:.7rem;color:var(--muted)">10% · 80€ · ASML/LVMH/SAP/Nestlé</span></div>
-        <div style="display:flex;align-items:center;gap:6px;margin:3px 0"><div style="width:6px;height:5px;border-radius:3px;background:#9b7fe8"></div><span style="font-family:var(--mono);font-size:.75rem;color:var(--text)">XAIX</span><span style="font-size:.7rem;color:var(--muted)">5% · 40€ · satellite IA</span></div>
-        <div style="display:flex;align-items:center;gap:6px;margin:3px 0"><div style="width:6px;height:5px;border-radius:3px;background:#f59f00"></div><span style="font-family:var(--mono);font-size:.75rem;color:var(--text)">IUSN</span><span style="font-size:.7rem;color:var(--muted)">5% · 40€ · small cap premium</span></div>
-        <div style="margin-top:8px;font-size:.7rem;color:var(--muted)">TER moyen ~0.20% · 7 × 1.25€ = 8.75€/mois</div>
-      </div>
-    </div>
-    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:10px">
-      <div style="background:rgba(233,30,140,.06);border:1px solid rgba(233,30,140,.2);border-radius:8px;padding:10px 12px;font-size:.72rem;color:var(--muted)">
-        <strong style="color:var(--text)">QUS5 — Quality USA :</strong> SPDR S&P 500 Quality Aristocrats UCITS ETF ACC · ISIN IE000FJJZA01 · TER 0.27% · Apple, Google, Microsoft, Coca-Cola, P&G · cherche QUS5 sur IBIS (XETRA) sur IBKR
-      </div>
-      <div style="background:rgba(59,142,234,.06);border:1px solid rgba(59,142,234,.2);border-radius:8px;padding:10px 12px;font-size:.72rem;color:var(--muted)">
-        <strong style="color:var(--text)">C50 — Géants Europe :</strong> iShares Core Euro Stoxx 50 UCITS ETF ACC · ISIN IE00B53L3W79 · TER 0.10% · ASML, LVMH, SAP, Novo Nordisk, Nestlé · cherche C50 ou CEUA sur IBIS (XETRA)
-      </div>
-    </div>
-    <div style="background:rgba(0,212,170,.05);border:1px solid rgba(0,212,170,.15);border-radius:8px;padding:10px 14px;font-size:.75rem;color:var(--muted)">
-      <strong style="color:var(--text)">Note IUSN :</strong> cherche <strong style="color:var(--text)">IUSN sur IBIS (XETRA)</strong> — c'est WSML en EUR, même ISIN IE00BF4RFH31, TER 0.35%. Achats trimestriels recommandés pour les petites lignes (XAIX, IUSN) afin de limiter les commissions.
+      <div class="ct" style="margin-bottom:6px">Nouveaux versements — 550€/mois</div>
+      <div id="dash-monthly"></div>
+      <div class="note" style="margin-top:6px">TER moyen nouveaux versements : <strong style="color:var(--text)">~0.21%/an</strong> · Commissions : <strong style="color:var(--text)">5€/mois</strong> (4 × 1.25€ = <strong style="color:var(--green)">0.63% du versement</strong>)</div>
     </div>
   </div>
-
-</div>
-<!-- ══════════════════════════════════════════════
-     PROJECTION SALARIALE
-══════════════════════════════════════════════ -->
-<div id="panel-salary" class="panel">
-  <div class="sec mt20">Paramètres de carrière</div>
-  <div class="g4 mb16" id="sal-params"></div>
-
-  <!-- Phases salariales -->
-  <div class="card mb16">
-    <div class="card-title">Phases salariales — court / moyen / long terme</div>
-    <div class="g3" id="sal-phases"></div>
-  </div>
-
-  <!-- KPIs salaire -->
-  <div class="g4 mb16" id="sal-kpis"></div>
-
-  <!-- Graphique évolution salaire + investissement -->
-  <div class="card mb16">
-    <div class="card-title">Évolution salaire net vs capacité d'investissement</div>
-    <div class="chart-box" style="height:280px"><canvas id="c-salary"></canvas></div>
-  </div>
-
-  <!-- Graphique capital avec salaire croissant -->
-  <div class="card mb16">
-    <div class="card-title">Capital projeté avec versements croissants (salaire réel)</div>
-    <div class="chart-box" style="height:280px"><canvas id="c-salary-capital"></canvas></div>
-  </div>
-
-  <!-- Tableau des phases -->
   <div class="card">
-    <div class="card-title">Détail annuel — salaire, versement IBKR, capital cumulé</div>
-    <div style="overflow-x:auto"><table class="tbl" id="sal-table"><thead><tr>
-      <th>Année</th><th>Phase</th><th>Salaire net/mois</th><th>Dépenses fixes/mois</th>
-      <th>Versement IBKR/mois</th><th>Versé sur l'année</th><th>Capital cumulé</th><th>Revenu passif/mois (4%)</th>
-    </tr></thead><tbody id="sal-tbody"></tbody></table></div>
+    <div class="ct">Allocation cible — 7 ETFs complémentaires</div>
+    <div class="g7" id="dash-alloc"></div>
   </div>
 </div>
 
-<!-- ══════════════════════════════════════════════
-     PORTEFEUILLE
-══════════════════════════════════════════════ -->
+<!-- ═══ PORTEFEUILLE ═══ -->
 <div id="panel-portfolio" class="panel">
-  <div class="sec mt20">Cours en temps réel — EUR (XETRA / Euronext Amsterdam)</div>
-  <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:16px">
-    <div class="kpi" id="pk-SPYI"><div class="mono" style="font-size:.62rem;color:var(--muted)">SPYI · XETRA</div><div class="prow"><span class="pval tg" id="pv-SPYI">—</span><span class="pch" id="pc-SPYI"><span class="spin"></span></span></div><div class="kpi-lbl">SPDR MSCI ACWI IMI</div><div class="kpi-sub">50% · 400€/mois · base</div></div>
-    <div class="kpi" id="pk-EMIM"><div class="mono" style="font-size:.62rem;color:var(--muted)">EMIM · AEB</div><div class="prow"><span class="pval tg" id="pv-EMIM">—</span><span class="pch" id="pc-EMIM"><span class="spin"></span></span></div><div class="kpi-lbl">iShares MSCI EM IMI</div><div class="kpi-sub">10% · 80€/mois</div></div>
-    <div class="kpi" id="pk-SPYL"><div class="mono" style="font-size:.62rem;color:var(--muted)">SPYL · XETRA</div><div class="prow"><span class="pval tg" id="pv-SPYL">—</span><span class="pch" id="pc-SPYL"><span class="spin"></span></span></div><div class="kpi-lbl">SPDR S&P 500</div><div class="kpi-sub">10% · 80€/mois</div></div>
-    <div class="kpi" id="pk-QUS5"><div class="mono" style="font-size:.62rem;color:var(--muted)">QUS5 · XETRA</div><div class="prow"><span class="pval" style="color:#e91e8c" id="pv-QUS5">—</span><span class="pch" id="pc-QUS5"><span class="spin"></span></span></div><div class="kpi-lbl">Quality USA · Apple/Coca/PG</div><div class="kpi-sub">10% · 80€/mois</div></div>
-    <div class="kpi" id="pk-C50"><div class="mono" style="font-size:.62rem;color:var(--muted)">C50 · XETRA</div><div class="prow"><span class="pval tb" id="pv-C50">—</span><span class="pch" id="pc-C50"><span class="spin"></span></span></div><div class="kpi-lbl">Euro Stoxx 50 · ASML/LVMH</div><div class="kpi-sub">10% · 80€/mois</div></div>
-    <div class="kpi" id="pk-XAIX"><div class="mono" style="font-size:.62rem;color:var(--muted)">XAIX · XETRA</div><div class="prow"><span class="pval tp" id="pv-XAIX">—</span><span class="pch" id="pc-XAIX"><span class="spin"></span></span></div><div class="kpi-lbl">AI & Big Data</div><div class="kpi-sub">5% · 40€/mois</div></div>
-    <div class="kpi" id="pk-IUSN"><div class="mono" style="font-size:.62rem;color:var(--muted)">IUSN · XETRA</div><div class="prow"><span class="pval ta" id="pv-IUSN">—</span><span class="pch" id="pc-IUSN"><span class="spin"></span></span></div><div class="kpi-lbl">World Small Cap</div><div class="kpi-sub">5% · 40€/mois</div></div>
-    <div class="kpi" id="pk-CEBZ" style="opacity:.5"><div class="mono" style="font-size:.62rem;color:var(--muted)">CEBZ · XETRA</div><div class="prow"><span class="pval" id="pv-CEBZ">—</span><span class="pch" id="pc-CEBZ"></span></div><div class="kpi-lbl">MSCI Europe (ancien)</div><div class="kpi-sub">Remplacé par C50</div></div>
-  </div>
-
-  <div class="sec">Ajouter un investissement</div>
-  <div class="card mb16">
+  <div class="sec">Cours en temps réel</div>
+  <div id="price-grid" style="display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:16px"></div>
+  <div class="sec">Ajouter un achat</div>
+  <div class="card" style="margin-bottom:14px">
     <div class="frow">
-      <div class="spinbox"><label>Date</label><input type="date" id="t-date" style="background:var(--bg4);border:1px solid var(--border);color:var(--text);padding:7px 10px;border-radius:8px;font-family:var(--mono);font-size:.82rem;outline:none"></div>
-      <div class="spinbox"><label>ETF</label><select id="t-etf" style="background:var(--bg4);border:1px solid var(--border);color:var(--text);padding:7px 10px;border-radius:8px;font-family:var(--mono);font-size:.82rem;outline:none">
-<option value="SPYI">SPYI — Base mondiale 9000 titres</option>
-<option value="EMIM">EMIM — Émergents Asie/Inde/Chine</option>
-<option value="SPYL">SPYL — S&P 500 low cost</option>
-<option value="QUS5">QUS5 — Quality USA (Apple/Google/Coca/PG)</option>
-<option value="C50">C50 — Géants Europe (ASML/LVMH/SAP/Nestlé)</option>
-<option value="XAIX">XAIX — Satellite IA</option>
-<option value="IUSN">IUSN — Small Cap monde</option>
-<option value="CEBZ">CEBZ — MSCI Europe large</option>
-<option value="VWCE">VWCE — Vanguard All-World</option>
-<option value="IWDA">IWDA — iShares MSCI World</option>
-</select></div>
-      <div class="spinbox"><label>Nombre de parts</label><div class="spin-wrap"><button class="spin-btn" onclick="spinField('t-parts',-0.001)">−</button><input type="number" id="t-parts" step="0.001" min="0" placeholder="2.500"><button class="spin-btn" onclick="spinField('t-parts',0.001)">+</button></div></div>
-      <div class="spinbox"><label>Prix achat (€/part)</label><div class="spin-wrap"><button class="spin-btn" onclick="spinField('t-price',-0.01)">−</button><input type="number" id="t-price" step="0.01" min="0" placeholder="112.34"><button class="spin-btn" onclick="spinField('t-price',0.01)">+</button></div></div>
-      <button class="btn btn-p" onclick="addTrade()" style="align-self:flex-end">+ Ajouter</button>
+      <div class="sb"><label>Date</label><input type="date" id="t-date"></div>
+      <div class="sb"><label>ETF</label><select id="t-etf"></select></div>
+      <div class="sb"><label>Nombre de parts</label><div class="sb-w"><button class="sb-b" onclick="sp('t-parts',-0.001)">−</button><input type="number" id="t-parts" step="0.001" min="0" placeholder="0.000"><button class="sb-b" onclick="sp('t-parts',0.001)">+</button></div></div>
+      <div class="sb"><label>Prix achat (€)</label><div class="sb-w"><button class="sb-b" onclick="sp('t-price',-0.01)">−</button><input type="number" id="t-price" step="0.01" min="0" placeholder="0.00"><button class="sb-b" onclick="sp('t-price',0.01)">+</button></div></div>
+      <button class="btn btn-p" onclick="addT()" style="align-self:flex-end">+ Ajouter</button>
     </div>
   </div>
-
-  <div class="g4 mb16" id="ptf-kpis"></div>
-
-  <div class="g2 mb16">
-    <div class="card"><div class="card-title">Allocation actuelle</div><div class="chart-box"><canvas id="c-alloc"></canvas></div></div>
-    <div class="card"><div class="card-title">Évolution P&L cumulé</div><div class="chart-box"><canvas id="c-pnl"></canvas></div></div>
+  <div class="g4" id="ptf-kpis"></div>
+  <div class="g2">
+    <div class="card"><div class="ct">Allocation actuelle</div><div class="ch"><canvas id="c-alloc"></canvas></div></div>
+    <div class="card"><div class="ct">Gains/Pertes cumulés</div><div class="ch"><canvas id="c-pnl"></canvas></div></div>
   </div>
-
   <div class="card">
-    <div class="card-title">Historique des investissements</div>
+    <div class="ct">Historique des achats</div>
     <div style="overflow-x:auto"><table class="tbl"><thead><tr>
-      <th>Date</th><th>ETF</th><th>Parts</th><th>Prix achat €</th><th>Investi €</th><th>Prix actuel €</th><th>Valeur €</th><th>P&L €</th><th>P&L %</th><th></th>
-    </tr></thead><tbody id="trades-body"><tr><td colspan="10" style="text-align:center;color:var(--muted);padding:24px">Aucun investissement enregistré.</td></tr></tbody></table></div>
+      <th>Date</th><th>ETF</th><th>Parts</th><th>Prix achat</th><th>Investi</th><th>Prix actuel</th><th>Valeur</th><th>Gain/Perte €</th><th>%</th><th></th>
+    </tr></thead><tbody id="trades-body">
+      <tr><td colspan="10" style="text-align:center;color:var(--muted);padding:20px">Aucun achat enregistré.</td></tr>
+    </tbody></table></div>
   </div>
 </div>
 
-<!-- ══════════════════════════════════════════════
-     PROJECTIONS
-══════════════════════════════════════════════ -->
-<div id="panel-projections" class="panel">
-  <div class="sec mt20">Paramètres de simulation</div>
-  <div class="g6 mb8" id="proj-params"></div>
-  <div class="g4 mb12" id="proj-params2"></div>
-
-  <!-- BLOC LIBERTÉ -->
-  <div id="proj-liberte" class="mb16"></div>
-
-  <div class="g4 mb16" id="proj-kpis"></div>
-
-  <div class="card mb16">
-    <div class="card-title">Évolution du capital — 3 scénarios avec projection jusqu'à l'objectif</div>
-    <div class="chart-box" style="height:320px"><canvas id="c-proj"></canvas></div>
+<!-- ═══ PROJECTIONS ═══ -->
+<div id="panel-proj" class="panel">
+  <div class="sec">Paramètres</div>
+  <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:10px" id="proj-p1"></div>
+  <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:16px" id="proj-p2"></div>
+  <div id="lib-bloc" style="margin-bottom:14px"></div>
+  <div class="g4" id="proj-kpis"></div>
+  <div class="card" style="margin-bottom:14px">
+    <div class="ct">Capital projeté — 3 scénarios</div>
+    <div class="ch" style="height:300px"><canvas id="c-proj"></canvas></div>
   </div>
-
   <div class="card">
-    <div class="card-title">Tableau des jalons — de aujourd'hui jusqu'à la date de liberté financière</div>
+    <div class="ct">Jalons jusqu'à la liberté financière</div>
     <div style="overflow-x:auto"><table class="tbl"><thead><tr>
-      <th>Horizon</th><th>Année calendaire</th><th>Versement/mois</th>
-      <th>Pessimiste</th><th>Réaliste</th><th>Optimiste</th>
-      <th>% objectif</th><th>Revenu passif/mois</th><th>Statut</th>
+      <th>Dans</th><th>Année</th><th>Versement/mois</th><th>Scénario bas</th><th>Réaliste</th><th>Scénario haut</th><th>% objectif</th><th>Revenu passif/mois</th>
     </tr></thead><tbody id="proj-tbody"></tbody></table></div>
   </div>
 </div>
 
-<!-- ══════════════════════════════════════════════
-     ETFs
-══════════════════════════════════════════════ -->
-<div id="panel-etfs" class="panel">
-  <div class="sec mt20">Comparatif ETFs — tout en EUR · Données mai 2026</div>
+<!-- ═══ STRATÉGIE ETF ═══ -->
+<div id="panel-strategie" class="panel">
+  <div class="sec">L'allocation finale validée</div>
+  <div style="overflow-x:auto;margin-bottom:16px"><table class="tbl" id="strat-table">
+    <thead><tr><th>ETF</th><th>ISIN</th><th>Bourse IBKR</th><th>TER</th><th>Encours</th><th>Allocation</th><th>550€/mois</th><th>Rôle</th><th>Logique</th></tr></thead>
+    <tbody id="strat-tbody"></tbody>
+  </table></div>
 
-  <!-- HYPOTHESE DISCIPLINE -->
-  <div style="background:linear-gradient(135deg,rgba(0,212,170,.08),rgba(155,127,232,.06));border:1px solid rgba(0,212,170,.3);border-radius:12px;padding:14px 18px;margin-bottom:14px;font-size:.82rem;line-height:1.7">
-    <span style="font-size:.65rem;font-family:var(--mono);color:var(--green);text-transform:uppercase;letter-spacing:.1em;display:block;margin-bottom:6px">Hypothèse : discipline totale confirmée</span>
-    Tu ne paniques pas en crise. Tu achètes quand le marché baisse. Tu ne regardes pas le portefeuille plus de 2 fois par an. Dans ce cas — et seulement dans ce cas — voici les allocations optimales maximisant le rendement ajusté au risque sur chaque horizon.
+  <div class="g2">
+    <div class="card">
+      <div class="ct">Répartition cible</div>
+      <div class="ch"><canvas id="c-strat-pie"></canvas></div>
+    </div>
+    <div class="card">
+      <div class="ct">Impact des frais sur 20 ans</div>
+      <div class="ch"><canvas id="c-fees"></canvas></div>
+      <div class="note" style="margin-top:6px">Base : 5 750€ + 550€/mois · 7%/an brut</div>
+    </div>
   </div>
 
-  <!-- ROADMAP 4 PHASES -->
-  <div class="card mb16">
-    <div class="card-title">🗺️ Feuille de route ETF ultime — profil offensif discipliné</div>
-
-    <!-- Phase 0 — Démarrage -->
-    <div style="border-left:3px solid var(--green);padding:14px 16px;margin-bottom:12px;background:rgba(0,212,170,.04);border-radius:0 10px 10px 0">
-      <div style="display:flex;align-items:center;gap:10px;margin-bottom:10px">
-        <div style="background:var(--green);color:var(--bg);border-radius:50%;width:26px;height:26px;display:flex;align-items:center;justify-content:center;font-size:.75rem;font-weight:700;flex-shrink:0">0</div>
-        <div style="flex:1">
-          <div style="font-weight:700;font-size:.9rem">Démarrage — maintenant (capital &lt; 20 000€ · versement &lt; 800€/mois)</div>
-          <div style="font-size:.72rem;color:var(--muted);font-family:var(--mono)">TER moyen : ~0.24% · 2 ETFs · Frais transaction optimaux</div>
+  <div class="card">
+    <div class="ct">Évolution de la stratégie dans le temps</div>
+    <div style="display:flex;flex-direction:column;gap:8px">
+        <div style="border-left:3px solid var(--green);padding:12px 14px;background:rgba(0,212,170,.04);border-radius:0 10px 10px 0">
+        <div class="fw7" style="font-size:.88rem;margin-bottom:6px">Phase actuelle — dès maintenant · XDWD 40% + EMIM 25% + IUSN 20% + ZPRV 15%</div>
+        <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:6px">
+          <div style="background:rgba(0,0,0,.2);border-radius:6px;padding:7px 9px;font-size:.72rem"><div style="color:var(--muted)">XDWD · 320€/mois</div><div class="mono" style="color:#1D9E75">Monde développé 0.12%</div></div>
+          <div style="background:rgba(0,0,0,.2);border-radius:6px;padding:7px 9px;font-size:.72rem"><div style="color:var(--muted)">EMIM · 200€/mois</div><div class="mono" style="color:#3b8eea">Émergents Asie/Inde</div></div>
+          <div style="background:rgba(0,0,0,.2);border-radius:6px;padding:7px 9px;font-size:.72rem"><div style="color:var(--muted)">IUSN · 160€/mois</div><div class="mono" style="color:#f59f00">Small cap premium</div></div>
+          <div style="background:rgba(0,0,0,.2);border-radius:6px;padding:7px 9px;font-size:.72rem"><div style="color:var(--muted)">ZPRV · 120€/mois</div><div class="mono" style="color:#e91e8c">Value + size premium</div></div>
         </div>
-        <div style="text-align:right;flex-shrink:0">
-          <div style="font-size:1rem;font-weight:800;color:var(--green);font-family:var(--mono)">VWCE 90% + XAIX 10%</div>
-          <div style="font-size:.65rem;color:var(--muted)">AEB · IE00B3RBWM25 + IBIS · IE00BGV5VN51</div>
-        </div>
-      </div>
-      <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:8px">
-        <div style="background:var(--bg4);border-radius:8px;padding:10px 12px">
-          <div style="font-size:.85rem;font-weight:800;color:var(--green);font-family:var(--mono)">VWCE 90%</div>
-          <div style="font-size:.7rem;color:var(--muted);margin-top:2px">4 500€ initial · 360€/mois · Diversification mondiale maximale · FTSE All-World 3 700 titres</div>
-        </div>
-        <div style="background:var(--bg4);border-radius:8px;padding:10px 12px">
-          <div style="font-size:.85rem;font-weight:800;color:var(--purple);font-family:var(--mono)">XAIX 10%</div>
-          <div style="font-size:.7rem;color:var(--muted);margin-top:2px">500€ initial · 40€/mois · Satellite IA · Nasdaq Global AI &amp; Big Data · 100 entreprises</div>
+        <div class="note">4 lignes · TER moyen ~0.21% · SPYI reste intouché et continue de croître seul. Ces 4 ETFs reçoivent tous les nouveaux versements.</div>
+        <div style="margin-top:6px;background:rgba(83,74,183,.08);border:1px solid rgba(83,74,183,.2);border-radius:6px;padding:7px 10px;font-size:.73rem;color:var(--muted)">
+          <strong style="color:#534AB7">SPYI héritage :</strong> 500 parts à 5 750€. Ne se vend jamais. Sa part relative diminue progressivement au fil des années — de ~50% du portefeuille total aujourd'hui vers ~20% dans 10 ans. C'est normal et voulu.
         </div>
       </div>
-      <div style="font-size:.75rem;color:var(--muted);line-height:1.5;margin-bottom:8px">Sur 400€/mois, répartir sur 6 ETFs donnerait 20€/mois sur XAIX et WSML — les frais IBKR (~1€/ordre) représenteraient 5% de chaque achat, annulant l'avantage des frais bas. <strong style="color:var(--text)">2 lignes maintenant, 6 lignes dès que le versement dépasse 800€/mois.</strong></div>
-      <div style="background:rgba(59,142,234,.06);border:1px solid rgba(59,142,234,.2);border-radius:8px;padding:9px 12px;font-size:.73rem;color:var(--muted)">
-        🔄 <strong style="color:var(--text)">Alternative phase 0 si tu veux les small caps inclus dès maintenant :</strong> remplace VWCE par <strong style="color:var(--blue)">SPYI (IE00B3YLTY66, TER 0.17%)</strong> — même logique "tout en un" que VWCE mais avec ~9 000 titres dont les small caps. Garde XAIX 10% en satellite. SPYI est sur IBIS (XETRA) sur IBKR.
-      </div>
-    </div>
-
-    <!-- Phase 1 — Court terme -->
-    <div style="border-left:3px solid var(--green);padding:14px 16px;margin-bottom:12px;background:rgba(0,212,170,.03);border-radius:0 10px 10px 0">
-      <div style="display:flex;align-items:center;gap:10px;margin-bottom:10px">
-        <div style="background:rgba(0,212,170,.2);color:var(--green);border-radius:50%;width:26px;height:26px;display:flex;align-items:center;justify-content:center;font-size:.75rem;font-weight:700;flex-shrink:0">1</div>
-        <div style="flex:1">
-          <div style="font-weight:700;font-size:.9rem">Court terme — An 1 à 3 (capital ~20 000€ · versement ~400–700€/mois)</div>
-          <div style="font-size:.72rem;color:var(--muted);font-family:var(--mono)">TER moyen : ~0.24% · Même allocation · Accumulation pure</div>
+      <div style="border-left:3px solid var(--blue);padding:12px 14px;background:rgba(59,142,234,.04);border-radius:0 10px 10px 0">
+        <div class="fw7" style="font-size:.88rem;margin-bottom:6px">Phase 2 · An 3–7 · Mêmes 4 ETFs · Versement monte à 800–1 200€/mois</div>
+        <div style="display:grid;grid-template-columns:repeat(5,1fr);gap:6px;margin-bottom:6px">
+          <div style="background:rgba(0,0,0,.2);border-radius:6px;padding:6px 8px;font-size:.68rem"><div style="color:var(--muted)">SPYI 35%</div><div class="mono" style="color:#534AB7">Héritage</div></div>
+          <div style="background:rgba(0,0,0,.2);border-radius:6px;padding:6px 8px;font-size:.68rem"><div style="color:var(--muted)">XDWD 25%</div><div class="mono" style="color:#1D9E75">0.12% — nouveaux</div></div>
+          <div style="background:rgba(0,0,0,.2);border-radius:6px;padding:6px 8px;font-size:.68rem"><div style="color:var(--muted)">EMIM 15%</div><div class="mono" style="color:#3b8eea">Émergents</div></div>
+          <div style="background:rgba(0,0,0,.2);border-radius:6px;padding:6px 8px;font-size:.68sm"><div style="color:var(--muted)">IUSN 15%</div><div class="mono" style="color:#f59f00">Small cap</div></div>
+          <div style="background:rgba(0,0,0,.2);border-radius:6px;padding:6px 8px;font-size:.68rem"><div style="color:var(--muted)">ZPRV 10%</div><div class="mono" style="color:#e91e8c">Value</div></div>
         </div>
-        <div style="text-align:right;flex-shrink:0">
-          <div style="font-size:1rem;font-weight:800;color:var(--green);font-family:var(--mono)">VWCE 90% + XAIX 10%</div>
-          <div style="font-size:.65rem;color:var(--muted)">Rien ne change — on accumule</div>
+        <div class="note">Tu ne vends pas SPYI — tu diriges les nouveaux versements vers XDWD + EMIM + IUSN + ZPRV. SPYI représente 35% au départ puis diminue naturellement. TER moyen ~0.17%.</div>
+        <div style="margin-top:6px;background:rgba(0,212,170,.06);border:1px solid rgba(0,212,170,.15);border-radius:6px;padding:7px 10px;font-size:.73rem;color:var(--muted)">
+          💡 <strong style="color:var(--text)">Pourquoi XDWD plutôt que SPPW ou SC0J ?</strong> XDWD a 18.8 Md€ d'encours — le plus solide des trois alternatives MSCI World à 0.12%. Tous trackent le même index, cherche sur IBKR par ISIN IE00BJ0KDQ92.
         </div>
       </div>
-      <div style="font-size:.75rem;color:var(--muted);line-height:1.5">
-        Discipline unique : <strong style="color:var(--text)">acheter chaque mois, surtout quand le marché baisse.</strong> Une correction −30% = parts VWCE à −30% que tu accumules. Le marché a récupéré 100% des corrections historiques sur 5–7 ans. La crise est ton meilleur ami si tu continues d'acheter.
-      </div>
-      <div style="margin-top:8px;background:var(--bg4);border-radius:6px;padding:8px 10px;font-size:.72rem;color:var(--muted)">
-        💡 <strong style="color:var(--text)">Note IWDA :</strong> si tu as déjà du IWDA, tu le gardes — même index MSCI World que WRDU, 0.08%/an de plus seulement. Pas de raison de vendre et de déclencher un événement fiscal inutile.
-      </div>
-    </div>
-
-    <!-- Phase 2 — Moyen terme -->
-    <div style="border-left:3px solid var(--blue);padding:14px 16px;margin-bottom:12px;background:rgba(59,142,234,.04);border-radius:0 10px 10px 0">
-      <div style="display:flex;align-items:center;gap:10px;margin-bottom:10px">
-        <div style="background:rgba(59,142,234,.2);color:var(--blue);border-radius:50%;width:26px;height:26px;display:flex;align-items:center;justify-content:center;font-size:.75rem;font-weight:700;flex-shrink:0">2</div>
-        <div style="flex:1">
-          <div style="font-weight:700;font-size:.9rem">Moyen terme — An 3 à 7 (capital ~25 000€ → ~90 000€ · versement ≥ 800€/mois)</div>
-          <div style="font-size:.72rem;color:var(--muted);font-family:var(--mono)">TER moyen : ~0.17% · 4 ETFs · Rééquilibrage 1×/an en janvier</div>
+      <div style="border-left:3px solid var(--purple);padding:12px 14px;background:rgba(155,127,232,.04);border-radius:0 10px 10px 0">
+        <div class="fw7" style="font-size:.88rem;margin-bottom:6px">Phase 3 · An 7+ · Capital > 100k€ · Portefeuille mature</div>
+        <div class="note" style="margin-bottom:6px">Arrêter d'acheter SPYI — concentrer tous les versements sur XDWD + EMIM + IUSN + ZPRV. Le SPYI existant reste intact, il continue de croître seul. Rééquilibrage annuel en janvier en redirectant les versements vers la poche sous-représentée. TER cible : ~0.17%.</div>
+        <div style="background:rgba(239,159,39,.06);border:1px solid rgba(239,159,39,.15);border-radius:6px;padding:7px 10px;font-size:.73rem;color:var(--muted)">
+          ⚠ <strong style="color:var(--text)">Si Canada :</strong> ouvrir un TFSA dès l'arrivée — y loger XDWD + EMIM en priorité (0% d'impôt sur tous les gains à vie).
+          <strong style="color:var(--text)"> Si Luxembourg :</strong> fiscalité identique à la Belgique, pas de changement nécessaire.
         </div>
-        <div style="text-align:right;flex-shrink:0">
-          <div style="font-size:.9rem;font-weight:800;color:var(--blue);font-family:var(--mono)">WRDU 70% + EMIM 15%</div>
-          <div style="font-size:.9rem;font-weight:800;color:var(--blue);font-family:var(--mono)">+ XAIX 10% + WSML 5%</div>
-        </div>
-      </div>
-      <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:7px;margin-bottom:10px">
-        <div style="background:var(--bg4);border-radius:8px;padding:9px 10px;text-align:center">
-          <div style="font-size:.82rem;font-weight:800;color:var(--green);font-family:var(--mono)">WRDU</div>
-          <div style="font-size:.62rem;color:var(--muted);margin-top:2px">70% · Monde dév.</div>
-          <div style="font-size:.62rem;color:var(--muted)">TER 0.12%</div>
-          <div style="font-size:.62rem;color:var(--muted)">~560€/mois</div>
-        </div>
-        <div style="background:var(--bg4);border-radius:8px;padding:9px 10px;text-align:center">
-          <div style="font-size:.82rem;font-weight:800;color:var(--blue);font-family:var(--mono)">EMIM</div>
-          <div style="font-size:.62rem;color:var(--muted);margin-top:2px">15% · Émergents</div>
-          <div style="font-size:.62rem;color:var(--muted)">TER 0.18%</div>
-          <div style="font-size:.62rem;color:var(--muted)">~120€/mois</div>
-        </div>
-        <div style="background:rgba(155,127,232,.1);border-radius:8px;padding:9px 10px;text-align:center;border:1px solid rgba(155,127,232,.2)">
-          <div style="font-size:.82rem;font-weight:800;color:var(--purple);font-family:var(--mono)">XAIX</div>
-          <div style="font-size:.62rem;color:var(--muted);margin-top:2px">10% · IA satellite</div>
-          <div style="font-size:.62rem;color:var(--muted)">TER 0.35%</div>
-          <div style="font-size:.62rem;color:var(--muted)">~80€/mois</div>
-        </div>
-        <div style="background:rgba(245,166,35,.08);border-radius:8px;padding:9px 10px;text-align:center;border:1px solid rgba(245,166,35,.2)">
-          <div style="font-size:.82rem;font-weight:800;color:var(--amber);font-family:var(--mono)">WSML</div>
-          <div style="font-size:.62rem;color:var(--muted);margin-top:2px">5% · Small cap</div>
-          <div style="font-size:.62rem;color:var(--muted)">TER 0.35%</div>
-          <div style="font-size:.62rem;color:var(--muted)">~40€/mois</div>
-        </div>
-      </div>
-      <div style="font-size:.75rem;color:var(--muted);line-height:1.5;margin-bottom:8px">
-        Tu ne vends pas VWCE/XAIX existants — pas d'événement fiscal. Tu diriges les <strong style="color:var(--text)">nouveaux versements</strong> vers cette nouvelle répartition. Le portefeuille converge naturellement. EMIM réduit à 15% car WRDU (MSCI World) sous-pondère déjà les émergents — l'exposition globale reste équilibrée.
-      </div>
-      <div style="background:var(--bg4);border-radius:6px;padding:8px 10px;font-size:.72rem;color:var(--muted)">
-        💡 <strong style="color:var(--text)">Frais de change WRDU :</strong> utilise <strong style="color:var(--text)">WCOR sur EPA</strong> (Euronext Paris, IBKR) — même ISIN IE000BI8OT95, coté en EUR, zéro conversion.
-      </div>
-    </div>
-
-    <!-- Phase 3 — Long terme -->
-    <div style="border-left:3px solid var(--purple);padding:14px 16px;background:rgba(155,127,232,.04);border-radius:0 10px 10px 0;margin-bottom:12px">
-      <div style="display:flex;align-items:center;gap:10px;margin-bottom:8px">
-        <div style="background:rgba(155,127,232,.2);color:var(--purple);border-radius:50%;width:26px;height:26px;display:flex;align-items:center;justify-content:center;font-size:.75rem;font-weight:700;flex-shrink:0">3</div>
-        <div>
-          <div style="font-weight:700;font-size:.9rem">Long terme — An 7+ (capital > 100 000€ · résidence stabilisée · versement ≥ 1 200€/mois)</div>
-          <div style="font-size:.72rem;color:var(--muted);font-family:var(--mono)">TER moyen : ~0.16% · 6 ETFs · Rééquilibrage annuel en janvier</div>
-        </div>
-        <div style="text-align:right;flex-shrink:0">
-          <div style="font-size:.82rem;font-weight:800;color:var(--purple);font-family:var(--mono)">WRDU 45% + EMIM 20% + CEBZ 15%</div>
-          <div style="font-size:.82rem;font-weight:800;color:var(--purple);font-family:var(--mono)">+ SPYL 10% + XAIX 5% + WSML 5%</div>
-        </div>
-      </div>
-      <div style="font-size:.78rem;color:var(--muted);line-height:1.6;margin-bottom:10px">
-        Le portefeuille ultime. 6 facteurs de risque rémunérés : monde développé (WRDU), émergents (EMIM), Europe surpondérée (CEBZ), S&P 500 low-cost (SPYL), IA/tech (XAIX), small cap premium (WSML). WSML capte la prime small cap documentée académiquement — +2–3%/an historique vs large cap sur 20 ans, au prix d'une volatilité +30%. Rééquilibrage : nouveaux versements vers la poche sous-représentée — ventes uniquement si écart ≥ ±5%.
-      </div>
-      <div style="display:grid;grid-template-columns:repeat(6,1fr);gap:7px">
-        <div style="background:var(--bg4);border-radius:8px;padding:10px;text-align:center">
-          <div style="font-size:.85rem;font-weight:800;color:var(--green);font-family:var(--mono)">WRDU</div>
-          <div style="font-size:.62rem;color:var(--muted);margin-top:2px">50% · Monde dév.</div>
-          <div style="font-size:.62rem;color:var(--muted)">TER 0.12%</div>
-        </div>
-        <div style="background:var(--bg4);border-radius:8px;padding:10px;text-align:center">
-          <div style="font-size:.85rem;font-weight:800;color:var(--blue);font-family:var(--mono)">EMIM</div>
-          <div style="font-size:.62rem;color:var(--muted);margin-top:2px">20% · Émergents</div>
-          <div style="font-size:.62rem;color:var(--muted)">TER 0.18%</div>
-        </div>
-        <div style="background:var(--bg4);border-radius:8px;padding:10px;text-align:center">
-          <div style="font-size:.85rem;font-weight:800;color:var(--amber);font-family:var(--mono)">CEBZ</div>
-          <div style="font-size:.62rem;color:var(--muted);margin-top:2px">15% · Europe</div>
-          <div style="font-size:.62rem;color:var(--muted)">TER 0.12%</div>
-        </div>
-        <div style="background:var(--bg4);border-radius:8px;padding:10px;text-align:center">
-          <div style="font-size:.85rem;font-weight:800;color:var(--amber);font-family:var(--mono)">SPYL</div>
-          <div style="font-size:.62rem;color:var(--muted);margin-top:2px">10% · S&P 500</div>
-          <div style="font-size:.62rem;color:var(--muted)">TER 0.03%</div>
-        </div>
-        <div style="background:rgba(155,127,232,.15);border-radius:8px;padding:10px;text-align:center;border:1px solid rgba(155,127,232,.3)">
-          <div style="font-size:.82rem;font-weight:800;color:var(--purple);font-family:var(--mono)">XAIX</div>
-          <div style="font-size:.62rem;color:var(--muted);margin-top:2px">5% · IA satellite</div>
-          <div style="font-size:.62rem;color:var(--muted)">TER 0.35%</div>
-        </div>
-        <div style="background:rgba(245,166,35,.1);border-radius:8px;padding:10px;text-align:center;border:1px solid rgba(245,166,35,.25)">
-          <div style="font-size:.82rem;font-weight:800;color:var(--amber);font-family:var(--mono)">WSML</div>
-          <div style="font-size:.62rem;color:var(--muted);margin-top:2px">5% · Small cap</div>
-          <div style="font-size:.62rem;color:var(--muted)">TER 0.35%</div>
-        </div>
-      </div>
-    </div>
-
-    <!-- Bloc satellite IA — optionnel dès la phase 2 -->
-    <div style="border-left:3px solid var(--purple);padding:14px 16px;background:rgba(155,127,232,.03);border-radius:0 10px 10px 0">
-      <div style="display:flex;align-items:center;gap:10px;margin-bottom:8px">
-        <div style="background:rgba(155,127,232,.15);color:var(--purple);border-radius:50%;width:26px;height:26px;display:flex;align-items:center;justify-content:center;font-size:.75rem;font-weight:700;flex-shrink:0">★</div>
-        <div>
-          <div style="font-weight:700;font-size:.9rem">Poche satellite IA — optionnel dès la phase 2 (si capital > 25 000€)</div>
-          <div style="font-size:.72rem;color:var(--muted);font-family:var(--mono)">Max 5–10% du portefeuille total · Jamais plus</div>
-        </div>
-      </div>
-      <div style="font-size:.78rem;color:var(--muted);line-height:1.6;margin-bottom:10px">
-        Ta sœur a potentiellement raison sur l'IA. Mais personne ne sait lesquelles des entreprises actuelles domineront dans 10 ans (comme Amazon vs Pets.com en 2000). La solution : un ETF qui parie sur le secteur entier, pas sur un titre. <strong style="color:var(--text)">Maximum 5–10% de ton portefeuille</strong> — assez pour profiter si ça explose, pas assez pour te couler si ça corrige de 60%.
-      </div>
-      <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
-        <div style="background:var(--bg4);border-radius:10px;padding:12px 14px">
-          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
-            <div style="font-size:.9rem;font-weight:800;color:var(--purple);font-family:var(--mono)">XAIX</div>
-            <span class="badge b-g">Recommandé</span>
-          </div>
-          <div style="font-size:.7rem;color:var(--muted);font-family:var(--mono);margin-bottom:8px">IE00BGV5VN51 · Xtrackers · IBIS (XETRA)</div>
-          <div class="etf-row"><span>Index</span><span>Nasdaq Global AI & Big Data</span></div>
-          <div class="etf-row"><span>TER</span><span class="ta">0.35%/an</span></div>
-          <div class="etf-row"><span>Encours</span><span>~6.9 Md€</span></div>
-          <div class="etf-row"><span>Titres</span><span>~100 entreprises</span></div>
-          <div class="etf-row"><span>Scope</span><span>IA + Big Data + Cybersécurité</span></div>
-          <div class="etf-row"><span>Dividendes</span><span class="tg">ACC ✓</span></div>
-          <div class="etf-row"><span>Fisc. Belgique</span><span class="tg">0% ✓</span></div>
-          <div style="margin-top:8px;font-size:.72rem;color:var(--muted)">Diversifié sur 100 entreprises IA mondiales · Moins risqué que NVIDIA seul · Encours solide</div>
-        </div>
-        <div style="background:var(--bg4);border-radius:10px;padding:12px 14px">
-          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
-            <div style="font-size:.9rem;font-weight:800;color:var(--purple);font-family:var(--mono)">WTAI</div>
-            <span class="badge b-b">Alternative</span>
-          </div>
-          <div style="font-size:.7rem;color:var(--muted);font-family:var(--mono);margin-bottom:8px">IE00BDVPNG13 · WisdomTree · WTAI.MI (Milan)</div>
-          <div class="etf-row"><span>Index</span><span>NASDAQ CTA AI Index</span></div>
-          <div class="etf-row"><span>TER</span><span class="ta">0.40%/an</span></div>
-          <div class="etf-row"><span>Encours</span><span>~568 M€</span></div>
-          <div class="etf-row"><span>Titres</span><span>~60–80 entreprises</span></div>
-          <div class="etf-row"><span>Scope</span><span>IA pure (sans cybersécurité)</span></div>
-          <div class="etf-row"><span>Dividendes</span><span class="tg">ACC ✓</span></div>
-          <div class="etf-row"><span>Fisc. Belgique</span><span class="tg">0% ✓</span></div>
-          <div style="margin-top:8px;font-size:.72rem;color:var(--muted)">Plus concentré sur l'IA pure · Encours plus faible · Top holdings : Micron, Qualcomm</div>
-        </div>
-      </div>
-      <div style="margin-top:10px;background:rgba(255,87,87,.06);border:1px solid rgba(255,87,87,.15);border-radius:8px;padding:9px 12px;font-size:.72rem;color:var(--muted)">
-        ⚠ <strong style="color:var(--text)">Règle absolue :</strong> cette poche satellite ne dépasse jamais 10% du portefeuille total. Si XAIX x2 en 2 ans et représente 15%, tu rééquilibres en janvier en redirigeant les versements vers le reste. L'enthousiasme pour l'IA ne justifie pas de dépasser ce plafond.
       </div>
     </div>
   </div>
 
-  <div class="card mb16">
-    <div class="card-title">Comparatif complet — ETFs UCITS ACC irlandais · Tickers IBKR réels</div>
+  <div class="card" style="margin-top:14px">
+    <div class="ct">Note fiscale Belgique — 0% sur les plus-values</div>
+    <div style="font-size:.82rem;color:var(--muted);line-height:1.7">
+      <p>Tous les ETFs de cette liste sont des ETFs <strong style="color:var(--text)">actions pures UCITS accumulants</strong> domiciliés en Irlande → <strong style="color:var(--green)">0% d'impôt sur les plus-values en Belgique</strong> à la vente.</p>
+      <p style="margin-top:6px"><strong style="color:var(--amber)">Exception : SGLD (or physique)</strong> — c'est un ETC, pas un ETF actions. Fiscalement traité différemment mais également exonéré de plus-value en Belgique pour un particulier en gestion normale. À confirmer avec un comptable si montants importants.</p>
+      <p style="margin-top:6px">La TOB (taxe sur opérations boursières) de 0.12–0.35% est prélevée automatiquement par IBKR sur chaque transaction pour les résidents belges.</p>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ AUTOMATISATION IBKR ═══ -->
+<div id="panel-ibkr" class="panel">
+  <div class="sec">Automatiser ses investissements sur IBKR</div>
+
+  <div style="background:linear-gradient(135deg,rgba(0,212,170,.07),rgba(59,142,234,.05));border:1px solid rgba(0,212,170,.25);border-radius:14px;padding:16px 20px;margin-bottom:16px;font-size:.82rem;color:var(--muted);line-height:1.7">
+    <strong style="color:var(--text)">Objectif :</strong> acheter automatiquement tes 7 ETFs chaque mois sans intervention manuelle. IBKR propose deux méthodes : les <strong style="color:var(--green)">Recurring Investments</strong> (achats récurrents) et les <strong style="color:var(--blue)">ordres programmés</strong>. Voici comment les configurer.
+  </div>
+
+  <!-- Méthode 1 -->
+  <div class="card" style="margin-bottom:14px">
+    <div class="ct">Méthode 1 — Recurring Investments (recommandé) ✓</div>
+    <div style="font-size:.82rem;color:var(--muted);line-height:1.8;margin-bottom:14px">
+      IBKR propose une fonctionnalité native d'investissement récurrent. Tu définis un montant en euros, une fréquence, et IBKR achète automatiquement les parts entières possibles et garde le reste en cash.
+    </div>
+    <div style="display:flex;flex-direction:column;gap:8px">
+      <div style="display:flex;gap:12px;align-items:flex-start;padding:10px;background:var(--bg4);border-radius:8px">
+        <div style="background:var(--green);color:var(--bg);border-radius:50%;width:22px;height:22px;display:flex;align-items:center;justify-content:center;font-size:.72rem;font-weight:700;flex-shrink:0">1</div>
+        <div><div style="font-size:.82rem;font-weight:600;margin-bottom:2px">Ouvrir IBKR → Menu "Invest" → "Recurring Investments"</div><div class="note">Disponible sur l'appli mobile IBKR et sur Client Portal (web). Sur mobile : icône "+" → "Recurring Investment".</div></div>
+      </div>
+      <div style="display:flex;gap:12px;align-items:flex-start;padding:10px;background:var(--bg4);border-radius:8px">
+        <div style="background:var(--green);color:var(--bg);border-radius:50%;width:22px;height:22px;display:flex;align-items:center;justify-content:center;font-size:.72rem;font-weight:700;flex-shrink:0">2</div>
+        <div><div style="font-size:.82rem;font-weight:600;margin-bottom:2px">Rechercher l'ETF par ISIN ou ticker</div><div class="note">Exemple : tape "IE00B3YLTY66" ou "SPYI" → sélectionne "SPYI — XETRA (EUR)". Toujours vérifier que la bourse affichée est bien en EUR (XETRA ou AEB).</div></div>
+      </div>
+      <div style="display:flex;gap:12px;align-items:flex-start;padding:10px;background:var(--bg4);border-radius:8px">
+        <div style="background:var(--green);color:var(--bg);border-radius:50%;width:22px;height:22px;display:flex;align-items:center;justify-content:center;font-size:.72rem;font-weight:700;flex-shrink:0">3</div>
+        <div><div style="font-size:.82rem;font-weight:600;margin-bottom:2px">Configurer : montant · fréquence · jour</div><div class="note">Montant : le montant mensuel alloué (ex: 330€ pour SPYI). Fréquence : Mensuel. Jour : le 1er du mois (ou le 2 si le 1er est férié). IBKR ajuste automatiquement.</div></div>
+      </div>
+      <div style="display:flex;gap:12px;align-items:flex-start;padding:10px;background:var(--bg4);border-radius:8px">
+        <div style="background:var(--green);color:var(--bg);border-radius:50%;width:22px;height:22px;display:flex;align-items:center;justify-content:center;font-size:.72rem;font-weight:700;flex-shrink:0">4</div>
+        <div><div style="font-size:.82rem;font-weight:600;margin-bottom:2px">Répéter pour chaque ETF</div><div class="note">Créer 7 ordres récurrents distincts. Le cash doit être disponible sur le compte au moment de l'exécution — programme le virement bancaire quelques jours avant.</div></div>
+      </div>
+    </div>
+    <div style="margin-top:10px;background:rgba(0,212,170,.06);border:1px solid rgba(0,212,170,.2);border-radius:8px;padding:8px 12px;font-size:.75rem;color:var(--muted)">
+      ✓ <strong style="color:var(--text)">Avantage :</strong> IBKR n'applique pas de commission supplémentaire sur les Recurring Investments pour certains ETFs. Vérifie dans l'appli si tes ETFs sont éligibles (icône "0 commission").
+    </div>
+  </div>
+
+  <!-- Tableau des ordres -->
+  <div class="card" style="margin-bottom:14px">
+    <div class="ct">Configuration des 7 ordres récurrents</div>
     <div style="overflow-x:auto"><table class="tbl">
-      <thead><tr>
-        <th>Ticker IBKR</th><th>Bourse sur IBKR</th><th>Nom court</th><th>ISIN</th><th>Émetteur</th><th>Index</th>
-        <th>TER/an</th><th>Encours</th><th>Titres</th><th>Émergents</th><th>Small caps</th>
-        <th>Corée</th><th>Acc/Dist</th><th>Fisc. BE</th><th>Recommandé</th>
-      </tr></thead>
-      <tbody>
-        <tr style="background:rgba(0,212,170,.04)">
-          <td class="mono fw7 tg">VWCE</td>
-          <td class="mono" style="font-size:.72rem">AEB (Amsterdam)</td>
-          <td>Vanguard FTSE All-World</td>
-          <td class="mono" style="font-size:.65rem">IE00B3RBWM25</td>
-          <td>Vanguard</td><td>FTSE All-World</td>
-          <td class="ta mono">0.22%</td>
-          <td class="mono">~50 Md€</td>
-          <td class="mono">~3 700</td>
-          <td class="tg">✓ ~10%</td><td class="tr">✗</td>
-          <td class="ta">EM</td>
-          <td><span class="badge b-g">ACC</span></td>
-          <td><span class="badge b-g">0% ✓</span></td>
-          <td><span class="badge b-g">✓ Simpliste</span></td>
-        </tr>
-        <tr style="background:rgba(0,212,170,.06)">
-          <td class="mono fw7 tg">WRDU <span style="font-size:.65rem;color:var(--muted)">ou ISIN</span></td>
-          <td class="mono" style="font-size:.72rem">AEB (Amsterdam)</td>
-          <td>Amundi Core MSCI World</td>
-          <td class="mono" style="font-size:.65rem">IE000BI8OT95</td>
-          <td>Amundi</td><td>MSCI World</td>
-          <td class="tg mono fw7">0.12%</td>
-          <td class="mono">~15 Md€</td>
-          <td class="mono">~1 500</td>
-          <td class="tr">✗</td><td class="tr">✗</td>
-          <td class="tb">DM</td>
-          <td><span class="badge b-g">ACC</span></td>
-          <td><span class="badge b-g">0% ✓</span></td>
-          <td><span class="badge b-g">✓ + EMIM</span></td>
-        </tr>
-        <tr>
-          <td class="mono fw7 tb">IWDA</td>
-          <td class="mono" style="font-size:.72rem">AEB (Amsterdam)</td>
-          <td>iShares Core MSCI World</td>
-          <td class="mono" style="font-size:.65rem">IE00B4L5Y983</td>
-          <td>BlackRock</td><td>MSCI World</td>
-          <td class="mono">0.20%</td>
-          <td class="mono">~80 Md€</td>
-          <td class="mono">~1 500</td>
-          <td class="tr">✗</td><td class="tr">✗</td>
-          <td class="tb">DM</td>
-          <td><span class="badge b-g">ACC</span></td>
-          <td><span class="badge b-g">0% ✓</span></td>
-          <td><span class="badge b-b">+ EMIM</span></td>
-        </tr>
-        <tr>
-          <td class="mono fw7 tb">EMIM</td>
-          <td class="mono" style="font-size:.72rem">AEB (Amsterdam)</td>
-          <td>iShares MSCI EM IMI</td>
-          <td class="mono" style="font-size:.65rem">IE00BKM4GZ66</td>
-          <td>BlackRock</td><td>MSCI EM IMI</td>
-          <td class="mono">0.18%</td>
-          <td class="mono">~20 Md€</td>
-          <td class="mono">~3 000</td>
-          <td class="tg">100% EM</td><td class="tg">✓</td>
-          <td class="tb">EM (MSCI)</td>
-          <td><span class="badge b-g">ACC</span></td>
-          <td><span class="badge b-g">0% ✓</span></td>
-          <td><span class="badge b-b">Complément</span></td>
-        </tr>
-        <tr style="background:rgba(59,142,234,.04)">
-          <td class="mono fw7 tp">SPYI</td>
-          <td class="mono" style="font-size:.72rem">IBIS (XETRA)</td>
-          <td>SPDR MSCI ACWI IMI</td>
-          <td class="mono" style="font-size:.65rem">IE00B3YLTY66</td>
-          <td>State Street</td><td>MSCI ACWI IMI</td>
-          <td class="tg mono">0.17%</td>
-          <td class="mono">~3 Md€</td>
-          <td class="mono">~9 000</td>
-          <td class="tg">✓ ~12%</td><td class="tg">✓</td>
-          <td class="tb">DM</td>
-          <td><span class="badge b-g">ACC</span></td>
-          <td><span class="badge b-g">0% ✓</span></td>
-          <td><span class="badge b-p">✓ Max large</span></td>
-        </tr>
-        <tr style="background:rgba(245,166,35,.04)">
-          <td class="mono fw7 ta">SPYL</td>
-          <td class="mono" style="font-size:.72rem">IBIS (XETRA)</td>
-          <td>SPDR S&P 500 UCITS</td>
-          <td class="mono" style="font-size:.65rem">IE000XZSV718</td>
-          <td>State Street</td><td>S&P 500</td>
-          <td class="tg mono fw7">0.03%</td>
-          <td class="mono">~15 Md€</td>
-          <td class="mono">500</td>
-          <td class="tr">✗</td><td class="tr">✗</td>
-          <td class="tb">DM (USA)</td>
-          <td><span class="badge b-g">ACC</span></td>
-          <td><span class="badge b-g">0% ✓</span></td>
-          <td><span class="badge b-a">⚠ USA seul</span></td>
-        </tr>
-        <tr style="background:rgba(233,30,140,.04)">
-          <td class="mono fw7" style="color:#e91e8c">QUS5</td>
-          <td class="mono" style="font-size:.72rem">IBIS (XETRA)</td>
-          <td>SPDR S&P 500 Quality Aristocrats</td>
-          <td class="mono" style="font-size:.65rem">IE000FJJZA01</td>
-          <td>State Street</td><td>S&P 500 Quality FCF Aristocrats</td>
-          <td class="mono">0.27%</td>
-          <td class="mono">~575 M€</td>
-          <td class="mono">~100</td>
-          <td class="tr">✗</td><td class="tr">✗</td>
-          <td class="tb">USA</td>
-          <td><span class="badge b-g">ACC</span></td>
-          <td><span class="badge b-g">0% ✓</span></td>
-          <td><span class="badge b-g">✓ Quality USA</span></td>
-        </tr>
-        <tr style="background:rgba(59,142,234,.04)">
-          <td class="mono fw7 tb">C50</td>
-          <td class="mono" style="font-size:.72rem">IBIS (XETRA)</td>
-          <td>iShares Core Euro Stoxx 50</td>
-          <td class="mono" style="font-size:.65rem">IE00B53L3W79</td>
-          <td>BlackRock</td><td>Euro STOXX 50</td>
-          <td class="tg mono fw7">0.10%</td>
-          <td class="mono">~4.7 Md€</td>
-          <td class="mono">50</td>
-          <td class="tr">✗</td><td class="tr">✗</td>
-          <td class="tb">Europe</td>
-          <td><span class="badge b-g">ACC</span></td>
-          <td><span class="badge b-g">0% ✓</span></td>
-          <td><span class="badge b-g">✓ Géants EU</span></td>
-        </tr>
-        <tr>
-          <td class="mono fw7 ta">CEBZ</td>
-          <td class="mono" style="font-size:.72rem">IBIS (XETRA)</td>
-          <td>iShares Core MSCI Europe</td>
-          <td class="mono" style="font-size:.65rem">IE00B4K48X80</td>
-          <td>BlackRock</td><td>MSCI Europe</td>
-          <td class="tg mono">0.12%</td>
-          <td class="mono">~15 Md€</td>
-          <td class="mono">~430</td>
-          <td class="tr">✗</td><td class="tr">✗</td>
-          <td class="tb">DM</td>
-          <td><span class="badge b-g">ACC</span></td>
-          <td><span class="badge b-g">0% ✓</span></td>
-          <td><span class="badge b-a">Alternatif C50</span></td>
-        </tr>
-        <tr style="background:rgba(155,127,232,.04)">
-          <td class="mono fw7 tp">XAIX</td>
-          <td class="mono" style="font-size:.72rem">IBIS (XETRA)</td>
-          <td>Xtrackers AI & Big Data</td>
-          <td class="mono" style="font-size:.65rem">IE00BGV5VN51</td>
-          <td>DWS/Xtrackers</td><td>Nasdaq Global AI & Big Data</td>
-          <td class="ta mono">0.35%</td>
-          <td class="mono">~6.9 Md€</td>
-          <td class="mono">~100</td>
-          <td class="tg">✓ partiel</td><td class="tg">✓ partiel</td>
-          <td class="tb">Global</td>
-          <td><span class="badge b-g">ACC</span></td>
-          <td><span class="badge b-g">0% ✓</span></td>
-          <td><span class="badge b-p">★ Satellite IA 5%</span></td>
-        </tr>
-        <tr style="background:rgba(155,127,232,.02)">
-          <td class="mono fw7 tp">WTAI</td>
-          <td class="mono" style="font-size:.72rem">Milan (WTAI.MI)</td>
-          <td>WisdomTree AI UCITS</td>
-          <td class="mono" style="font-size:.65rem">IE00BDVPNG13</td>
-          <td>WisdomTree</td><td>NASDAQ CTA AI Index</td>
-          <td class="ta mono">0.40%</td>
-          <td class="mono">~568 M€</td>
-          <td class="mono">~70</td>
-          <td class="tr">✗</td><td class="tr">✗</td>
-          <td class="tb">Global</td>
-          <td><span class="badge b-g">ACC</span></td>
-          <td><span class="badge b-g">0% ✓</span></td>
-          <td><span class="badge b-p">Alt. Satellite IA</span></td>
-        </tr>
-      </tbody>
+      <thead><tr><th>ETF</th><th>ISIN (à rechercher)</th><th>Bourse</th><th>Montant/mois</th><th>Fréquence</th><th>Jour</th><th>Type d'ordre</th></tr></thead>
+      <tbody id="ibkr-orders"></tbody>
     </table></div>
-    <div style="margin-top:12px;background:var(--bg4);border-radius:8px;padding:10px 14px;font-size:.75rem;color:var(--muted);line-height:1.7">
-      <strong style="color:var(--text)">💡 Astuce IBKR :</strong> si tu ne trouves pas un ticker, cherche directement par <strong style="color:var(--green)">ISIN</strong> dans la barre de recherche — c'est le code universel. Sélectionne ensuite la bourse <strong style="color:var(--text)">AEB</strong> (Euronext Amsterdam) pour les ETFs en EUR, ou <strong style="color:var(--text)">IBIS</strong> (XETRA) pour SPYI, SPYL et CEBZ.
+    <div class="note" style="margin-top:8px">💡 SPYI (5 750€ · 500 parts) — position héritage, aucun ordre récurrent à créer dessus. Il croît seul. Ces 4 ordres récurrents couvrent 100% des 550€ mensuels.</div>
+  </div>
+
+  <!-- Méthode 2 -->
+  <div class="card" style="margin-bottom:14px">
+    <div class="ct">Méthode 2 — Virement automatique + achat manuel le 1er du mois</div>
+    <div style="font-size:.82rem;color:var(--muted);line-height:1.7">
+      Si tu préfères contrôler chaque achat (tu l'as dit — pas de biais émotionnel possible car ta liberté > émotions) :
+      <ol style="margin:10px 0 0 20px;display:flex;flex-direction:column;gap:6px">
+        <li>Programme un virement automatique mensuel de <strong style="color:var(--text)">550€ le 25 de chaque mois</strong> depuis Hello Bank vers IBKR (arrive en 2–3 jours, disponible pour le 1er).</li>
+        <li>Le 1er de chaque mois, ouvre IBKR et passe 6–7 ordres Market sur les ETFs selon l'allocation.</li>
+        <li>Durée totale : 10 minutes par mois. Commission : 1.25€ × 7 = 8.75€.</li>
+      </ol>
     </div>
   </div>
 
-  <!-- Scenarios d'allocation -->
-  <div class="card mb16">
-    <div class="card-title">3 scénarios d'allocation selon ton profil</div>
-    <div class="g3">
-      <div class="card-sm" style="border-color:var(--green)">
-        <div style="font-size:.68rem;font-family:var(--mono);color:var(--green);text-transform:uppercase;letter-spacing:.08em;margin-bottom:8px">Option 1 — Simplicité totale</div>
-        <div style="font-size:.95rem;font-weight:800;margin-bottom:10px">VWCE 100%</div>
-        <div class="etf-row"><span>Frais</span><span class="ta">0.22%/an</span></div>
-        <div class="etf-row"><span>Nombre de lignes</span><span class="tg">1 seule</span></div>
-        <div class="etf-row"><span>Rééquilibrage</span><span class="tg">Jamais nécessaire</span></div>
-        <div class="etf-row"><span>Convient si</span><span>Capital &lt; 50k€</span></div>
-        <div style="margin-top:10px;font-size:.77rem;color:var(--muted)">Sur 400€/mois sur 20 ans, la différence avec l'option 2 est de ~2 000€. Simplicité vaut largement ce coût.</div>
+  <!-- Paramétrage technique -->
+  <div class="card" style="margin-bottom:14px">
+    <div class="ct">Paramétrage technique des ordres sur IBKR</div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+      <div>
+        <div style="font-size:.78rem;font-weight:600;margin-bottom:8px;color:var(--text)">Type d'ordre recommandé</div>
+        <div style="font-size:.8rem;color:var(--muted);line-height:1.7">
+          <p>→ <strong style="color:var(--green)">Ordre Market</strong> : exécution immédiate au prix du marché. Simple, rapide. Léger slippage possible en cas de faible liquidité.</p>
+          <p style="margin-top:6px">→ <strong style="color:var(--blue)">Ordre Limit</strong> : tu fixes un prix maximum. Plus de contrôle mais risque de non-exécution si le marché monte au-dessus.</p>
+          <p style="margin-top:6px">→ <strong style="color:var(--amber)">Recommandation :</strong> Ordre Market pour les ETFs liquides (SPYI, SPYL, EMIM). Limit sur XAIX et IUSN (moins liquides).</p>
+        </div>
       </div>
-      <div class="card-sm" style="border-color:rgba(0,212,170,.4)">
-        <div style="font-size:.68rem;font-family:var(--mono);color:var(--green);text-transform:uppercase;letter-spacing:.08em;margin-bottom:8px">Option 2 — Coût minimal</div>
-        <div style="font-size:.95rem;font-weight:800;margin-bottom:10px">WCOR 75% + EMIM 25%</div>
-        <div class="etf-row"><span>Frais moyens</span><span class="tg">0.135%/an</span></div>
-        <div class="etf-row"><span>Nombre de lignes</span><span class="ta">2 lignes</span></div>
-        <div class="etf-row"><span>Rééquilibrage</span><span class="ta">1×/an conseillé</span></div>
-        <div class="etf-row"><span>Convient si</span><span>Tu veux gratter chaque bp</span></div>
-        <div style="margin-top:10px;font-size:.77rem;color:var(--muted)">Amundi est irlandais domicilié, UCITS, pleinement réglementé. Pas de risque supplémentaire vs iShares.</div>
-      </div>
-      <div class="card-sm" style="border-color:var(--purple)">
-        <div style="font-size:.68rem;font-family:var(--mono);color:var(--purple);text-transform:uppercase;letter-spacing:.08em;margin-bottom:8px">Option 3 — Couverture maximale</div>
-        <div style="font-size:.95rem;font-weight:800;margin-bottom:10px">SPYI 100%</div>
-        <div class="etf-row"><span>Frais</span><span class="tg">0.17%/an</span></div>
-        <div class="etf-row"><span>Nombre de lignes</span><span class="tg">1 seule</span></div>
-        <div class="etf-row"><span>Rééquilibrage</span><span class="tg">Jamais nécessaire</span></div>
-        <div class="etf-row"><span>Convient si</span><span>Tu veux small caps incluses</span></div>
-        <div style="margin-top:10px;font-size:.77rem;color:var(--muted)">~9 000 titres vs 3 700 pour VWCE. Diversification maximale. Moins liquide que VWCE mais encours suffisant.</div>
+      <div>
+        <div style="font-size:.78rem;font-weight:600;margin-bottom:8px;color:var(--text)">Devises et frais de change</div>
+        <div style="font-size:.8rem;color:var(--muted);line-height:1.7">
+          <p>→ Tous tes ETFs cotent en <strong style="color:var(--green)">EUR sur XETRA ou AEB</strong> → zéro frais de change si ton compte IBKR est en EUR.</p>
+          <p style="margin-top:6px">→ SGLD cote en USD sur LSE. Si tu l'achètes, IBKR convertit EUR→USD (~0.002% de frais). Alternative : cherche <strong style="color:var(--text)">8PSG sur XETRA</strong> — c'est SGLD en EUR.</p>
+          <p style="margin-top:6px">→ TOB prélevée automatiquement par IBKR pour les résidents belges (0.12–0.35% selon l'ETF).</p>
+        </div>
       </div>
     </div>
   </div>
 
-  <!-- Graphique frais -->
-  <div class="card mb16">
-    <div class="card-title">Impact des frais sur 20 ans — même capital, même rendement brut</div>
-    <div class="chart-box" style="height:270px"><canvas id="c-fees"></canvas></div>
-    <div class="note mt8">Base : 5 000€ initial + 400€/mois · 7%/an brut · Seule différence = le TER annuel</div>
-  </div>
-
-  <!-- Règles de combinaison -->
+  <!-- Virement automatique -->
   <div class="card">
-    <div class="card-title">Règles de combinaison — ce qu'on peut et ne peut pas faire</div>
-    <div style="font-size:.82rem;line-height:1.8;color:var(--muted)">
-      <p><span class="tg">✓ OK</span> — <strong style="color:var(--text)">VWCE seul</strong> : famille FTSE, 1 ETF, tout inclus.</p>
-      <p><span class="tg">✓ OK</span> — <strong style="color:var(--text)">IWDA + EMIM</strong> ou <strong style="color:var(--text)">WCOR + EMIM</strong> : famille MSCI, développés + émergents séparés. Contrôle du poids EM.</p>
-      <p><span class="tg">✓ OK</span> — <strong style="color:var(--text)">SPYI seul</strong> : famille MSCI, tout inclus + small caps.</p>
-      <p><span class="tg">✓ OK</span> — <strong style="color:var(--text)">IWDA + EMIM + CEBZ</strong> : surpondération Europe volontaire. Sens si tu vis et travailles durablement en Europe.</p>
-      <p><span class="tr">✗ INTERDIT</span> — <strong style="color:var(--text)">VWCE + IWDA</strong> : double exposition aux développés (FTSE ≠ MSCI, Corée classée différemment).</p>
-      <p><span class="tr">✗ INTERDIT</span> — <strong style="color:var(--text)">VWCE + SPYI</strong> : même problème, indices différents, double exposition involontaire.</p>
-      <p><span class="ta">⚠ CONCENTRÉ</span> — <strong style="color:var(--text)">SPYL seul</strong> : TER 0.03% imbattable, mais 100% USA. Zéro Europe, zéro Japon, zéro émergents. Pertinent en complément (ex: SPYL 50% + CEBZ 25% + EMIM 25%) — pas comme seul ETF d'un portefeuille mondial.</p>
-      <p><span class="ta">⚠ ÉVITER</span> — <strong style="color:var(--text)">CEB4</strong> (FTSE 100 EUR Hedgé) : lancé août 2024, seulement 54M€ d'encours, risque de fermeture + coût du hedging 0.5–1.5%/an sur long terme.</p>
-      <p><span class="ta">⚠ PHASE 2+</span> — <strong style="color:var(--text)">CEBZ / EUN2</strong> : pertinents uniquement si capital &gt; 50k€ et résidence européenne stabilisée. Biais domestique si utilisés trop tôt.</p>
-    </div>
-  </div>
-</div>
-
-<!-- ══════════════════════════════════════════════
-     PAYS
-══════════════════════════════════════════════ -->
-<div id="panel-countries" class="panel">
-  <div class="sec mt20">Comparatif destinations — tout en EUR · Profil actuaire francophone</div>
-  <div class="note mb16">Taux indicatifs mai 2026 : 1 CHF = 1.04 EUR · 1 CAD = 0.67 EUR · 1 GBP = 1.17 EUR</div>
-
-  <div class="card mb16">
-    <div class="card-title">Salaire actuaire junior net/mois en EUR — comparatif complet</div>
-    <div class="chart-box" style="height:320px"><canvas id="c-countries"></canvas></div>
-  </div>
-
-  <div class="card mb16">
-    <div style="overflow-x:auto"><table class="tbl">
-      <thead><tr>
-        <th>Pays</th><th>Salaire junior net/mois (€)</th><th>Loyer moyen (€)</th>
-        <th>Reste après loyer (€)</th><th>Fiscalité plus-values</th>
-        <th>Enveloppe invest.</th><th>Résidence perm.</th>
-        <th>Visa CMR</th><th>Français</th><th>Score</th>
-      </tr></thead>
-      <tbody>
-        <tr style="background:rgba(0,212,170,.05)">
-          <td>🇱🇺 Luxembourg</td><td class="tg mono fw7">3 200–4 200 €</td><td class="mono">900–1 300 €</td>
-          <td class="tg mono">2 300–2 900 €</td><td><span class="badge b-g">0% actions</span></td>
-          <td class="tm">Compte-titres</td><td>7 ans</td>
-          <td><span class="badge b-a">Permis B</span></td><td><span class="badge b-g">Oui ✓</span></td>
-          <td><div class="cbar"><div class="cbar-fill" style="width:92%;background:var(--green)"></div></div><span class="mono" style="font-size:.68rem">92/100</span></td>
-        </tr>
-        <tr>
-          <td>🇮🇪 Irlande (Dublin)</td><td class="tg mono fw7">2 900–3 800 €</td><td class="mono">1 400–2 000 €</td>
-          <td class="tg mono">1 500–1 800 €</td><td><span class="badge b-a">33% CGT</span></td>
-          <td class="tm">Compte-titres</td><td>5 ans</td>
-          <td><span class="badge b-g">Visa travail EU</span></td><td><span class="badge b-r">Anglais req.</span></td>
-          <td><div class="cbar"><div class="cbar-fill" style="width:85%;background:var(--green)"></div></div><span class="mono" style="font-size:.68rem">85/100</span></td>
-        </tr>
-        <tr>
-          <td>🇳🇱 Pays-Bas (Amsterdam)</td><td class="tg mono fw7">2 800–3 600 €</td><td class="mono">1 200–1 800 €</td>
-          <td class="tg mono">1 600–1 800 €</td><td><span class="badge b-a">Box 3 ~1.6%/an</span></td>
-          <td class="tm">Compte-titres</td><td>5 ans</td>
-          <td><span class="badge b-g">Permis EU</span></td><td><span class="badge b-a">Anglais largement OK</span></td>
-          <td><div class="cbar"><div class="cbar-fill" style="width:83%;background:var(--green)"></div></div><span class="mono" style="font-size:.68rem">83/100</span></td>
-        </tr>
-        <tr>
-          <td>🇩🇪 Allemagne (Munich)</td><td class="mono fw7">2 700–3 500 €</td><td class="mono">1 100–1 700 €</td>
-          <td class="mono">1 600–1 800 €</td><td><span class="badge b-a">26.4% flat tax</span></td>
-          <td class="tm">Compte-titres</td><td>5 ans</td>
-          <td><span class="badge b-g">Permis EU</span></td><td><span class="badge b-a">Anglais OK multinat.</span></td>
-          <td><div class="cbar"><div class="cbar-fill" style="width:80%;background:var(--blue)"></div></div><span class="mono" style="font-size:.68rem">80/100</span></td>
-        </tr>
-        <tr>
-          <td>🇫🇷 France (Paris)</td><td class="mono fw7">2 400–3 100 €</td><td class="mono">1 100–1 800 €</td>
-          <td class="mono">1 300–1 300 €</td><td><span class="badge b-a">PFU 30%</span></td>
-          <td><span class="badge b-b">PEA après 5 ans</span></td><td>10 ans</td>
-          <td><span class="badge b-a">Titre séjour</span></td><td><span class="badge b-g">Oui ✓</span></td>
-          <td><div class="cbar"><div class="cbar-fill" style="width:78%;background:var(--amber)"></div></div><span class="mono" style="font-size:.68rem">78/100</span></td>
-        </tr>
-        <tr>
-          <td>🇨🇦 Canada (Québec)</td><td class="mono fw7">2 600–3 400 €</td><td class="mono">900–1 400 €</td>
-          <td class="tg mono">1 700–2 000 €</td><td><span class="badge b-a">50% imposable</span></td>
-          <td><span class="badge b-g">TFSA 0%</span></td><td><span class="badge b-g">2–4 ans ✓</span></td>
-          <td><span class="badge b-g">Entrée Express</span></td><td><span class="badge b-g">Oui ✓</span></td>
-          <td><div class="cbar"><div class="cbar-fill" style="width:74%;background:var(--blue)"></div></div><span class="mono" style="font-size:.68rem">74/100</span></td>
-        </tr>
-        <tr>
-          <td>🇵🇹 Portugal (Lisbonne)</td><td class="mono fw7">1 800–2 400 €</td><td class="mono">900–1 400 €</td>
-          <td class="mono">900–1 000 €</td><td><span class="badge b-a">28% flat</span></td>
-          <td class="tm">Compte-titres</td><td>5 ans</td>
-          <td><span class="badge b-g">Permis EU</span></td><td><span class="badge b-a">Portugais proche FR</span></td>
-          <td><div class="cbar"><div class="cbar-fill" style="width:68%;background:var(--amber)"></div></div><span class="mono" style="font-size:.68rem">68/100</span></td>
-        </tr>
-        <tr>
-          <td>🇪🇸 Espagne (Madrid)</td><td class="mono fw7">1 900–2 600 €</td><td class="mono">900–1 400 €</td>
-          <td class="mono">1 000–1 200 €</td><td><span class="badge b-a">19–26% progressif</span></td>
-          <td><span class="badge b-b">Régime Beckham 6 ans</span></td><td>10 ans</td>
-          <td><span class="badge b-g">Permis EU</span></td><td><span class="badge b-a">Espagnol proche FR</span></td>
-          <td><div class="cbar"><div class="cbar-fill" style="width:65%;background:var(--amber)"></div></div><span class="mono" style="font-size:.68rem">65/100</span></td>
-        </tr>
-        <tr>
-          <td>🇧🇪 Belgique (actuel)</td><td class="mono fw7">2 000–2 500 €</td><td class="mono">875–1 100 €</td>
-          <td class="mono">1 125–1 400 €</td><td><span class="badge b-g">0% actions pures</span></td>
-          <td class="tm">Compte-titres</td><td>5 ans</td>
-          <td><span class="badge b-g">Tu y es déjà</span></td><td><span class="badge b-g">Oui ✓</span></td>
-          <td><div class="cbar"><div class="cbar-fill" style="width:65%;background:var(--purple)"></div></div><span class="mono" style="font-size:.68rem">65/100</span></td>
-        </tr>
-        <tr>
-          <td>🇨🇭 Suisse Romande</td><td class="tg mono fw7">4 500–6 300 €</td><td class="mono">1 600–2 800 €</td>
-          <td class="tg mono">2 900–3 500 €</td><td><span class="badge b-g">0% plus-values</span></td>
-          <td class="tm">Compte-titres</td><td>12 ans</td>
-          <td><span class="badge b-r">Quota strict ✗</span></td><td><span class="badge b-g">Romande oui</span></td>
-          <td><div class="cbar"><div class="cbar-fill" style="width:55%;background:var(--muted)"></div></div><span class="mono" style="font-size:.68rem">55/100</span></td>
-        </tr>
-      </tbody>
-    </table></div>
-  </div>
-
-  <!-- Feuille de route Europe -->
-  <div class="card">
-    <div class="card-title">Stratégie Europe — pourquoi rester dans l'UE est souvent optimal</div>
-    <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px">
-      <div class="card-sm" style="border-color:var(--green)">
-        <div style="font-size:.78rem;font-weight:700;margin-bottom:8px;color:var(--green)">Avantage clé UE</div>
-        <div style="font-size:.77rem;color:var(--muted);line-height:1.6">
-          Carte résident longue durée UE après 5 ans en Belgique → droit de vivre et travailler dans <strong style="color:var(--text)">27 pays</strong> sans visa ni quota. C'est l'équivalent fonctionnel d'un passeport EU pour le marché du travail.
-        </div>
+    <div class="ct">Configurer le virement automatique depuis Hello Bank</div>
+    <div style="display:flex;flex-direction:column;gap:8px">
+      <div style="display:flex;gap:12px;align-items:flex-start;padding:10px;background:var(--bg4);border-radius:8px">
+        <div style="background:var(--blue);color:var(--bg);border-radius:50%;width:22px;height:22px;display:flex;align-items:center;justify-content:center;font-size:.72rem;font-weight:700;flex-shrink:0">1</div>
+        <div><div style="font-size:.82rem;font-weight:600;margin-bottom:2px">Trouver l'IBAN de ton compte IBKR</div><div class="note">IBKR → Menu "Transférer des fonds" → "Dépôt" → ton IBAN IBKR est affiché (format IE ou LU selon ton compte).</div></div>
       </div>
-      <div class="card-sm" style="border-color:var(--blue)">
-        <div style="font-size:.78rem;font-weight:700;margin-bottom:8px;color:var(--blue)">Marché actuariel EU</div>
-        <div style="font-size:.77rem;color:var(--muted);line-height:1.6">
-          Luxembourg, Dublin, Amsterdam, Munich, Paris — toutes accessibles en 2h depuis Bruxelles. Qualification Solvabilité II / IFRS 17 reconnue partout en Europe. Pénurie d'actuaires dans toutes ces villes.
-        </div>
+      <div style="display:flex;gap:12px;align-items:flex-start;padding:10px;background:var(--bg4);border-radius:8px">
+        <div style="background:var(--blue);color:var(--bg);border-radius:50%;width:22px;height:22px;display:flex;align-items:center;justify-content:center;font-size:.72rem;font-weight:700;flex-shrink:0">2</div>
+        <div><div style="font-size:.82rem;font-weight:600;margin-bottom:2px">Hello Bank → Paiements → Ordre permanent</div><div class="note">Montant : 550€. Date d'exécution : le 25 de chaque mois. Bénéficiaire : ton IBAN IBKR. Référence : "Investissement ETF".</div></div>
       </div>
-      <div class="card-sm" style="border-color:var(--amber)">
-        <div style="font-size:.78rem;font-weight:700;margin-bottom:8px;color:var(--amber)">Naturalisations EU</div>
-        <div style="font-size:.77rem;color:var(--muted);line-height:1.6">
-          BE / NL / PT / IE : 5 ans · LU : 7 ans · DE : 5 ans (réforme 2024). Un passeport EU = 186 pays sans visa. Comparable au passeport canadien — mais atteignable sans quitter l'Europe.
-        </div>
+      <div style="display:flex;gap:12px;align-items:flex-start;padding:10px;background:var(--bg4);border-radius:8px">
+        <div style="background:var(--blue);color:var(--bg);border-radius:50%;width:22px;height:22px;display:flex;align-items:center;justify-content:center;font-size:.72rem;font-weight:700;flex-shrink:0">3</div>
+        <div><div style="font-size:.82rem;font-weight:600;margin-bottom:2px">Délai de réception</div><div class="note">SEPA : 1–2 jours ouvrables. Le 25 → disponible sur IBKR le 26–27 → prêt pour les achats du 1er du mois suivant.</div></div>
       </div>
     </div>
   </div>
 </div>
 
-<!-- ══════════════════════════════════════════════
-     PLAN D'ACTION
-══════════════════════════════════════════════ -->
-<div id="panel-plan" class="panel">
-  <div class="sec mt20">Plan d'action complet — dans l'ordre</div>
-  <div id="actions-list"></div>
+<!-- ═══ PLAN DE VIE ═══ -->
+<div id="panel-vie" class="panel">
+  <div class="sec">Statut Canada — décision imminente</div>
+  <div style="background:linear-gradient(135deg,rgba(0,212,170,.08),rgba(59,142,234,.05));border:1px solid rgba(0,212,170,.3);border-radius:12px;padding:14px 18px;margin-bottom:14px">
+    <div class="g4">
+      <div style="background:rgba(0,0,0,.2);border-radius:8px;padding:10px;text-align:center"><div class="mono fw7 tg" style="font-size:1.1rem">420 pts</div><div class="note">Score CRS</div></div>
+      <div style="background:rgba(0,0,0,.2);border-radius:8px;padding:10px;text-align:center"><div class="mono fw7 ta" style="font-size:1.1rem">400 pts</div><div class="note">Seuil avril 2026</div></div>
+      <div style="background:rgba(0,0,0,.2);border-radius:8px;padding:10px;text-align:center"><div class="mono fw7 tb" style="font-size:1.1rem">Mars 2026</div><div class="note">Biométrie faite</div></div>
+      <div style="background:rgba(0,0,0,.2);border-radius:8px;padding:10px;text-align:center"><div class="mono fw7 tp" style="font-size:1.1rem">4–8 sem.</div><div class="note">Délai décision</div></div>
+    </div>
+    <div style="margin-top:10px;font-size:.78rem;color:var(--muted)">⚡ Vérifie <a href="https://ircc.canada.ca" style="color:var(--blue)" target="_blank">ircc.canada.ca</a> chaque jour. Si approbation → 60 jours pour accepter. Réserve 2 500€ disponible sur Hello Bank.</div>
+  </div>
+
+  <div class="sec">Top 5 destinations — stratégie d'investissement par pays</div>
+  <div id="dest-list" style="margin-bottom:16px"></div>
+
+  <div class="sec">Actions prioritaires</div>
+  <div id="plan-list" style="margin-bottom:16px"></div>
+
+  <div class="sec">Les 5 règles inviolables</div>
+  <div id="rules-list"></div>
 </div>
 
-<!-- ══════════════════════════════════════════════
-     RÈGLES D'OR
-══════════════════════════════════════════════ -->
-<div id="panel-rules" class="panel">
-  <div class="sec mt20">Les 6 règles d'or — inviolables</div>
-  <div id="rules-list" class="mb16"></div>
-  <div class="card">
-    <div class="card-title">La formule fondamentale</div>
-    <div style="text-align:center;padding:20px 0">
-      <div style="font-size:1.3rem;font-weight:800;letter-spacing:-.02em">Capital liberté = Dépenses annuelles × 25</div>
-      <div class="note mt8">Règle des 4% · Trinity Study 1998 · Retire 4%/an sans entamer le capital sur 30+ ans</div>
-      <div class="g3 mt16" id="rules-kpis"></div>
-    </div>
-  </div>
-</div>
-
-<!-- ══════════════════════════════════════════════
-     RÉSIDENCE & CARRIÈRE
-══════════════════════════════════════════════ -->
-<div id="panel-residence" class="panel">
-  <div class="sec mt20">Situation personnelle — 24 mai 2026</div>
-
-  <!-- Statut Canada -->
-  <div style="background:linear-gradient(135deg,rgba(0,212,170,.08),rgba(59,142,234,.05));border:1px solid rgba(0,212,170,.3);border-radius:14px;padding:16px 20px;margin-bottom:16px">
-    <div style="font-size:.65rem;font-family:var(--mono);color:var(--green);text-transform:uppercase;letter-spacing:.1em;margin-bottom:8px">🇨🇦 Statut Canada — En attente de décision finale</div>
-    <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:12px">
-      <div style="background:rgba(0,0,0,.2);border-radius:8px;padding:10px;text-align:center">
-        <div style="font-size:1.2rem;font-weight:800;color:var(--green);font-family:var(--mono)">420 pts</div>
-        <div style="font-size:.68rem;color:var(--muted)">Score CRS</div>
-      </div>
-      <div style="background:rgba(0,0,0,.2);border-radius:8px;padding:10px;text-align:center">
-        <div style="font-size:1.2rem;font-weight:800;color:var(--amber);font-family:var(--mono)">400 pts</div>
-        <div style="font-size:.68rem;color:var(--muted)">Seuil francophone (avr. 2026)</div>
-      </div>
-      <div style="background:rgba(0,0,0,.2);border-radius:8px;padding:10px;text-align:center">
-        <div style="font-size:1.2rem;font-weight:800;color:var(--blue);font-family:var(--mono)">Mars 2026</div>
-        <div style="font-size:.68rem;color:var(--muted)">Biométrie faite</div>
-      </div>
-      <div style="background:rgba(0,0,0,.2);border-radius:8px;padding:10px;text-align:center">
-        <div style="font-size:1.2rem;font-weight:800;color:var(--purple);font-family:var(--mono)">~4–8 sem.</div>
-        <div style="font-size:.68rem;color:var(--muted)">Délai décision estimé</div>
-      </div>
-    </div>
-    <div style="margin-top:12px;font-size:.75rem;color:var(--muted);line-height:1.6">
-      ⚡ <strong style="color:var(--text)">La décision peut tomber n'importe quel jour.</strong> Vérifie ton portail IRCC chaque jour. Si approbation → 60 jours pour accepter et soumettre les documents finaux. Réserve Canada de 2 500€ disponible sur Hello Bank.
-    </div>
-  </div>
-
-  <!-- Statut Belgique -->
-  <div class="card mb16">
-    <div class="card-title">🇧🇪 Statut Belgique — Séjour légal en cours</div>
-    <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:14px">
-      <div class="kpi"><div class="kpi-val ta">Oct. 2021</div><div class="kpi-lbl">Arrivée en Belgique</div><div class="kpi-sub">Statut étudiant</div></div>
-      <div class="kpi"><div class="kpi-val tb">Sept. 2024</div><div class="kpi-lbl">Passage travailleur</div><div class="kpi-sub">Carte B / permis unique</div></div>
-      <div class="kpi"><div class="kpi-val" style="color:var(--muted)">~2.2 ans</div><div class="kpi-lbl">Séjour comptabilisé</div><div class="kpi-sub">Étudiant × 0.5 + travailleur</div></div>
-      <div class="kpi"><div class="kpi-val tr">2028–2029</div><div class="kpi-lbl">Carte L possible</div><div class="kpi-sub">Résidence longue durée UE</div></div>
-    </div>
-    <div style="background:rgba(239,159,39,.06);border:1px solid rgba(239,159,39,.2);border-radius:8px;padding:10px 14px;font-size:.75rem;color:var(--muted)">
-      ⚠️ <strong style="color:var(--text)">Le séjour étudiant (oct. 2021 → sept. 2024) ne compte qu'à moitié.</strong> Tu ne peux pas demander la carte L avant 2028–2029. Si tu pars au Canada, la Belgique n'est plus une option de résidence permanente à court terme.
-    </div>
-  </div>
-
-  <!-- Classement top 5 destinations -->
-  <div class="sec">Classement Top 5 destinations — selon ton profil exact</div>
-  <div style="display:flex;flex-direction:column;gap:10px;margin-bottom:20px">
-
-    <!-- Canada #1 -->
-    <div style="border:1.5px solid var(--green);border-radius:12px;padding:16px 18px;background:rgba(0,212,170,.04)">
-      <div style="display:flex;align-items:center;gap:12px;margin-bottom:10px">
-        <div style="background:var(--green);color:var(--bg);width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:.9rem;flex-shrink:0">1</div>
-        <div style="flex:1">
-          <div style="font-weight:700;font-size:1rem">🇨🇦 Canada — Montréal (Québec)</div>
-          <div style="font-size:.72rem;color:var(--muted);font-family:var(--mono)">Résidence permanente · Score CRS 420 > seuil 400 · Décision imminente</div>
-        </div>
-        <div style="text-align:right">
-          <div style="font-size:1.3rem;font-weight:800;color:var(--green);font-family:var(--mono)">96/100</div>
-        </div>
-      </div>
-      <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:10px">
-        <div style="background:rgba(0,0,0,.2);border-radius:6px;padding:8px 10px;font-size:.72rem">
-          <div style="color:var(--muted)">Salaire actuaire junior</div>
-          <div style="color:var(--text);font-weight:500;font-family:var(--mono)">2 600–3 400 €/mois</div>
-        </div>
-        <div style="background:rgba(0,0,0,.2);border-radius:6px;padding:8px 10px;font-size:.72rem">
-          <div style="color:var(--muted)">Résidence permanente</div>
-          <div style="color:var(--green);font-weight:500">Dossier en cours ✓</div>
-        </div>
-        <div style="background:rgba(0,0,0,.2);border-radius:6px;padding:8px 10px;font-size:.72rem">
-          <div style="color:var(--muted)">Passeport canadien</div>
-          <div style="color:var(--text);font-weight:500">Dans 3 ans · 185 pays</div>
-        </div>
-      </div>
-      <div style="font-size:.72rem;color:var(--muted);line-height:1.6">
-        <strong style="color:var(--text)">Stratégie investissement :</strong> Ouvrir TFSA immédiatement à l'arrivée (0% impôt à vie sur gains). Transférer IBKR — compte reste valide. Continuer SPYI + allocation identique. Cotiser RRSP dès le premier salaire (déduction fiscale).
-      </div>
-      <div style="margin-top:8px;display:flex;gap:6px;flex-wrap:wrap">
-        <span style="font-size:.68rem;padding:2px 8px;border-radius:10px;background:rgba(0,212,170,.1);color:var(--green);font-family:var(--mono)">TFSA 0% impôt</span>
-        <span style="font-size:.68rem;padding:2px 8px;border-radius:10px;background:rgba(0,212,170,.1);color:var(--green);font-family:var(--mono)">Français prioritaire</span>
-        <span style="font-size:.68rem;padding:2px 8px;border-radius:10px;background:rgba(0,212,170,.1);color:var(--green);font-family:var(--mono)">Communauté africaine forte</span>
-        <span style="font-size:.68rem;padding:2px 8px;border-radius:10px;background:rgba(239,159,39,.1);color:var(--amber);font-family:var(--mono)">50% PV imposables</span>
-        <span style="font-size:.68rem;padding:2px 8px;border-radius:10px;background:rgba(155,127,232,.1);color:var(--purple);font-family:var(--mono)">Thèse copine → Michelin Canada ?</span>
-      </div>
-    </div>
-
-    <!-- Luxembourg #2 -->
-    <div style="border:1px solid var(--border);border-radius:12px;padding:16px 18px;background:var(--bg3)">
-      <div style="display:flex;align-items:center;gap:12px;margin-bottom:10px">
-        <div style="background:rgba(59,142,234,.2);color:var(--blue);width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:.9rem;flex-shrink:0">2</div>
-        <div style="flex:1">
-          <div style="font-weight:700;font-size:1rem">🇱🇺 Luxembourg</div>
-          <div style="font-size:.72rem;color:var(--muted);font-family:var(--mono)">Plan B si Canada refusé · Accessible avec expérience EU · Français suffisant</div>
-        </div>
-        <div style="text-align:right">
-          <div style="font-size:1.3rem;font-weight:800;color:var(--blue);font-family:var(--mono)">88/100</div>
-        </div>
-      </div>
-      <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:10px">
-        <div style="background:rgba(0,0,0,.2);border-radius:6px;padding:8px 10px;font-size:.72rem">
-          <div style="color:var(--muted)">Salaire actuaire junior</div>
-          <div style="color:var(--text);font-weight:500;font-family:var(--mono)">3 200–4 200 €/mois</div>
-        </div>
-        <div style="background:rgba(0,0,0,.2);border-radius:6px;padding:8px 10px;font-size:.72rem">
-          <div style="color:var(--muted)">Résidence permanente</div>
-          <div style="color:var(--amber);font-weight:500">7 ans de travail</div>
-        </div>
-        <div style="background:rgba(0,0,0,.2);border-radius:6px;padding:8px 10px;font-size:.72rem">
-          <div style="color:var(--muted)">Plus-values actions</div>
-          <div style="color:var(--green);font-weight:500">0% ✓</div>
-        </div>
-      </div>
-      <div style="font-size:.72rem;color:var(--muted);line-height:1.6">
-        <strong style="color:var(--text)">Stratégie investissement :</strong> IBKR unchanged. 0% plus-values sur actions. Versement mensuel passe à 1 200–1 500€ avec le salaire LUX. Épargne réglementée locale à explorer.
-      </div>
-      <div style="margin-top:8px;display:flex;gap:6px;flex-wrap:wrap">
-        <span style="font-size:.68rem;padding:2px 8px;border-radius:10px;background:rgba(0,212,170,.1);color:var(--green);font-family:var(--mono)">0% plus-values</span>
-        <span style="font-size:.68rem;padding:2px 8px;border-radius:10px;background:rgba(0,212,170,.1);color:var(--green);font-family:var(--mono)">+40% salaire vs Belgique</span>
-        <span style="font-size:.68rem;padding:2px 8px;border-radius:10px;background:rgba(239,159,39,.1);color:var(--amber);font-family:var(--mono)">Permis B requis</span>
-      </div>
-    </div>
-
-    <!-- Irlande #3 -->
-    <div style="border:1px solid var(--border);border-radius:12px;padding:16px 18px;background:var(--bg3)">
-      <div style="display:flex;align-items:center;gap:12px;margin-bottom:10px">
-        <div style="background:rgba(155,127,232,.2);color:var(--purple);width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:.9rem;flex-shrink:0">3</div>
-        <div style="flex:1">
-          <div style="font-weight:700;font-size:1rem">🇮🇪 Irlande — Dublin</div>
-          <div style="font-size:.72rem;color:var(--muted);font-family:var(--mono)">Hub Big Tech EU · Anglais requis · Après IELTS B2</div>
-        </div>
-        <div style="text-align:right">
-          <div style="font-size:1.3rem;font-weight:800;color:var(--purple);font-family:var(--mono)">82/100</div>
-        </div>
-      </div>
-      <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:10px">
-        <div style="background:rgba(0,0,0,.2);border-radius:6px;padding:8px 10px;font-size:.72rem">
-          <div style="color:var(--muted)">Salaire actuaire junior</div>
-          <div style="color:var(--text);font-weight:500;font-family:var(--mono)">2 900–3 800 €/mois</div>
-        </div>
-        <div style="background:rgba(0,0,0,.2);border-radius:6px;padding:8px 10px;font-size:.72rem">
-          <div style="color:var(--muted)">Résidence permanente</div>
-          <div style="color:var(--amber);font-weight:500">5 ans</div>
-        </div>
-        <div style="background:rgba(0,0,0,.2);border-radius:6px;padding:8px 10px;font-size:.72rem">
-          <div style="color:var(--muted)">ETFs UCITS domiciliés</div>
-          <div style="color:var(--green);font-weight:500">En Irlande ✓</div>
-        </div>
-      </div>
-      <div style="font-size:.72rem;color:var(--muted);line-height:1.6">
-        <strong style="color:var(--text)">Stratégie investissement :</strong> CGT 33% sur plus-values — moins favorable que BE/LUX. Mais IBKR unchanged. Avantage : tu vis là où tes ETFs sont domiciliés. Hub européen de Google, Meta, Apple.
-      </div>
-      <div style="margin-top:8px;display:flex;gap:6px;flex-wrap:wrap">
-        <span style="font-size:.68rem;padding:2px 8px;border-radius:10px;background:rgba(0,212,170,.1);color:var(--green);font-family:var(--mono)">Big Tech présentes</span>
-        <span style="font-size:.68rem;padding:2px 8px;border-radius:10px;background:rgba(0,212,170,.1);color:var(--green);font-family:var(--mono)">Hub fintech EU</span>
-        <span style="font-size:.68rem;padding:2px 8px;border-radius:10px;background:rgba(226,75,74,.1);color:var(--red);font-family:var(--mono)">CGT 33%</span>
-        <span style="font-size:.68rem;padding:2px 8px;border-radius:10px;background:rgba(239,159,39,.1);color:var(--amber);font-family:var(--mono)">Anglais obligatoire</span>
-      </div>
-    </div>
-
-    <!-- Allemagne #4 -->
-    <div style="border:1px solid var(--border);border-radius:12px;padding:16px 18px;background:var(--bg3)">
-      <div style="display:flex;align-items:center;gap:12px;margin-bottom:10px">
-        <div style="background:rgba(239,159,39,.2);color:var(--amber);width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:.9rem;flex-shrink:0">4</div>
-        <div style="flex:1">
-          <div style="font-weight:700;font-size:1rem">🇩🇪 Allemagne — Munich / Francfort</div>
-          <div style="font-size:.72rem;color:var(--muted);font-family:var(--mono)">Marché actuariat gigantesque · Munich Re · Allianz · Anglais OK en multinationale</div>
-        </div>
-        <div style="text-align:right">
-          <div style="font-size:1.3rem;font-weight:800;color:var(--amber);font-family:var(--mono)">78/100</div>
-        </div>
-      </div>
-      <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:10px">
-        <div style="background:rgba(0,0,0,.2);border-radius:6px;padding:8px 10px;font-size:.72rem">
-          <div style="color:var(--muted)">Salaire actuaire junior</div>
-          <div style="color:var(--text);font-weight:500;font-family:var(--mono)">2 700–3 500 €/mois</div>
-        </div>
-        <div style="background:rgba(0,0,0,.2);border-radius:6px;padding:8px 10px;font-size:.72rem">
-          <div style="color:var(--muted)">Résidence permanente</div>
-          <div style="color:var(--amber);font-weight:500">5 ans (réforme 2024)</div>
-        </div>
-        <div style="background:rgba(0,0,0,.2);border-radius:6px;padding:8px 10px;font-size:.72rem">
-          <div style="color:var(--muted)">Flat tax plus-values</div>
-          <div style="color:var(--amber);font-weight:500">26.4% Abgeltung</div>
-        </div>
-      </div>
-      <div style="font-size:.72rem;color:var(--muted);line-height:1.6">
-        <strong style="color:var(--text)">Stratégie investissement :</strong> 26.4% flat tax sur plus-values — vendre le VWCE/SPYI avant de quitter la Belgique (0% BE) pour réaliser les gains. IBKR unchanged. Versement mensuel 1 000–1 200€ avec salaire DE.
-      </div>
-      <div style="margin-top:8px;display:flex;gap:6px;flex-wrap:wrap">
-        <span style="font-size:.68rem;padding:2px 8px;border-radius:10px;background:rgba(0,212,170,.1);color:var(--green);font-family:var(--mono)">Munich Re · Allianz</span>
-        <span style="font-size:.68rem;padding:2px 8px;border-radius:10px;background:rgba(239,159,39,.1);color:var(--amber);font-family:var(--mono)">26.4% flat tax</span>
-        <span style="font-size:.68rem;padding:2px 8px;border-radius:10px;background:rgba(239,159,39,.1);color:var(--amber);font-family:var(--mono)">Allemand utile</span>
-      </div>
-    </div>
-
-    <!-- Suisse #5 -->
-    <div style="border:1px solid var(--border);border-radius:12px;padding:16px 18px;background:var(--bg3)">
-      <div style="display:flex;align-items:center;gap:12px;margin-bottom:10px">
-        <div style="background:rgba(226,75,74,.2);color:var(--red);width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:.9rem;flex-shrink:0">5</div>
-        <div style="flex:1">
-          <div style="font-weight:700;font-size:1rem">🇨🇭 Suisse Romande — Genève / Lausanne</div>
-          <div style="font-size:.72rem;color:var(--muted);font-family:var(--mono)">Salaire N°1 mondial · 0% plus-values · Visa très restrictif hors UE</div>
-        </div>
-        <div style="text-align:right">
-          <div style="font-size:1.3rem;font-weight:800;color:var(--red);font-family:var(--mono)">55/100</div>
-        </div>
-      </div>
-      <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:10px">
-        <div style="background:rgba(0,0,0,.2);border-radius:6px;padding:8px 10px;font-size:.72rem">
-          <div style="color:var(--muted)">Salaire actuaire</div>
-          <div style="color:var(--green);font-weight:500;font-family:var(--mono)">4 500–6 300 €/mois</div>
-        </div>
-        <div style="background:rgba(0,0,0,.2);border-radius:6px;padding:8px 10px;font-size:.72rem">
-          <div style="color:var(--muted)">Plus-values</div>
-          <div style="color:var(--green);font-weight:500">0% ✓</div>
-        </div>
-        <div style="background:rgba(0,0,0,.2);border-radius:6px;padding:8px 10px;font-size:.72rem">
-          <div style="color:var(--muted)">Visa CMR</div>
-          <div style="color:var(--red);font-weight:500">Quota annuel strict</div>
-        </div>
-      </div>
-      <div style="font-size:.72rem;color:var(--muted);line-height:1.6">
-        <strong style="color:var(--text)">Stratégie investissement :</strong> 0% plus-values — idéal pour réaliser les gains accumulés. IBKR unchanged. À viser uniquement avec 5+ ans d'expérience et qualification actuarielle complète. Passeport canadien facilite l'accès.
-      </div>
-      <div style="margin-top:8px;display:flex;gap:6px;flex-wrap:wrap">
-        <span style="font-size:.68rem;padding:2px 8px;border-radius:10px;background:rgba(0,212,170,.1);color:var(--green);font-family:var(--mono)">0% plus-values</span>
-        <span style="font-size:.68rem;padding:2px 8px;border-radius:10px;background:rgba(0,212,170,.1);color:var(--green);font-family:var(--mono)">Salaire record</span>
-        <span style="font-size:.68rem;padding:2px 8px;border-radius:10px;background:rgba(226,75,74,.1);color:var(--red);font-family:var(--mono)">Visa quasi impossible maintenant</span>
-        <span style="font-size:.68rem;padding:2px 8px;border-radius:10px;background:rgba(239,159,39,.1);color:var(--amber);font-family:var(--mono)">Objectif 5-10 ans</span>
-      </div>
-    </div>
-  </div>
-
-  <!-- Stratégie investissement modulable -->
-  <div class="sec">Stratégie d'investissement modulable selon la destination</div>
-  <div class="card mb16">
-    <div class="card-title">Ce qui change dans le portefeuille selon où tu vis</div>
-    <div style="overflow-x:auto"><table class="tbl">
-      <thead><tr>
-        <th>Pays</th>
-        <th>Fiscalité plus-values</th>
-        <th>Enveloppe prioritaire</th>
-        <th>Action avant de partir (depuis BE)</th>
-        <th>Versement mensuel cible</th>
-        <th>ETFs à modifier</th>
-      </tr></thead>
-      <tbody>
-        <tr style="background:rgba(0,212,170,.04)">
-          <td>🇨🇦 Canada</td>
-          <td><span style="background:rgba(239,159,39,.1);color:var(--amber);padding:2px 7px;border-radius:4px;font-size:.72rem">50% gains imposables</span></td>
-          <td><span style="background:rgba(0,212,170,.1);color:var(--green);padding:2px 7px;border-radius:4px;font-size:.72rem">TFSA en priorité absolue</span></td>
-          <td style="font-size:.75rem;color:var(--muted)">Ne pas vendre — reporter les gains au Canada où 50% seulement imposable</td>
-          <td><span style="font-family:var(--mono);color:var(--green)">800→1 200 €</span></td>
-          <td style="font-size:.75rem;color:var(--muted)">Identique + TFSA wrapper</td>
-        </tr>
-        <tr>
-          <td>🇱🇺 Luxembourg</td>
-          <td><span style="background:rgba(0,212,170,.1);color:var(--green);padding:2px 7px;border-radius:4px;font-size:.72rem">0% actions ✓</span></td>
-          <td style="font-size:.75rem;color:var(--muted)">Compte-titres IBKR suffit</td>
-          <td style="font-size:.75rem;color:var(--muted)">Rien à changer — fiscalité identique à BE</td>
-          <td><span style="font-family:var(--mono);color:var(--green)">800→1 500 €</span></td>
-          <td style="font-size:.75rem;color:var(--muted)">Identique</td>
-        </tr>
-        <tr>
-          <td>🇮🇪 Irlande</td>
-          <td><span style="background:rgba(226,75,74,.1);color:var(--red);padding:2px 7px;border-radius:4px;font-size:.72rem">CGT 33%</span></td>
-          <td style="font-size:.75rem;color:var(--muted)">Minimiser les ventes</td>
-          <td style="font-size:.75rem;color:var(--muted)">Vendre les positions avec PV avant départ (0% BE)</td>
-          <td><span style="font-family:var(--mono);color:var(--green)">800→1 200 €</span></td>
-          <td style="font-size:.75rem;color:var(--muted)">Buy & hold absolu</td>
-        </tr>
-        <tr>
-          <td>🇩🇪 Allemagne</td>
-          <td><span style="background:rgba(239,159,39,.1);color:var(--amber);padding:2px 7px;border-radius:4px;font-size:.72rem">26.4% flat tax</span></td>
-          <td style="font-size:.75rem;color:var(--muted)">Abgeltungssteuer — automatique</td>
-          <td style="font-size:.75rem;color:var(--muted)">Vendre TOUT avant départ (0% BE → 0% impôt)</td>
-          <td><span style="font-family:var(--mono);color:var(--green)">800→1 200 €</span></td>
-          <td style="font-size:.75rem;color:var(--muted)">Racheter immédiatement en DE</span></td>
-        </tr>
-        <tr>
-          <td>🇨🇭 Suisse</td>
-          <td><span style="background:rgba(0,212,170,.1);color:var(--green);padding:2px 7px;border-radius:4px;font-size:.72rem">0% plus-values</span></td>
-          <td style="font-size:.75rem;color:var(--muted)">Compte-titres IBKR suffit</td>
-          <td style="font-size:.75rem;color:var(--muted)">Rien à changer — idéal pour réaliser les PV accumulées</td>
-          <td><span style="font-family:var(--mono);color:var(--green)">800→2 500 €</span></td>
-          <td style="font-size:.75rem;color:var(--muted)">Ajouter CEBZ si résidence CH longue</td>
-        </tr>
-      </tbody>
-    </table></div>
-  </div>
-
-  <!-- Actions immédiates -->
-  <div class="card">
-    <div class="card-title">Actions immédiates — avant la décision Canada</div>
-    <div style="display:flex;align-items:flex-start;gap:12px;padding:10px 0;border-bottom:1px solid rgba(30,45,64,.5)">
-      <div style="background:rgba(226,75,74,.15);color:var(--red);border-radius:50%;width:26px;height:26px;display:flex;align-items:center;justify-content:center;font-size:.72rem;font-weight:700;flex-shrink:0">!</div>
-      <div>
-        <div style="font-size:.85rem;font-weight:600;margin-bottom:2px">Vérifier le portail IRCC chaque jour</div>
-        <div style="font-size:.75rem;color:var(--muted)">ircc.canada.ca — section "Vérifier l'état de ma demande". La décision apparaît en ligne avant le courrier. Si approuvé → 60 jours pour accepter.</div>
-      </div>
-    </div>
-    <div style="display:flex;align-items:flex-start;gap:12px;padding:10px 0;border-bottom:1px solid rgba(30,45,64,.5)">
-      <div style="background:rgba(155,127,232,.15);color:var(--purple);border-radius:50%;width:26px;height:26px;display:flex;align-items:center;justify-content:center;font-size:.72rem;font-weight:700;flex-shrink:0">2</div>
-      <div>
-        <div style="font-size:.85rem;font-weight:600;margin-bottom:2px">Conversation avec ta copine — maintenant, pas plus tard</div>
-        <div style="font-size:.75rem;color:var(--muted)">La décision peut arriver dans 4 semaines. Il faut savoir si vous partez ensemble. Michelin Canada (Ontario/Nouvelle-Écosse) est une piste concrète pour sa thèse CIFRE.</div>
-      </div>
-    </div>
-    <div style="display:flex;align-items:flex-start;gap:12px;padding:10px 0;border-bottom:1px solid rgba(30,45,64,.5)">
-      <div style="background:rgba(59,142,234,.15);color:var(--blue);border-radius:50%;width:26px;height:26px;display:flex;align-items:center;justify-content:center;font-size:.72rem;font-weight:700;flex-shrink:0">3</div>
-      <div>
-        <div style="font-size:.85rem;font-weight:600;margin-bottom:2px">S'inscrire à l'IELTS maintenant</div>
-        <div style="font-size:.75rem;color:var(--muted)">ielts.org — centre Bruxelles ou Liège. ~250€. Utile pour Canada (score CRS) ET pour le marché du travail EU. Prépare 2–3 mois avec IELTS Liz sur YouTube.</div>
-      </div>
-    </div>
-    <div style="display:flex;align-items:flex-start;gap:12px;padding:10px 0">
-      <div style="background:rgba(0,212,170,.15);color:var(--green);border-radius:50%;width:26px;height:26px;display:flex;align-items:center;justify-content:center;font-size:.72rem;font-weight:700;flex-shrink:0">4</div>
-      <div>
-        <div style="font-size:.85rem;font-weight:600;margin-bottom:2px">Préparer l'arrivée Canada (si décision positive)</div>
-        <div style="font-size:.75rem;color:var(--muted)">Repérer Montréal (Plateau, Mile-End, Rosemont) · Identifier employeurs actuariat (Desjardins, Sun Life, Intact, iA Groupe) · Comprendre TFSA + RRSP · Réserve 2 500€ disponible sur Hello Bank.</div>
-      </div>
-    </div>
-  </div>
-
-
-</div><!-- /wrap -->
+</div><!-- /w -->
 <div id="toast"></div>
 
 <script>
-// ════════════════════════════════════════════════════════════════
-// STATE & STORAGE
-// ════════════════════════════════════════════════════════════════
-const YEAR = 2026;
-const S = {
-  trades: JSON.parse(localStorage.getItem('lf_trades') || '[]'),
-  prices: { SPYI:null, EMIM:null, SPYL:null, QUS5:null, C50:null, XAIX:null, IUSN:null, CEBZ:null, VWCE:null, IWDA:null },
-  ch: {}
+const YEAR=2026;
+const S={trades:JSON.parse(localStorage.getItem('lf_v3')||'[]'),prices:{},ch:{}};
+const save=()=>localStorage.setItem('lf_v3',JSON.stringify(S.trades));
+const fmt=(v,d=0)=>(+v).toLocaleString('fr-FR',{minimumFractionDigits:d,maximumFractionDigits:d});
+const fmtE=(v,d=0)=>fmt(v,d)+' €';
+const clr=v=>v>=0?'var(--green)':'var(--red)';
+const sign=v=>v>=0?'+':'';
+
+// ═══ DATA ═══
+// SPYI = héritage, intouché, continue de croître seul
+const SPYI_HERITAGE = {
+  etf:'SPYI', parts:500, prix:11.50, total:5750,
+  isin:'IE00B3YLTY66', ter:0.17, bourse:'XETRA', color:'#534AB7',
+  note:'Position initiale · 22 mai 2026 · Ne jamais vendre'
 };
 
-const save = () => localStorage.setItem('lf_trades', JSON.stringify(S.trades));
-const fmt = (v, d=0) => (+v).toLocaleString('fr-FR', {minimumFractionDigits:d, maximumFractionDigits:d});
-const fmtE = (v, d=0) => fmt(v,d) + ' €';
-const clr = (v) => v >= 0 ? 'var(--green)' : 'var(--red)';
-const sign = (v) => v >= 0 ? '+' : '';
+// Nouveaux versements mensuels — 800€/mois
+const ALLOC=[
+  {etf:'XDWD',pct:40,mnt:320,isin:'IE00BJ0KDQ92',ter:0.12,enc:'18.8 Md€',bourse:'XETRA',color:'#1D9E75',role:'Monde développé — coeur',desc:'MSCI World · TER 0.12% · alternative optimale à WRDU'},
+  {etf:'EMIM',pct:25,mnt:200,isin:'IE00BKM4GZ66',ter:0.18,enc:'~20 Md€', bourse:'AEB',  color:'#3b8eea',role:'Émergents — Asie/Inde/Chine',desc:'MSCI EM IMI · 3 000 titres · tu contrôles le poids'},
+  {etf:'IUSN',pct:20,mnt:160,isin:'IE00BF4RFH31',ter:0.35,enc:'~6.8 Md€',bourse:'XETRA',color:'#f59f00',role:'Prime small caps',desc:'MSCI World Small Cap · WSML en EUR · facteur size'},
+  {etf:'ZPRV',pct:15,mnt:120,isin:'IE00BSPLC413',ter:0.30,enc:'841 M€', bourse:'XETRA',color:'#e91e8c',role:'Prime value + size US',desc:'MSCI USA Small Cap Value Weighted · double prime académique'},
+];
 
-// ════════════════════════════════════════════════════════════════
-// TABS
-// ════════════════════════════════════════════════════════════════
-const TABS = ['dashboard','salary','portfolio','projections','etfs','countries','plan','rules','residence'];
-function go(name) {
-  document.querySelectorAll('.tab').forEach((t,i) => t.classList.toggle('active', TABS[i] === name));
-  document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
-  document.getElementById('panel-'+name).classList.add('active');
-  if(name==='salary') drawSalary();
-  if(name==='projections') drawProjections();
-  if(name==='etfs') drawFees();
-  if(name==='countries') drawCountries();
-  if(name==='portfolio') refreshPortfolio();
+// Phase 2 allocation (an 3-7, versement >= 800€/mois)
+const ALLOC_P2=[
+  {etf:'SPYI',pct:35,mnt:280,isin:'IE00B3YLTY66',ter:0.17,enc:'5.7 Md€', bourse:'XETRA',color:'#534AB7',role:'Base mondiale (héritage)',desc:'Déjà en portefeuille — continue de croître'},
+  {etf:'XDWD',pct:25,mnt:200,isin:'IE00BJ0KDQ92',ter:0.12,enc:'18.8 Md€',bourse:'XETRA',color:'#1D9E75',role:'Monde développé 0.12%',desc:'= WRDU/MWRE · meilleure alternative · nouveaux versements'},
+  {etf:'EMIM',pct:15,mnt:120,isin:'IE00BKM4GZ66',ter:0.18,enc:'~20 Md€',bourse:'AEB',  color:'#3b8eea',role:'Émergents — contrôle poids',desc:'Asie · Inde · Chine · 3 000 titres'},
+  {etf:'IUSN',pct:15,mnt:120,isin:'IE00BF4RFH31',ter:0.35,enc:'~6.8 Md€',bourse:'XETRA',color:'#f59f00',role:'Prime small caps',desc:'MSCI World Small Cap'},
+  {etf:'ZPRV',pct:10,mnt: 80,isin:'IE00BSPLC413',ter:0.30,enc:'841 M€', bourse:'XETRA',color:'#e91e8c',role:'Prime value + size US',desc:'MSCI USA Small Cap Value Weighted'},
+];
+
+const TER_MWY=ALLOC.reduce((s,e)=>s+e.ter*(e.pct/100),0);
+
+const TABS=['dash','portfolio','proj','strategie','ibkr','vie'];
+function go(n){
+  document.querySelectorAll('.tab').forEach((t,i)=>t.classList.toggle('active',TABS[i]===n));
+  document.querySelectorAll('.panel').forEach(p=>p.classList.remove('active'));
+  document.getElementById('panel-'+n).classList.add('active');
+  if(n==='proj')drawProj();
+  if(n==='strategie'){drawStratPie();drawFees();}
+}
+function sp(id,d){const el=document.getElementById(id);const dc=Math.abs(d)<1?String(d).replace('-','').split('.')[1]?.length||0:0;el.value=Math.max(0,+(+el.value+d).toFixed(dc));el.dispatchEvent(new Event('input'));}
+
+function mkSpin(id,lbl,min,max,step,val,unit,cb){
+  return`<div class="sb"><label>${lbl}</label><div class="sb-w">
+    <button class="sb-b" onclick="sp('${id}',-(${step}))">−</button>
+    <input type="number" id="${id}" min="${min}" max="${max}" step="${step}" value="${val}" oninput="${cb||''}">
+    ${unit?`<span class="sb-u">${unit}</span>`:''}
+    <button class="sb-b" onclick="sp('${id}',${step})">+</button>
+  </div></div>`;}
+
+// ═══ DASHBOARD ═══
+function initDash(){
+  document.getElementById('dash-params').innerHTML=[
+    mkSpin('p-rev','Revenu net/mois',500,10000,50,2500,'€','updateDash()'),
+    mkSpin('p-dep','Dépenses fixes/mois',500,4000,25,1950,'€','updateDash()'),
+    mkSpin('p-inv','Versement IBKR',50,3000,50,800,'€','updateDash()'),
+    mkSpin('p-obj','Objectif liberté',100000,2000000,25000,750000,'€','updateDash()'),
+  ].join('');
+
+  document.getElementById('dash-monthly').innerHTML=ALLOC.map(a=>`
+    <div style="display:flex;align-items:center;gap:8px;margin:4px 0">
+      <div style="width:${a.pct*2}px;height:6px;border-radius:3px;background:${a.color};flex-shrink:0"></div>
+      <span class="mono fw7" style="color:${a.color};min-width:40px;font-size:.78rem">${a.etf}</span>
+      <span style="font-size:.72rem;color:var(--muted)">${a.pct}% · ${a.mnt}€</span>
+    </div>`).join('');
+
+  document.getElementById('dash-alloc').innerHTML=ALLOC.map(a=>`
+    <div style="background:var(--bg4);border-radius:8px;padding:10px;text-align:center;border-top:3px solid ${a.color}">
+      <div class="mono fw7" style="color:${a.color};font-size:.88rem">${a.etf}</div>
+      <div style="font-size:.65rem;color:var(--text);margin:3px 0">${a.pct}%</div>
+      <div style="font-size:.6rem;color:var(--muted)">${a.mnt}€/mois</div>
+      <div style="font-size:.58rem;color:var(--dim);margin-top:1px">TER ${(a.ter*100).toFixed(2)}%</div>
+    </div>`).join('');
 }
 
-// ════════════════════════════════════════════════════════════════
-// SPINBOX BUILDER
-// ════════════════════════════════════════════════════════════════
-function spinField(id, delta) {
-  const el = document.getElementById(id);
-  const v = +(+el.value + delta).toFixed(Math.abs(delta) < 1 ? String(delta).split('.')[1]?.length || 0 : 0);
-  el.value = Math.max(0, v);
-  el.dispatchEvent(new Event('input'));
-}
+function updateDash(){
+  const rev=+(document.getElementById('p-rev')?.value)||2500;
+  const dep=+(document.getElementById('p-dep')?.value)||1950;
+  const inv=+(document.getElementById('p-inv')?.value)||550;
+  const obj=+(document.getElementById('p-obj')?.value)||750000;
+  const marg=Math.max(0,rev-dep);
+  const anLib=anneExacte(5750,inv,7,3,900,obj);
 
-function makeSpinbox(id, label, min, max, step, value, unit='€', onInput='') {
-  return `<div class="spinbox">
-    <label>${label}</label>
-    <div class="spin-wrap">
-      <button class="spin-btn" onclick="spinField('${id}',-(${step}))"  >−</button>
-      <input type="number" id="${id}" min="${min}" max="${max}" step="${step}" value="${value}" oninput="${onInput}" style="text-align:center">
-      ${unit ? `<span class="spin-unit">${unit}</span>` : ''}
-      <button class="spin-btn" onclick="spinField('${id}',${step})">+</button>
-    </div>
-  </div>`;
-}
+  document.getElementById('dash-kpis').innerHTML=`
+    <div class="kpi"><div class="kv tg">${fmtE(rev)}</div><div class="kl">Revenu net</div></div>
+    <div class="kpi"><div class="kv ta">${fmtE(dep)}</div><div class="kl">Dépenses fixes</div><div class="ks">${fmt(dep/rev*100,1)}% du revenu</div></div>
+    <div class="kpi"><div class="kv tb">${fmtE(inv)}</div><div class="kl">Versement IBKR</div><div class="ks">${fmt(inv/rev*100,1)}% du revenu</div></div>
+    <div class="kpi"><div class="kv tp">${anLib?anLib.toFixed(1)+' ans':'> 50 ans'}</div><div class="kl">Avant liberté</div><div class="ks">${anLib?'vers '+(YEAR+Math.ceil(anLib)):'—'}</div></div>`;
 
-// ════════════════════════════════════════════════════════════════
-// DASHBOARD
-// ════════════════════════════════════════════════════════════════
-function dashParams() {
-  const defs = [
-    {id:'p-rev',label:'Revenu net/mois',min:500,max:10000,step:50,val:2250,unit:'€'},
-    {id:'p-loy',label:'Loyer + charges',min:300,max:3000,step:25,val:1025,unit:'€'},
-    {id:'p-ali',label:'Alimentation',min:100,max:1000,step:25,val:400,unit:'€'},
-    {id:'p-env',label:'Envois Cameroun',min:0,max:1000,step:25,val:300,unit:'€'},
-    {id:'p-voi',label:'Voiture fixe',min:0,max:600,step:10,val:150,unit:'€'},
-    {id:'p-div',label:'Divers',min:0,max:500,step:10,val:75,unit:'€'},
-  ];
-  document.getElementById('dash-params').innerHTML = defs.map(d =>
-    makeSpinbox(d.id, d.label, d.min, d.max, d.step, d.val, d.unit, 'updateDash()')
-  ).join('');
-}
-
-function getP() {
-  return ['p-rev','p-loy','p-ali','p-env','p-voi','p-div'].map(id => +(document.getElementById(id)?.value)||0);
-}
-
-function updateDash() {
-  const [rev,loy,ali,env,voi,div] = getP();
-  const dep = loy+ali+env+voi+div;
-  const inv = Math.max(0, rev-dep);
-  const pct = rev > 0 ? dep/rev*100 : 0;
-  const capLib = dep*12*25;
-  const anLib = anneExacte(5000,Math.min(inv,400),7,3,Math.min(inv*0.8,800),capLib);
-
-  document.getElementById('dash-kpis').innerHTML = `
-    <div class="kpi"><div class="kpi-val" style="color:var(--green)">${fmtE(rev)}</div><div class="kpi-lbl">Revenu net/mois</div></div>
-    <div class="kpi"><div class="kpi-val" style="color:${pct>75?'var(--red)':pct>60?'var(--amber)':'var(--blue)'}">${fmtE(dep)}</div><div class="kpi-lbl">Dépenses fixes/mois</div><div class="kpi-sub">${fmt(pct,1)}% du revenu</div></div>
-    <div class="kpi"><div class="kpi-val" style="color:${inv>=300?'var(--green)':'var(--amber)'}">${fmtE(inv)}</div><div class="kpi-lbl">Investissable/mois</div><div class="kpi-sub">${fmt(inv/rev*100,1)}% du revenu</div></div>
-    <div class="kpi"><div class="kpi-val" style="color:var(--purple)">${anLib ? anLib.toFixed(1)+' ans' : '> 50 ans'}</div><div class="kpi-lbl">Avant liberté financière</div><div class="kpi-sub">${anLib ? 'vers '+(YEAR+Math.ceil(anLib)) : '—'}</div></div>
-  `;
-  document.getElementById('rules-kpis').innerHTML = `
-    <div class="kpi"><div class="kpi-val tr">${fmtE(dep*12)}</div><div class="kpi-lbl">Dépenses annuelles</div></div>
-    <div class="kpi"><div class="kpi-val ta">${fmtE(capLib)}</div><div class="kpi-lbl">Capital nécessaire (×25)</div></div>
-    <div class="kpi"><div class="kpi-val tg">${fmtE(capLib*0.04/12)}</div><div class="kpi-lbl">Revenus passifs/mois</div></div>
-  `;
-
-  // Budget chart
-  if(S.ch.budget) S.ch.budget.destroy();
-  S.ch.budget = new Chart(document.getElementById('c-budget').getContext('2d'),{
-    type:'doughnut',
-    data:{labels:['Loyer+charges','Alimentation','Envois famille','Voiture','Divers','Investi'],
-      datasets:[{data:[loy,ali,env,voi,div,inv],
-        backgroundColor:['#ff5757','#f5a623','#9b7fe8','#3b8eea','#4a6080','#00d4aa'],
-        borderColor:'#080b10',borderWidth:2}]},
+  if(S.ch.budget)S.ch.budget.destroy();
+  const mnte=Math.max(0,marg-inv);
+  S.ch.budget=new Chart(document.getElementById('c-budget').getContext('2d'),{type:'doughnut',
+    data:{labels:['Dépenses fixes','Investi IBKR','Marge restante'],
+      datasets:[{data:[dep,inv,mnte],backgroundColor:['#ff5757','#00d4aa','#4a6080'],borderColor:'#080b10',borderWidth:2}]},
     options:{plugins:{legend:{labels:{color:'#e2e8f0',font:{family:'Syne',size:10}}}},cutout:'55%',responsive:true}
   });
-
-  // Répartition
-  if(S.ch.rep) S.ch.rep.destroy();
-  S.ch.rep = new Chart(document.getElementById('c-repartition').getContext('2d'),{
-    type:'bar',
-    data:{labels:['Fonds urgence\nHello Bank','Réserve Canada\nHello Bank','Investi\nIBKR ETF'],
-      datasets:[{data:[2500,2500,5000],backgroundColor:['#f5a623','#3b8eea','#00d4aa'],borderRadius:6}]},
-    options:{plugins:{legend:{display:false}},
-      scales:{x:{ticks:{color:'#4a6080',font:{family:'JetBrains Mono',size:9}},grid:{display:false}},y:{display:false}},responsive:true}
-  });
 }
 
-// ════════════════════════════════════════════════════════════════
-// SALARY PROJECTION
-// ════════════════════════════════════════════════════════════════
-function salParams() {
-  const defs = [
-    {id:'s-init',label:'Salaire actuel net/mois',min:1000,max:8000,step:50,val:2250,unit:'€'},
-    {id:'s-dep',label:'Dépenses fixes actuelles',min:500,max:5000,step:25,val:1950,unit:'€'},
-    {id:'s-taux',label:'Rendement IBKR',min:3,max:12,step:0.5,val:7,unit:'%'},
-    {id:'s-horizon',label:'Horizon total',min:5,max:40,step:1,val:20,unit:'ans'},
-  ];
-  document.getElementById('sal-params').innerHTML = defs.map(d =>
-    makeSpinbox(d.id, d.label, d.min, d.max, d.step, d.val, d.unit, 'drawSalary()')
-  ).join('');
-
-  // Phases
-  const phases = [
-    {id:'ph1',label:'Phase 1 — Court terme (0–3 ans)',sal:2250,dep:1950,init:5000,color:'var(--amber)'},
-    {id:'ph2',label:'Phase 2 — Moyen terme (4–7 ans)',sal:3800,dep:2200,init:0,color:'var(--blue)'},
-    {id:'ph3',label:'Phase 3 — Long terme (8+ ans)',sal:5500,dep:2600,init:0,color:'var(--green)'},
-  ];
-  document.getElementById('sal-phases').innerHTML = phases.map(ph => `
-    <div class="sal-phase">
-      <div class="sal-phase-title"><span style="width:8px;height:8px;border-radius:50%;background:${ph.color};flex-shrink:0;display:inline-block"></span>${ph.label}</div>
-      <div class="g2">
-        ${makeSpinbox(ph.id+'-sal','Salaire net/mois',1000,15000,50,ph.sal,'€','drawSalary()')}
-        ${makeSpinbox(ph.id+'-dep','Dépenses fixes',500,6000,25,ph.dep,'€','drawSalary()')}
-      </div>
-    </div>
-  `).join('');
-}
-
-function getSalPhase(id) {
-  const sal = +(document.getElementById(id+'-sal')?.value)||0;
-  const dep = +(document.getElementById(id+'-dep')?.value)||0;
-  return {sal, dep, ibkr: Math.max(0, (sal-dep)*0.8)};
-}
-
-function drawSalary() {
-  const ph1 = getSalPhase('ph1');
-  const ph2 = getSalPhase('ph2');
-  const ph3 = getSalPhase('ph3');
-  const taux = +(document.getElementById('s-taux')?.value)||7;
-  const horizon = +(document.getElementById('s-horizon')?.value)||20;
-  const init = +(document.getElementById('s-init')?.value)||2250;
-  const initCapital = 5000;
-
-  const phases = [
-    {dur:3, ...ph1},
-    {dur:4, ...ph2},
-    {dur:Math.max(1,horizon-7), ...ph3},
-  ];
-
-  // Build year-by-year data
-  const rows = [];
-  let cap = initCapital;
-  const tm = taux/100/12;
-  let year = 0;
-  for(const ph of phases) {
-    for(let y = 0; y < ph.dur && year < horizon; y++) {
-      year++;
-      // compound monthly
-      let yearVerse = 0;
-      for(let m = 0; m < 12; m++) {
-        cap = cap*(1+tm) + ph.ibkr;
-        yearVerse += ph.ibkr;
-      }
-      rows.push({
-        year, calYear: YEAR+year,
-        phase: year <= 3 ? 'Court terme' : year <= 7 ? 'Moyen terme' : 'Long terme',
-        sal: ph.sal, dep: ph.dep, ibkr: ph.ibkr,
-        verse: yearVerse, cap: Math.round(cap),
-        passif: Math.round(cap*0.04/12)
-      });
-    }
-  }
-
-  // KPIs
-  const lastRow = rows[rows.length-1];
-  document.getElementById('sal-kpis').innerHTML = `
-    <div class="kpi"><div class="kpi-val tg">${fmtE(lastRow.sal)}</div><div class="kpi-lbl">Salaire long terme</div><div class="kpi-sub">Phase 3 — senior</div></div>
-    <div class="kpi"><div class="kpi-val tb">${fmtE(lastRow.ibkr)}</div><div class="kpi-lbl">Versement IBKR long terme</div><div class="kpi-sub">80% de la marge disponible</div></div>
-    <div class="kpi"><div class="kpi-val tg">${fmtE(lastRow.cap)}</div><div class="kpi-lbl">Capital final (an ${horizon})</div></div>
-    <div class="kpi"><div class="kpi-val tp">${fmtE(lastRow.passif)}</div><div class="kpi-lbl">Revenu passif final/mois</div><div class="kpi-sub">Règle des 4%</div></div>
-  `;
-
-  // Salary chart
-  const labels = rows.map(r => 'An '+r.year);
-  if(S.ch.sal) S.ch.sal.destroy();
-  S.ch.sal = new Chart(document.getElementById('c-salary').getContext('2d'),{
-    type:'bar',
-    data:{labels, datasets:[
-      {label:'Salaire net/mois (€)',data:rows.map(r=>r.sal),backgroundColor:'rgba(59,142,234,0.5)',borderColor:'#3b8eea',borderWidth:1,borderRadius:3,yAxisID:'y'},
-      {label:'Versement IBKR/mois (€)',data:rows.map(r=>r.ibkr),backgroundColor:'rgba(0,212,170,0.7)',borderColor:'#00d4aa',borderWidth:1,borderRadius:3,yAxisID:'y'},
-    ]},
-    options:{responsive:true,maintainAspectRatio:false,
-      plugins:{legend:{labels:{color:'#8892b0',font:{family:'Syne',size:11}}}},
-      scales:{
-        x:{ticks:{color:'#4a6080',font:{family:'JetBrains Mono',size:9}},grid:{display:false}},
-        y:{ticks:{color:'#4a6080',font:{family:'JetBrains Mono',size:9},callback:v=>fmtE(v)},grid:{color:'rgba(30,45,64,.5)'}}
-      }
-    }
-  });
-
-  // Capital chart from salary
-  if(S.ch.salCap) S.ch.salCap.destroy();
-  S.ch.salCap = new Chart(document.getElementById('c-salary-capital').getContext('2d'),{
-    type:'line',
-    data:{labels, datasets:[
-      {label:'Capital projeté (€)',data:rows.map(r=>r.cap),borderColor:'#00d4aa',backgroundColor:'rgba(0,212,170,0.07)',borderWidth:2.5,fill:true,tension:0.3,pointRadius:0},
-      {label:'Total versé cumulé (€)',data:rows.reduce((acc,r,i)=>[...acc,(acc[i-1]||initCapital)+r.verse],[]).map(Math.round),borderColor:'#3b8eea',borderDash:[5,3],borderWidth:1.5,fill:false,tension:0.3,pointRadius:0},
-    ]},
-    options:{responsive:true,maintainAspectRatio:false,
-      plugins:{legend:{labels:{color:'#8892b0',font:{family:'Syne',size:11}}}},
-      scales:{
-        x:{ticks:{color:'#4a6080',font:{family:'JetBrains Mono',size:9}},grid:{display:false}},
-        y:{ticks:{color:'#4a6080',font:{family:'JetBrains Mono',size:9},callback:v=>fmtE(v)},grid:{color:'rgba(30,45,64,.5)'}}
-      }
-    }
-  });
-
-  // Table
-  document.getElementById('sal-tbody').innerHTML = rows.map(r => `
+// ═══ STRATÉGIE ═══
+function initStratTable(){
+  const totMnt=ALLOC.reduce((s,a)=>s+a.mnt,0);
+  document.getElementById('strat-tbody').innerHTML=ALLOC.map(a=>`
     <tr>
-      <td class="mono">${r.calYear}</td>
-      <td><span class="badge ${r.phase==='Court terme'?'b-a':r.phase==='Moyen terme'?'b-b':'b-g'}">${r.phase}</span></td>
-      <td class="mono tg fw7">${fmtE(r.sal)}</td>
-      <td class="mono">${fmtE(r.dep)}</td>
-      <td class="mono tb">${fmtE(r.ibkr)}</td>
-      <td class="mono">${fmtE(r.verse)}</td>
-      <td class="mono tg fw7">${fmtE(r.cap)}</td>
-      <td class="mono tp">${fmtE(r.passif)}</td>
-    </tr>
-  `).join('');
+      <td class="mono fw7" style="color:${a.color}">${a.etf}</td>
+      <td class="mono" style="font-size:.68rem">${a.isin}</td>
+      <td class="mono" style="font-size:.72rem">${a.bourse}</td>
+      <td class="mono ${a.ter<=0.12?'tg':a.ter>=0.35?'ta':''}">${(a.ter*100).toFixed(2)}%</td>
+      <td class="mono">${a.enc}</td>
+      <td><span class="badge bg">${a.pct}%</span></td>
+      <td class="mono">${a.mnt}€</td>
+      <td style="font-size:.75rem;font-weight:600">${a.role}</td>
+      <td style="font-size:.72rem;color:var(--muted)">${a.desc}</td>
+    </tr>`).join('');
+  document.getElementById('strat-tbody').innerHTML+=`
+    <tr style="border-top:1px solid var(--border)">
+      <td colspan="4" class="mono" style="color:var(--muted)">TER moyen pondéré : <strong style="color:var(--text)">${(TER_MWY*100).toFixed(3)}%/an</strong></td>
+      <td></td><td><span class="badge bg">100%</span></td>
+      <td class="mono fw7 tg">${totMnt}€</td>
+      <td colspan="2" style="font-size:.72rem;color:var(--muted)">Commissions : 7–8 ordres × 1.25€ = ~8.75€/mois</td>
+    </tr>`;
 }
 
-// ════════════════════════════════════════════════════════════════
-// PROJECTIONS
-// ════════════════════════════════════════════════════════════════
-function projParams() {
-  const defs1 = [
-    {id:'pj-cap',label:'Capital initial IBKR',min:0,max:50000,step:500,val:5000,unit:'€'},
-    {id:'pj-men',label:'Versement mensuel act.',min:50,max:3000,step:50,val:400,unit:'€'},
-    {id:'pj-tx',label:'Rendement annuel',min:2,max:15,step:0.5,val:7,unit:'%'},
-    {id:'pj-obj',label:'Objectif liberté',min:100000,max:3000000,step:25000,val:750000,unit:'€'},
-    {id:'pj-ban',label:'Boost versement à (an)',min:1,max:15,step:1,val:3,unit:''},
-    {id:'pj-bmo',label:'Versement après boost',min:100,max:5000,step:50,val:800,unit:'€'},
-  ];
-  document.getElementById('proj-params').innerHTML = defs1.map(d =>
-    makeSpinbox(d.id, d.label, d.min, d.max, d.step, d.val, d.unit, 'drawProjections()')
-  ).join('');
+function drawStratPie(){
+  if(S.ch.sp)S.ch.sp.destroy();
+  S.ch.sp=new Chart(document.getElementById('c-strat-pie').getContext('2d'),{type:'doughnut',
+    data:{labels:ALLOC.map(a=>a.etf+' '+a.pct+'%'),datasets:[{data:ALLOC.map(a=>a.pct),backgroundColor:ALLOC.map(a=>a.color),borderColor:'#080b10',borderWidth:3}]},
+    options:{plugins:{legend:{labels:{color:'#e2e8f0',font:{family:'Syne',size:10}}}},cutout:'48%',responsive:true}
+  });
 }
+drawStratPie();
 
-function projCapital(init, mensuel, taux, annees, boostAn, boostMontant) {
-  const tm = taux/100/12;
-  let cap = init, hist = [init], totalVerse = 0;
-  for(let m = 1; m <= annees*12; m++) {
-    const v = m <= boostAn*12 ? mensuel : boostMontant;
-    cap = cap*(1+tm)+v; totalVerse += v;
-    if(m%12===0) hist.push(Math.round(cap));
-  }
-  return {hist, totalVerse};
-}
-
-function anneExacte(init, mensuel, taux, boostAn, boostMontant, objectif) {
-  if(taux<=0 && mensuel<=0) return null;
-  const tm = taux/100/12;
-  let cap = init;
-  for(let m = 1; m <= 600; m++) {
-    const v = m <= boostAn*12 ? mensuel : boostMontant;
-    cap = cap*(1+tm)+v;
-    if(cap >= objectif) return +(m/12).toFixed(2);
-  }
-  return null;
-}
-
-function drawProjections() {
-  const capital = +(document.getElementById('pj-cap')?.value)||5000;
-  const mensuel = +(document.getElementById('pj-men')?.value)||400;
-  const taux    = +(document.getElementById('pj-tx')?.value)||7;
-  const obj     = +(document.getElementById('pj-obj')?.value)||750000;
-  const boostAn = +(document.getElementById('pj-ban')?.value)||3;
-  const boostM  = +(document.getElementById('pj-bmo')?.value)||800;
-
-  // Calcul exact de l'année d'atteinte pour chaque scénario
-  const anPess = anneExacte(capital, mensuel, Math.max(1,taux-2), 99, mensuel, obj);
-  const anReal = anneExacte(capital, mensuel, taux, boostAn, boostM, obj);
-  const anOpti = anneExacte(capital, mensuel, taux+1, boostAn, boostM*1.3, obj);
-
-  // Horizon du graphique = jusqu'à l'objectif réaliste + 2 ans de marge, max 50
-  const graphMax = Math.min(50, Math.max(20, anReal ? Math.ceil(anReal)+2 : 25));
-
-  const pess = projCapital(capital, mensuel, Math.max(1,taux-2), graphMax, 99, mensuel);
-  const real = projCapital(capital, mensuel, taux, graphMax, boostAn, boostM);
-  const opti = projCapital(capital, mensuel, taux+1, graphMax, boostAn, boostM*1.3);
-
-  const finalReal = real.hist[real.hist.length-1];
-  const dateLib = anReal ? YEAR + Math.ceil(anReal) : null;
-
-  // BLOC LIBERTÉ
-  document.getElementById('proj-liberte').innerHTML = `
-    <div class="lib-bloc">
-      <div class="lib-side">
-        <div style="font-size:.62rem;font-family:var(--mono);color:var(--muted);text-transform:uppercase;letter-spacing:.1em;margin-bottom:6px">Scénario pessimiste</div>
-        <div class="lib-side-val tr">${anPess ? anPess.toFixed(1)+' ans' : '> 50 ans'}</div>
-        <div class="note">${anPess ? 'vers '+(YEAR+Math.ceil(anPess)) : '—'}</div>
-      </div>
-      <div class="lib-center">
-        <div style="font-size:.62rem;font-family:var(--mono);color:var(--green);text-transform:uppercase;letter-spacing:.1em;margin-bottom:8px">✦ Scénario réaliste</div>
-        <div class="lib-big">${anReal ? anReal.toFixed(1)+' ans' : '> 50 ans'}</div>
-        <div style="font-size:.95rem;font-weight:700;margin-top:6px;color:var(--text)">${dateLib ? '🎯 Liberté en '+dateLib : 'Objectif non atteint sur 50 ans'}</div>
-        <div class="note mt8">${fmtE(mensuel)}/mois → ${fmtE(boostM)}/mois à l'an ${boostAn} · Rendement ${taux}%/an</div>
-      </div>
-      <div class="lib-side">
-        <div style="font-size:.62rem;font-family:var(--mono);color:var(--muted);text-transform:uppercase;letter-spacing:.1em;margin-bottom:6px">Scénario optimiste</div>
-        <div class="lib-side-val tb">${anOpti ? anOpti.toFixed(1)+' ans' : '> 50 ans'}</div>
-        <div class="note">${anOpti ? 'vers '+(YEAR+Math.ceil(anOpti)) : '—'}</div>
-      </div>
-    </div>
-  `;
-
-  // KPIs
-  document.getElementById('proj-kpis').innerHTML = `
-    <div class="kpi"><div class="kpi-val tg">${fmtE(finalReal)}</div><div class="kpi-lbl">Capital final (an ${graphMax})</div><div class="kpi-sub">Scénario réaliste</div></div>
-    <div class="kpi"><div class="kpi-val tb">${fmtE(real.totalVerse+capital)}</div><div class="kpi-lbl">Total versé</div><div class="kpi-sub">Hors rendement</div></div>
-    <div class="kpi"><div class="kpi-val tp">${fmtE(finalReal-real.totalVerse-capital)}</div><div class="kpi-lbl">Gain des marchés</div><div class="kpi-sub">Effet composé</div></div>
-    <div class="kpi"><div class="kpi-val tg">${fmtE(finalReal*0.04/12)}</div><div class="kpi-lbl">Revenu passif/mois</div><div class="kpi-sub">Règle des 4%</div></div>
-  `;
-
-  // Graphique avec plugin ligne verticale liberté
-  const goalLinePlugin = {
-    id:'goalLine',
-    afterDraw(chart) {
-      if(!anReal) return;
-      const {ctx:c, chartArea, scales} = chart;
-      const xIdx = Math.min(Math.ceil(anReal), graphMax);
-      const x = scales.x.getPixelForValue(xIdx);
-      if(!x) return;
-      c.save();
-      c.strokeStyle = 'rgba(0,212,170,0.7)'; c.lineWidth = 1.5; c.setLineDash([4,3]);
-      c.beginPath(); c.moveTo(x,chartArea.top); c.lineTo(x,chartArea.bottom); c.stroke();
-      c.fillStyle = '#00d4aa'; c.font = '700 11px Syne'; c.textAlign = 'left';
-      c.fillText('🎯 '+dateLib, x+5, chartArea.top+16);
-      c.restore();
-    }
-  };
-
-  const labels = Array.from({length:graphMax+1}, (_,i) => i===0?'Auj.':'An '+i);
-  if(S.ch.proj) S.ch.proj.destroy();
-  S.ch.proj = new Chart(document.getElementById('c-proj').getContext('2d'),{
-    type:'line', plugins:[goalLinePlugin],
-    data:{labels, datasets:[
-      {label:`Pessimiste (${(taux-2).toFixed(1)}%/an)`,data:pess.hist,borderColor:'#ff5757',backgroundColor:'rgba(255,87,87,0.04)',borderWidth:1.5,borderDash:[4,4],fill:true,tension:0.3,pointRadius:0},
-      {label:`Réaliste (${taux}%/an)`,data:real.hist,borderColor:'#00d4aa',backgroundColor:'rgba(0,212,170,0.08)',borderWidth:3,fill:true,tension:0.3,pointRadius:0},
-      {label:`Optimiste (${taux+1}%/an)`,data:opti.hist,borderColor:'#3b8eea',backgroundColor:'rgba(59,142,234,0.04)',borderWidth:1.5,borderDash:[6,3],fill:false,tension:0.3,pointRadius:0},
-      {label:`Objectif (${fmtE(obj)})`,data:Array(graphMax+1).fill(obj),borderColor:'#f5a623',borderWidth:1.5,borderDash:[8,4],fill:false,pointRadius:0},
+function drawFees(){
+  const calc=ter=>{const tm=(0.07-ter)/12;let c=5750,h=[5750];for(let i=1;i<=240;i++){c=c*(1+tm)+550;if(i%12===0)h.push(Math.round(c));}return h;};
+  const labels=Array.from({length:21},(_,i)=>i===0?'Auj.':'An '+i);
+  if(S.ch.fees)S.ch.fees.destroy();
+  S.ch.fees=new Chart(document.getElementById('c-fees').getContext('2d'),{type:'line',
+    data:{labels,datasets:[
+      {label:`Portfolio pondéré (${(TER_MWY*100).toFixed(2)}%)`,data:calc(TER_MWY),borderColor:'#00d4aa',borderWidth:3,fill:false,tension:0.3,pointRadius:0},
+      {label:'SPYL seul (0.03%)',data:calc(0.0003),borderColor:'#EF9F27',borderWidth:1.5,borderDash:[5,3],fill:false,tension:0.3,pointRadius:0},
+      {label:'Fonds actif (1.50%)',data:calc(0.015),borderColor:'#ff5757',borderWidth:1.5,borderDash:[3,3],fill:false,tension:0.3,pointRadius:0},
     ]},
     options:{responsive:true,maintainAspectRatio:false,
-      plugins:{legend:{labels:{color:'#8892b0',font:{family:'Syne',size:11},boxWidth:20}}},
-      scales:{
-        x:{ticks:{color:'#4a6080',font:{family:'JetBrains Mono',size:9},maxTicksLimit:12},grid:{color:'rgba(30,45,64,.4)'}},
-        y:{ticks:{color:'#4a6080',font:{family:'JetBrains Mono',size:9},callback:v=>fmtE(v)},grid:{color:'rgba(30,45,64,.4)'}}
-      }
+      plugins:{legend:{labels:{color:'#8892b0',font:{family:'Syne',size:9}}}},
+      scales:{x:{ticks:{color:'#4a6080',font:{family:'JetBrains Mono',size:9}},grid:{color:'rgba(30,45,64,.4)'}},
+              y:{ticks:{color:'#4a6080',font:{family:'JetBrains Mono',size:9},callback:v=>fmtE(v)},grid:{color:'rgba(30,45,64,.4)'}}}
     }
   });
+}
 
-  // TABLE COMPLÈTE jusqu'à l'année de liberté
-  const maxAn = anReal ? Math.ceil(anReal) : Math.min(graphMax, 50);
-  // Jalons : chaque année 1–5, puis tous les 2 ans, puis l'année exacte de liberté
-  const jalons = new Set();
-  for(let i=1; i<=Math.min(5,maxAn); i++) jalons.add(i);
-  for(let i=6; i<=maxAn; i+=2) jalons.add(i);
-  if(anReal) jalons.add(Math.ceil(anReal));
-  const sortedJalons = [...jalons].sort((a,b)=>a-b);
-
-  // Recalcul des 3 scénarios jusqu'à maxAn
-  const pessF = projCapital(capital, mensuel, Math.max(1,taux-2), maxAn, 99, mensuel);
-  const realF = projCapital(capital, mensuel, taux, maxAn, boostAn, boostM);
-  const optiF = projCapital(capital, mensuel, taux+1, maxAn, boostAn, boostM*1.3);
-
-  document.getElementById('proj-tbody').innerHTML = sortedJalons.map(j => {
-    const isLib = anReal && j === Math.ceil(anReal);
-    const versJ = j <= boostAn ? mensuel : boostM;
-    const pctReal = Math.min(100,(realF.hist[j]||0)/obj*100);
-    return `<tr class="${isLib?'tbl-highlight':''}">
-      <td class="mono">Dans ${j} an${j>1?'s':''}</td>
-      <td class="mono tb">${YEAR+j}</td>
-      <td class="mono">${fmtE(versJ)}/mois</td>
-      <td class="mono tr">${fmtE(pessF.hist[Math.min(j,pessF.hist.length-1)]||0)}</td>
-      <td class="mono tg fw7">${fmtE(realF.hist[Math.min(j,realF.hist.length-1)]||0)}</td>
-      <td class="mono tb">${fmtE(optiF.hist[Math.min(j,optiF.hist.length-1)]||0)}</td>
-      <td><span class="badge ${pctReal>=100?'b-g':pctReal>=60?'b-a':'b-r'}">${fmt(pctReal,0)}%</span></td>
-      <td class="mono tp">${fmtE((realF.hist[Math.min(j,realF.hist.length-1)]||0)*0.04/12)}/mois</td>
-      <td>${isLib?'<span class="badge b-g" style="font-size:.72rem">🎯 LIBERTÉ FINANCIÈRE</span>':'<span class="tm" style="font-size:.72rem">En cours</span>'}</td>
+// ═══ IBKR ORDERS ═══
+function initIbkrOrders(){
+  // Show phase 1 orders (3 ETFs) + note about phase 2
+const phase1=[
+  {etf:'XDWD',isin:'IE00BJ0KDQ92',bourse:'XETRA',mnt:320,note:'Ordre Market · ~15 parts/mois · prioritaire'},
+  {etf:'EMIM',isin:'IE00BKM4GZ66',bourse:'AEB',  mnt:200,note:'Ordre Market · ~4 parts/mois à ~46€'},
+  {etf:'IUSN',isin:'IE00BF4RFH31',bourse:'XETRA',mnt:160,note:'Ordre Market · ~14 parts/mois'},
+  {etf:'ZPRV',isin:'IE00BSPLC413',bourse:'XETRA',mnt:120,note:'Ordre Limit · ~1-2 parts/mois à ~75€'},
+];
+document.getElementById('ibkr-orders').innerHTML=phase1.map(a=>{
+    const note=a.etf==='XAIX'?'⚠ Accumuler 7 mois':a.etf==='SGLD'?'Cherche 8PSG sur XETRA pour EUR':'—';
+    return`<tr>
+      <td class="mono fw7" style="color:${a.color}">${a.etf}</td>
+      <td class="mono" style="font-size:.68rem">${a.isin}</td>
+      <td class="mono" style="font-size:.72rem">${a.bourse}</td>
+      <td class="mono tg fw7">${a.mnt}€</td>
+      <td>Mensuel</td>
+      <td>1er du mois</td>
+      <td style="font-size:.72rem;color:var(--muted)">${note}</td>
     </tr>`;
   }).join('');
 }
 
-// ════════════════════════════════════════════════════════════════
-// FEES CHART
-// ════════════════════════════════════════════════════════════════
-function drawFees() {
-  const calc = (ter) => {
-    const net = 0.07-ter, tm = net/12;
-    let cap = 5000; const h = [5000];
-    for(let i=1;i<=240;i++){cap=cap*(1+tm)+400;if(i%12===0)h.push(Math.round(cap));}
-    return h;
-  };
-  const labels = Array.from({length:21},(_,i)=>i===0?'Auj.':'An '+i);
-  if(S.ch.fees) S.ch.fees.destroy();
-  S.ch.fees = new Chart(document.getElementById('c-fees').getContext('2d'),{
-    type:'line',
-    data:{labels,datasets:[
-      {label:'SPYL S&P500 (0.03%)',data:calc(0.0003),borderColor:'#f5a623',borderWidth:3,fill:false,tension:0.3,pointRadius:0},
-      {label:'WCOR Amundi (0.12%)',data:calc(0.0012),borderColor:'#00d4aa',borderWidth:2.5,fill:false,tension:0.3,pointRadius:0},
-      {label:'XAIX Satellite IA (0.35%)',data:calc(0.0035),borderColor:'#9b7fe8',borderDash:[5,3],borderWidth:2,fill:false,tension:0.3,pointRadius:0},
-      {label:'SPYI SPDR (0.17%)',data:calc(0.0017),borderColor:'#9b7fe8',borderWidth:2,fill:false,tension:0.3,pointRadius:0},
-      {label:'IWDA iShares (0.20%)',data:calc(0.002),borderColor:'#3b8eea',borderDash:[6,3],borderWidth:2,fill:false,tension:0.3,pointRadius:0},
-      {label:'VWCE Vanguard (0.22%)',data:calc(0.0022),borderColor:'#f5a623',borderDash:[4,4],borderWidth:2,fill:false,tension:0.3,pointRadius:0},
-      {label:'Fonds actif (1.50%)',data:calc(0.015),borderColor:'#ff5757',borderDash:[3,3],borderWidth:1.5,fill:false,tension:0.3,pointRadius:0},
-    ]},
-    options:{responsive:true,maintainAspectRatio:false,
-      plugins:{legend:{labels:{color:'#8892b0',font:{family:'Syne',size:10}}}},
-      scales:{
-        x:{ticks:{color:'#4a6080',font:{family:'JetBrains Mono',size:9}},grid:{color:'rgba(30,45,64,.4)'}},
-        y:{ticks:{color:'#4a6080',font:{family:'JetBrains Mono',size:9},callback:v=>fmtE(v)},grid:{color:'rgba(30,45,64,.4)'}}
-      }
-    }
-  });
+// ═══ PORTFOLIO ═══
+const ALL_TICKERS=['SPYI'].concat(ALLOC.map(a=>a.etf)).concat(['VWCE','IWDA','CEBZ','C50','QUS5','SPYL']);
+function initPortfolio(){
+  document.getElementById('t-etf').innerHTML=ALL_TICKERS.map(t=>`<option>${t}</option>`).join('');
+  document.getElementById('t-date').value=new Date().toISOString().split('T')[0];
+
+  const PRICE_ETFS=[
+    {etf:'SPYI',role:'Position héritage · 500 parts',color:'#534AB7'},
+    ...ALLOC
+  ];
+  document.getElementById('price-grid').innerHTML=PRICE_ETFS.map(a=>`
+    <div class="kpi" id="pk-${a.etf}">
+      <div class="mono" style="font-size:.62rem;color:var(--muted)">${a.etf} · ${a.bourse}</div>
+      <div style="display:flex;align-items:baseline;gap:5px">
+        <span class="mono" style="font-size:1rem;font-weight:500;color:${a.color}" id="pv-${a.etf}">—</span>
+        <span class="mono" style="font-size:.7rem" id="pc-${a.etf}"><span class="spin"></span></span>
+      </div>
+      <div class="kl" style="font-size:.62rem">${a.role}</div>
+    </div>`).join('');
 }
 
-// ════════════════════════════════════════════════════════════════
-// COUNTRIES CHART
-// ════════════════════════════════════════════════════════════════
-function drawCountries() {
-  if(S.ch.countries) S.ch.countries.destroy();
-  S.ch.countries = new Chart(document.getElementById('c-countries').getContext('2d'),{
-    type:'bar',
-    data:{
-      labels:['🇨🇭 Suisse Romande','🇱🇺 Luxembourg','🇮🇪 Irlande Dublin','🇩🇪 Allemagne Munich','🇳🇱 Pays-Bas Amst.','🇨🇦 Canada Québec','🇫🇷 France Paris','🇧🇪 Belgique','🇪🇸 Espagne Madrid','🇵🇹 Portugal Lisbonne'],
-      datasets:[
-        {label:'Salaire min net/mois (€)',data:[4500,3200,2900,2700,2800,2600,2400,2000,1900,1800],backgroundColor:'rgba(0,212,170,0.45)',borderColor:'#00d4aa',borderWidth:1.5,borderRadius:3},
-        {label:'Salaire max net/mois (€)',data:[6300,4200,3800,3500,3600,3400,3100,2500,2600,2400],backgroundColor:'rgba(59,142,234,0.45)',borderColor:'#3b8eea',borderWidth:1.5,borderRadius:3},
-      ]
-    },
-    options:{indexAxis:'y',responsive:true,maintainAspectRatio:false,
-      plugins:{legend:{labels:{color:'#8892b0',font:{family:'Syne',size:10}}}},
-      scales:{
-        x:{ticks:{color:'#4a6080',font:{family:'JetBrains Mono',size:9},callback:v=>fmtE(v)},grid:{color:'rgba(30,45,64,.4)'}},
-        y:{ticks:{color:'#e2e8f0',font:{family:'Syne',size:10}},grid:{display:false}}
-      }
-    }
-  });
+function addT(){
+  const d=document.getElementById('t-date').value;
+  const etf=document.getElementById('t-etf').value;
+  const parts=+(document.getElementById('t-parts').value)||0;
+  const price=+(document.getElementById('t-price').value)||0;
+  if(!d||!parts||!price){toast('Remplis tous les champs','var(--red)');return;}
+  S.trades.push({id:Date.now(),date:d,etf,parts,price});save();refreshPtf();
+  document.getElementById('t-parts').value='';document.getElementById('t-price').value='';
+  toast('Achat enregistré ✓');
 }
+function deleteT(id){S.trades=S.trades.filter(t=>t.id!==id);save();refreshPtf();toast('Supprimé','var(--amber)');}
 
-// ════════════════════════════════════════════════════════════════
-// PORTFOLIO
-// ════════════════════════════════════════════════════════════════
-function addTrade() {
-  const date = document.getElementById('t-date').value;
-  const etf  = document.getElementById('t-etf').value;
-  const parts= +(document.getElementById('t-parts').value)||0;
-  const price= +(document.getElementById('t-price').value)||0;
-  if(!date||!parts||!price){toast('Remplis tous les champs','var(--red)');return;}
-  S.trades.push({id:Date.now(),date,etf,parts,price});
-  save(); refreshPortfolio();
-  document.getElementById('t-parts').value='';
-  document.getElementById('t-price').value='';
-  toast('Investissement ajouté ✓');
-}
-
-function deleteTrade(id) {
-  S.trades = S.trades.filter(t=>t.id!==id);
-  save(); refreshPortfolio(); toast('Supprimé','var(--amber)');
-}
-
-function refreshPortfolio() {
-  const tbody = document.getElementById('trades-body');
+function refreshPtf(){
+  const body=document.getElementById('trades-body');
+  const etfColors=Object.fromEntries(ALLOC.map(a=>[a.etf,a.color]));
   if(!S.trades.length){
-    tbody.innerHTML='<tr><td colspan="10" style="text-align:center;color:var(--muted);padding:24px">Aucun investissement. Ajoute ton premier achat ci-dessus.</td></tr>';
-    document.getElementById('ptf-kpis').innerHTML='';
-    return;
+    body.innerHTML='<tr><td colspan="10" style="text-align:center;color:var(--muted);padding:20px">Aucun achat. Ajoute ton premier investissement.</td></tr>';
+    document.getElementById('ptf-kpis').innerHTML='';return;
   }
-  let totInv=0,totVal=0;
-  const etfT={};
-  const pnlHistory=[];
-
-  const rows = S.trades.sort((a,b)=>a.date.localeCompare(b.date)).map(t=>{
-    const inv = t.parts*t.price;
-    const px  = S.prices[t.etf];
-    const val = px ? t.parts*px : null;
-    const pnl = val!==null ? val-inv : null;
-    const pct = pnl!==null ? pnl/inv*100 : null;
-    totInv += inv;
-    if(val!==null){totVal+=val;etfT[t.etf]=(etfT[t.etf]||0)+val;}
-    else{etfT[t.etf]=(etfT[t.etf]||0)+inv;}
-    pnlHistory.push({date:t.date,pnl:pnl||0});
-    const pnlHtml = pnl!==null?`<span style="color:${clr(pnl)}">${sign(pnl)}${fmt(pnl,2)} €</span>`:'—';
-    const pctHtml = pct!==null?`<span class="badge ${pct>=0?'b-g':'b-r'}">${sign(pct)}${fmt(pct,2)}%</span>`:'—';
-    return `<tr>
+  let totI=0,totV=0;const etfT={};
+  const rows=S.trades.sort((a,b)=>a.date.localeCompare(b.date)).map(t=>{
+    const inv=t.parts*t.price,px=S.prices[t.etf],val=px?t.parts*px:null;
+    const pnl=val!==null?val-inv:null,pct=pnl!==null?pnl/inv*100:null;
+    totI+=inv;if(val!==null){totV+=val;etfT[t.etf]=(etfT[t.etf]||0)+val;}else etfT[t.etf]=(etfT[t.etf]||0)+inv;
+    return`<tr>
       <td class="mono">${t.date}</td>
-      <td><span class="badge b-b">${t.etf}</span></td>
-      <td class="mono">${t.parts}</td>
-      <td class="mono">${fmt(t.price,2)} €</td>
+      <td><span class="badge bb" style="background:rgba(0,0,0,.3);border-color:${etfColors[t.etf]||'var(--border)'};color:${etfColors[t.etf]||'var(--text)'}">${t.etf}</span></td>
+      <td class="mono">${fmt(t.parts,3)}</td><td class="mono">${fmt(t.price,2)} €</td>
       <td class="mono">${fmt(inv,2)} €</td>
       <td class="mono">${px?fmt(px,2)+' €':'<span class="spin"></span>'}</td>
       <td class="mono">${val!==null?fmt(val,2)+' €':'—'}</td>
-      <td>${pnlHtml}</td><td>${pctHtml}</td>
-      <td><button class="btn btn-d btn-sm" onclick="deleteTrade(${t.id})">✕</button></td>
+      <td style="color:${clr(pnl||0)};font-family:var(--mono)">${pnl!==null?sign(pnl)+fmt(pnl,2)+' €':'—'}</td>
+      <td><span class="badge ${(pct||0)>=0?'bg':'br'}">${pct!==null?sign(pct)+fmt(pct,2)+'%':'—'}</span></td>
+      <td><button class="btn btn-d btn-sm" onclick="deleteT(${t.id})">✕</button></td>
     </tr>`;
   });
-  tbody.innerHTML = rows.join('');
+  body.innerHTML=rows.join('');
+  const pnlT=totV-totI,pctT=totI>0?pnlT/totI*100:0;
+  document.getElementById('ptf-kpis').innerHTML=`
+    <div class="kpi"><div class="kv tb">${fmtE(totI,2)}</div><div class="kl">Total investi</div></div>
+    <div class="kpi"><div class="kv tg">${fmtE(totV||totI,2)}</div><div class="kl">Valeur actuelle</div></div>
+    <div class="kpi"><div class="kv" style="color:${clr(pnlT)}">${sign(pnlT)}${fmtE(pnlT,2)}</div><div class="kl">Plus/Moins-value €</div></div>
+    <div class="kpi"><div class="kv" style="color:${clr(pctT)}">${sign(pctT)}${fmt(pctT,2)}%</div><div class="kl">Performance</div></div>`;
 
-  const pnlTot = totVal-totInv;
-  const pctTot = totInv>0?pnlTot/totInv*100:0;
-  document.getElementById('ptf-kpis').innerHTML = `
-    <div class="kpi"><div class="kpi-val tb">${fmtE(totInv,2)}</div><div class="kpi-lbl">Total investi</div></div>
-    <div class="kpi"><div class="kpi-val tg">${fmtE(totVal,2)}</div><div class="kpi-lbl">Valeur actuelle</div></div>
-    <div class="kpi"><div class="kpi-val" style="color:${clr(pnlTot)}">${sign(pnlTot)}${fmtE(pnlTot,2)}</div><div class="kpi-lbl">Plus/Moins-value €</div></div>
-    <div class="kpi"><div class="kpi-val" style="color:${clr(pctTot)}">${sign(pctTot)}${fmt(pctTot,2)}%</div><div class="kpi-lbl">Performance totale</div></div>
-  `;
-
-  // Allocation chart
-  if(S.ch.alloc) S.ch.alloc.destroy();
-  S.ch.alloc = new Chart(document.getElementById('c-alloc').getContext('2d'),{
-    type:'doughnut',
-    data:{labels:Object.keys(etfT),datasets:[{data:Object.values(etfT),backgroundColor:['#00d4aa','#3b8eea','#f5a623'],borderColor:'#080b10',borderWidth:3}]},
-    options:{plugins:{legend:{labels:{color:'#e2e8f0',font:{family:'Syne',size:12}}}},cutout:'58%',responsive:true}
+  const colors=ALLOC.map(a=>a.color).concat(['#00d4aa','#3b8eea','#ff5757']);
+  const etfKeys=Object.keys(etfT);
+  if(S.ch.alloc)S.ch.alloc.destroy();
+  S.ch.alloc=new Chart(document.getElementById('c-alloc').getContext('2d'),{type:'doughnut',
+    data:{labels:etfKeys,datasets:[{data:etfKeys.map(k=>etfT[k]),backgroundColor:etfKeys.map(k=>etfColors[k]||'#888'),borderColor:'#080b10',borderWidth:3}]},
+    options:{plugins:{legend:{labels:{color:'#e2e8f0',font:{family:'Syne',size:11}}}},cutout:'55%',responsive:true}
   });
 
-  // P&L cumul chart
-  const sorted = [...S.trades].sort((a,b)=>a.date.localeCompare(b.date));
-  let cumPnl = 0;
-  const pnlData = sorted.map(t=>{
-    const px = S.prices[t.etf];
-    if(px){cumPnl += (t.parts*px)-(t.parts*t.price);}
-    return {x:t.date, y:Math.round(cumPnl)};
-  });
-  if(S.ch.pnl) S.ch.pnl.destroy();
-  S.ch.pnl = new Chart(document.getElementById('c-pnl').getContext('2d'),{
-    type:'line',
-    data:{labels:sorted.map(t=>t.date),datasets:[{label:'P&L cumulé (€)',data:pnlData.map(d=>d.y),borderColor:pnlTot>=0?'#00d4aa':'#ff5757',backgroundColor:pnlTot>=0?'rgba(0,212,170,0.08)':'rgba(255,87,87,0.06)',borderWidth:2.5,fill:true,tension:0.4,pointRadius:4,pointBackgroundColor:pnlTot>=0?'#00d4aa':'#ff5757'}]},
-    options:{responsive:true,maintainAspectRatio:false,
-      plugins:{legend:{labels:{color:'#8892b0',font:{family:'Syne',size:11}}}},
-      scales:{
-        x:{ticks:{color:'#4a6080',font:{family:'JetBrains Mono',size:9}},grid:{display:false}},
-        y:{ticks:{color:'#4a6080',font:{family:'JetBrains Mono',size:9},callback:v=>v>=0?'+'+fmtE(v):fmtE(v)},grid:{color:'rgba(30,45,64,.4)'}}
-      }
+  let cum=0;
+  const sorted=[...S.trades].sort((a,b)=>a.date.localeCompare(b.date));
+  const pnlData=sorted.map(t=>{const px=S.prices[t.etf];if(px)cum+=(t.parts*px)-(t.parts*t.price);return Math.round(cum);});
+  if(S.ch.pnl)S.ch.pnl.destroy();
+  S.ch.pnl=new Chart(document.getElementById('c-pnl').getContext('2d'),{type:'line',
+    data:{labels:sorted.map(t=>t.date),datasets:[{label:'Gain/Perte cumulé',data:pnlData,borderColor:pnlT>=0?'#00d4aa':'#ff5757',backgroundColor:pnlT>=0?'rgba(0,212,170,.08)':'rgba(255,87,87,.06)',borderWidth:2.5,fill:true,tension:0.4,pointRadius:3}]},
+    options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},
+      scales:{x:{ticks:{color:'#4a6080',font:{family:'JetBrains Mono',size:9}},grid:{display:false}},
+              y:{ticks:{color:'#4a6080',font:{family:'JetBrains Mono',size:9},callback:v=>v>=0?'+'+fmtE(v):fmtE(v)},grid:{color:'rgba(30,45,64,.4)'}}}
     }
   });
 }
 
-// ════════════════════════════════════════════════════════════════
-// LIVE PRICES
-// ════════════════════════════════════════════════════════════════
-async function fetchPrice(ticker) {
-  try {
-    const r = await fetch(`https://query1.finance.yahoo.com/v8/finance/chart/${ticker}.AS?interval=1d&range=2d`,{mode:'cors'});
-    if(!r.ok) throw 0;
-    const j = await r.json();
-    const c = j.chart.result[0].indicators.quote[0].close;
-    return {price:c[c.length-1], change:(c[c.length-1]-c[c.length-2])/c[c.length-2]*100};
-  } catch { return null; }
+// ═══ PROJECTIONS ═══
+function initProj(){
+  document.getElementById('proj-p1').innerHTML=[
+    mkSpin('pj-cap','Capital initial IBKR',0,50000,500,5750,'€','drawProj()'),
+    mkSpin('pj-men','Versement mensuel',50,3000,50,800,'€','drawProj()'),
+    mkSpin('pj-tx','Rendement annuel',2,15,0.5,7,'%','drawProj()'),
+    mkSpin('pj-obj','Objectif liberté',100000,2000000,25000,750000,'€','drawProj()'),
+  ].join('');
+  document.getElementById('proj-p2').innerHTML=[
+    mkSpin('pj-ban','Boost versement à (an)',1,15,1,3,'','drawProj()'),
+    mkSpin('pj-bmo','Versement après boost',100,5000,50,900,'€','drawProj()'),
+    mkSpin('pj-cib','Liberté + famille (€)',100000,2000000,25000,900000,'€','drawProj()'),
+  ].join('');
 }
 
-const ETF_TICKERS = {
-  'SPYI': {ticker:'SPYI', exchange:'GY', label:'SPDR MSCI ACWI IMI'},
-  'EMIM': {ticker:'EMIM', exchange:'AS', label:'iShares EM IMI'},
-  'CEBZ': {ticker:'CEBZ', exchange:'GY', label:'iShares MSCI Europe'},
-  'SPYL': {ticker:'SPYL', exchange:'GY', label:'SPDR S&P 500'},
-  'XAIX': {ticker:'XAIX', exchange:'GY', label:'Xtrackers AI'},
-  'IUSN': {ticker:'IUSN', exchange:'GY', label:'iShares World Small Cap'},
-  'VWCE': {ticker:'VWCE', exchange:'AS', label:'Vanguard All-World'},
-  'IWDA': {ticker:'IWDA', exchange:'AS', label:'iShares MSCI World'},
+function anneExacte(init,men,tx,bAn,bMen,obj){
+  const tm=tx/100/12;let cap=init;
+  for(let m=1;m<=600;m++){cap=cap*(1+tm)+(m<=bAn*12?men:bMen);if(cap>=obj)return+(m/12).toFixed(2);}
+  return null;
+}
+function projCalc(init,men,tx,ans,bAn,bMen){
+  const tm=tx/100/12;let cap=init,h=[init],tv=0;
+  for(let m=1;m<=ans*12;m++){const v=m<=bAn*12?men:bMen;cap=cap*(1+tm)+v;tv+=v;if(m%12===0)h.push(Math.round(cap));}
+  return{h,tv};
+}
+
+function drawProj(){
+  const cap=+(document.getElementById('pj-cap')?.value)||5750;
+  const men=+(document.getElementById('pj-men')?.value)||550;
+  const tx= +(document.getElementById('pj-tx')?.value)||7;
+  const obj=+(document.getElementById('pj-obj')?.value)||750000;
+  const bAn=+(document.getElementById('pj-ban')?.value)||3;
+  const bMo=+(document.getElementById('pj-bmo')?.value)||900;
+
+  const anR=anneExacte(cap,men,tx,bAn,bMo,obj);
+  const anP=anneExacte(cap,men,Math.max(1,tx-2),99,men,obj);
+  const anO=anneExacte(cap,men,tx+1,bAn,bMo*1.3,obj);
+  const dateLib=anR?YEAR+Math.ceil(anR):null;
+
+  document.getElementById('lib-bloc').innerHTML=`
+    <div style="background:linear-gradient(135deg,rgba(0,212,170,.08),rgba(59,142,234,.05));border:1px solid rgba(0,212,170,.25);border-radius:14px;padding:16px 20px;display:grid;grid-template-columns:1fr 2fr 1fr;gap:14px;align-items:center">
+      <div style="text-align:center">
+        <div style="font-size:.6rem;font-family:var(--mono);color:var(--muted);text-transform:uppercase;margin-bottom:4px">Scénario bas</div>
+        <div class="mono fw7 tr" style="font-size:1.3rem">${anP?anP.toFixed(1)+' ans':'> 50 ans'}</div>
+        <div class="note">${anP?'vers '+(YEAR+Math.ceil(anP)):'—'}</div>
+      </div>
+      <div style="text-align:center;border-left:1px solid var(--border);border-right:1px solid var(--border);padding:0 18px">
+        <div style="font-size:.6rem;font-family:var(--mono);color:var(--green);text-transform:uppercase;margin-bottom:5px">✦ Réaliste</div>
+        <div class="mono fw7 tg" style="font-size:2.2rem;line-height:1">${anR?anR.toFixed(1)+' ans':'> 50 ans'}</div>
+        <div style="font-size:.92rem;font-weight:700;margin-top:4px">${dateLib?'🎯 Liberté en '+dateLib:'—'}</div>
+        <div class="note" style="margin-top:3px">${fmtE(men)} → ${fmtE(bMo)}/mois à l'an ${bAn} · ${tx}%/an</div>
+      </div>
+      <div style="text-align:center">
+        <div style="font-size:.6rem;font-family:var(--mono);color:var(--muted);text-transform:uppercase;margin-bottom:4px">Scénario haut</div>
+        <div class="mono fw7 tb" style="font-size:1.3rem">${anO?anO.toFixed(1)+' ans':'> 50 ans'}</div>
+        <div class="note">${anO?'vers '+(YEAR+Math.ceil(anO)):'—'}</div>
+      </div>
+    </div>`;
+
+  const maxAn=Math.min(50,Math.max(20,anR?Math.ceil(anR)+2:25));
+  const pess=projCalc(cap,men,Math.max(1,tx-2),maxAn,99,men);
+  const real=projCalc(cap,men,tx,maxAn,bAn,bMo);
+  const opti=projCalc(cap,men,tx+1,maxAn,bAn,bMo*1.3);
+  const fr=real.h[real.h.length-1];
+
+  document.getElementById('proj-kpis').innerHTML=`
+    <div class="kpi"><div class="kv tg">${fmtE(fr)}</div><div class="kl">Capital final réaliste</div></div>
+    <div class="kpi"><div class="kv tb">${fmtE(real.tv+cap)}</div><div class="kl">Total versé</div></div>
+    <div class="kpi"><div class="kv tp">${fmtE(fr-real.tv-cap)}</div><div class="kl">Gains des marchés</div></div>
+    <div class="kpi"><div class="kv tg">${fmtE(fr*0.04/12)}</div><div class="kl">Revenu passif/mois</div></div>`;
+
+  const glPlugin={id:'gl',afterDraw(c){
+    if(!anR)return;
+    const{ctx:cx,chartArea:a,scales:sc}=c;
+    const x=sc.x.getPixelForValue(Math.min(Math.ceil(anR),maxAn));if(!x)return;
+    cx.save();cx.strokeStyle='rgba(0,212,170,.7)';cx.lineWidth=1.5;cx.setLineDash([4,3]);
+    cx.beginPath();cx.moveTo(x,a.top);cx.lineTo(x,a.bottom);cx.stroke();
+    cx.fillStyle='#00d4aa';cx.font='700 10px Syne';cx.textAlign='left';
+    cx.fillText('🎯 '+dateLib,x+4,a.top+14);cx.restore();
+  }};
+  const labels=Array.from({length:maxAn+1},(_,i)=>i===0?'Auj.':'An '+i);
+  if(S.ch.proj)S.ch.proj.destroy();
+  S.ch.proj=new Chart(document.getElementById('c-proj').getContext('2d'),{type:'line',plugins:[glPlugin],
+    data:{labels,datasets:[
+      {label:`Bas (${Math.max(1,tx-2)}%/an)`,data:pess.h,borderColor:'#ff5757',backgroundColor:'rgba(255,87,87,.04)',borderWidth:1.5,borderDash:[4,4],fill:true,tension:0.3,pointRadius:0},
+      {label:`Réaliste (${tx}%/an)`,data:real.h,borderColor:'#00d4aa',backgroundColor:'rgba(0,212,170,.07)',borderWidth:2.5,fill:true,tension:0.3,pointRadius:0},
+      {label:`Haut (${tx+1}%/an)`,data:opti.h,borderColor:'#3b8eea',borderDash:[6,3],borderWidth:1.5,fill:false,tension:0.3,pointRadius:0},
+      {label:`Objectif ${fmtE(obj)}`,data:Array(maxAn+1).fill(obj),borderColor:'#f5a623',borderWidth:1.5,borderDash:[8,4],fill:false,pointRadius:0},
+    ]},
+    options:{responsive:true,maintainAspectRatio:false,
+      plugins:{legend:{labels:{color:'#8892b0',font:{family:'Syne',size:10},boxWidth:14}}},
+      scales:{x:{ticks:{color:'#4a6080',font:{family:'JetBrains Mono',size:9},maxTicksLimit:12},grid:{color:'rgba(30,45,64,.4)'}},
+              y:{ticks:{color:'#4a6080',font:{family:'JetBrains Mono',size:9},callback:v=>fmtE(v)},grid:{color:'rgba(30,45,64,.4)'}}}
+    }
+  });
+
+  const maxJ=anR?Math.ceil(anR):Math.min(maxAn,30);
+  const jals=new Set();
+  for(let i=1;i<=Math.min(5,maxJ);i++)jals.add(i);
+  for(let i=6;i<=maxJ;i+=2)jals.add(i);
+  if(anR)jals.add(Math.ceil(anR));
+  const pF=projCalc(cap,men,Math.max(1,tx-2),maxJ,99,men);
+  const rF=projCalc(cap,men,tx,maxJ,bAn,bMo);
+  const oF=projCalc(cap,men,tx+1,maxJ,bAn,bMo*1.3);
+  document.getElementById('proj-tbody').innerHTML=[...jals].sort((a,b)=>a-b).map(j=>{
+    const isLib=anR&&j===Math.ceil(anR);
+    const vJ=j<=bAn?men:bMo;
+    const pct=Math.min(100,(rF.h[Math.min(j,rF.h.length-1)]||0)/obj*100);
+    return`<tr class="${isLib?'tbl-hi':''}">
+      <td class="mono">${j} an${j>1?'s':''}</td><td class="mono tb">${YEAR+j}</td>
+      <td class="mono">${fmtE(vJ)}/mois</td>
+      <td class="mono tr">${fmtE(pF.h[Math.min(j,pF.h.length-1)]||0)}</td>
+      <td class="mono tg fw7">${fmtE(rF.h[Math.min(j,rF.h.length-1)]||0)}</td>
+      <td class="mono tb">${fmtE(oF.h[Math.min(j,oF.h.length-1)]||0)}</td>
+      <td><span class="badge ${pct>=100?'bg':pct>=60?'ba':'br'}">${fmt(pct,0)}%</span></td>
+      <td class="mono tp">${fmtE((rF.h[Math.min(j,rF.h.length-1)]||0)*0.04/12)}/mois${isLib?' 🎯':''}</td>
+    </tr>`;
+  }).join('');
+}
+
+// ═══ PLAN DE VIE ═══
+const DESTS=[
+  {f:'🇨🇦',p:'Canada — Montréal',sc:96,c:'#1D9E75',
+   rp:'Dossier en cours ✓',sal:'2 100–3 400 €',sal_s:'5 500–7 500 €',pv:'50% imposables',env:'TFSA 0% à vie',lib:'~13 ans',
+   action:'Ouvrir TFSA dès l\'arrivée · IBKR unchanged · Cotiser RRSP · 0% PV sur gains antérieurs à l\'arrivée'},
+  {f:'🇱🇺',p:'Luxembourg',sc:88,c:'#3b8eea',
+   rp:'7 ans de travail',sal:'3 000–3 500 €',sal_s:'6 000–8 000 €',pv:'0% actions',env:'Compte-titres IBKR',lib:'~11 ans',
+   action:'Fiscalité identique à BE · IBKR unchanged · Versement monte à 1 200–1 500€ avec salaire LUX'},
+  {f:'🇮🇪',p:'Irlande — Dublin',sc:82,c:'#9b7fe8',
+   rp:'5 ans',sal:'2 900–3 800 €',sal_s:'5 000–7 000 €',pv:'CGT 33%',env:'Compte-titres',lib:'~13 ans',
+   action:'VENDRE avant départ depuis BE (0% PV) · Racheter en Irlande · Buy & hold absolu'},
+  {f:'🇩🇪',p:'Allemagne — Munich',sc:78,c:'#EF9F27',
+   rp:'5 ans',sal:'2 700–3 500 €',sal_s:'5 000–7 000 €',pv:'26.4% Abgeltung',env:'Compte-titres',lib:'~13 ans',
+   action:'VENDRE TOUT avant départ (0% BE) · Racheter immédiatement en DE · Repart de 0% PV'},
+  {f:'🇨🇭',p:'Suisse Romande',sc:55,c:'#ff5757',
+   rp:'12 ans · quota strict',sal:'4 500–6 300 €',sal_s:'7 000–10 000 €',pv:'0% plus-values',env:'Compte-titres',lib:'~10 ans',
+   action:'0% PV = idéal pour réaliser les gains accumulés · Accessible avec passeport EU ou CA · Objectif 5–10 ans'},
+];
+
+document.getElementById('dest-list').innerHTML=DESTS.map((d,i)=>`
+  <div style="border:${i===0?'1.5px solid var(--green)':'1px solid var(--border)'};border-radius:12px;padding:13px 16px;background:var(--bg3);margin-bottom:10px">
+    <div style="display:flex;align-items:center;gap:10px;margin-bottom:8px">
+      <div style="width:28px;height:28px;border-radius:50%;background:${d.c};color:var(--bg);display:flex;align-items:center;justify-content:center;font-weight:800;font-size:.75rem;flex-shrink:0">${i+1}</div>
+      <div style="flex:1"><div style="font-weight:700;font-size:.95rem">${d.f} ${d.p}</div><div class="note">RP: ${d.rp} · Plus-values: ${d.pv} · Enveloppe: ${d.env} · Liberté: ${d.lib}</div></div>
+      <div class="mono fw7" style="color:${d.c};font-size:1.1rem">${d.sc}/100</div>
+    </div>
+    <div style="background:rgba(0,0,0,.2);border-radius:6px;padding:7px 10px;font-size:.75rem;color:var(--muted)">
+      <strong style="color:var(--text)">Stratégie investissement :</strong> ${d.action}
+    </div>
+    <div style="height:4px;background:var(--border);border-radius:3px;overflow:hidden;margin-top:8px">
+      <div style="height:100%;width:${d.sc}%;background:${d.c};border-radius:3px"></div>
+    </div>
+  </div>`).join('');
+
+const PLAN=[
+  {n:'1',c:'var(--red)',t:'Vérifier IRCC chaque jour',d:'ircc.canada.ca · Décision imminente. Si approbation → 60 jours pour accepter. Réserve 2 500€ disponible.'},
+  {n:'2',c:'var(--red)',t:'Conversation avec ta copine — ce weekend',d:'La décision peut arriver dans 4 semaines. Michelin Canada (Ontario / Nouvelle-Écosse) pour sa thèse CIFRE.'},
+  {n:'3',c:'var(--amber)',t:'Configurer les ordres récurrents IBKR',d:'7 ordres Recurring Investments. Virement automatique 550€ le 25 du mois depuis Hello Bank.'},
+  {n:'4',c:'var(--amber)',t:'S\'inscrire à l\'IELTS B2',d:'ielts.org · ~250€ · +20–50 pts CRS Canada · +20–30% valeur salariale internationale.'},
+  {n:'5',c:'var(--blue)',t:'Python + ML actuariel',d:'Les actuaires maîtrisant l\'IA gagnent 20–30% de plus. Coursera, DataCamp. Différenciateur clé 2026–2030.'},
+];
+document.getElementById('plan-list').innerHTML=PLAN.map(a=>`
+  <div style="display:flex;gap:12px;padding:10px 0;border-bottom:1px solid rgba(30,45,64,.4);align-items:flex-start">
+    <div style="width:24px;height:24px;border-radius:50%;background:rgba(0,0,0,.3);color:${a.c};border:1px solid ${a.c};display:flex;align-items:center;justify-content:center;font-size:.7rem;font-weight:700;flex-shrink:0">${a.n}</div>
+    <div><div style="font-size:.83rem;font-weight:700;margin-bottom:2px">${a.t}</div><div class="note">${a.d}</div></div>
+  </div>`).join('');
+
+const RULES=[
+  {c:'var(--green)',t:'📈 Chaque augmentation → 80% vers IBKR',d:'80% de chaque hausse de salaire → augmenter le versement mensuel. 20% → qualité de vie. C\'est la règle qui détermine si tu atteins la liberté à 40 ou 55 ans.'},
+  {c:'var(--green)',t:'🧱 Ne jamais vendre en crise',d:'−40% sur le marché = soldes sur tes ETFs. Tu achètes. Le marché mondial a récupéré 100% de toutes ses crises. La crise est ton alliée si tu continues d\'acheter.'},
+  {c:'var(--blue)',t:'🌍 Famille Cameroun = enveloppe séparée et sacrée',d:'300€/mois d\'envois = engagement moral. Ce n\'est pas une variable d\'ajustement. Jamais prélevé sur le portefeuille ETF.'},
+  {c:'var(--blue)',t:'📆 Regarder le portefeuille max 2 fois par an',d:'Janvier et juillet. Les décisions émotionnelles détruisent 1.5%/an de rendement (Dalbar 2023). Ton objectif de liberté est plus fort que tes émotions.'},
+  {c:'var(--amber)',t:'🚗 Garder la Clio jusqu\'au bout',d:'Pas de remplacement par un modèle plus cher. 15 000€ de voiture = 15 000€ de liberté financière en moins. Répare, entretiens, garde.'},
+];
+document.getElementById('rules-list').innerHTML=RULES.map(r=>`
+  <div style="border-left:3px solid ${r.c};padding:11px 14px;background:var(--bg3);border-radius:0 10px 10px 0;margin-bottom:8px">
+    <div style="font-size:.86rem;font-weight:700;margin-bottom:3px">${r.t}</div>
+    <div class="note">${r.d}</div>
+  </div>`).join('');
+
+// ═══ LIVE PRICES ═══
+// Exchange suffix map
+const EXCHANGE = {
+  SPYI:'DE', XDWD:'DE', IUSN:'DE', ZPRV:'DE', XAIX:'DE',
+  SPYL:'DE', C50:'DE', SGLD:'AS', EMIM:'AS', VWCE:'AS',
+  IWDA:'AS', CEBZ:'DE', QUS5:'DE',
 };
 
-async function loadPrices() {
-  document.getElementById('last-update').textContent = 'Chargement...';
-  const tickers = [
-    {key:'SPYI', yfTicker:'SPYI'},
-    {key:'EMIM', yfTicker:'EMIM'},
-    {key:'SPYL', yfTicker:'SPYL'},
-    {key:'QUS5', yfTicker:'QUS5'},
-    {key:'C50',  yfTicker:'C50'},
-    {key:'XAIX', yfTicker:'XAIX'},
-    {key:'IUSN', yfTicker:'IUSN'},
-    {key:'CEBZ', yfTicker:'CEBZ'},
-    {key:'VWCE', yfTicker:'VWCE'},
-    {key:'IWDA', yfTicker:'IWDA'},
+async function fetchP(ticker){
+  const ex = EXCHANGE[ticker] || 'DE';
+  const yt = `${ticker}.${ex}`;
+  const yfUrl = `https://query1.finance.yahoo.com/v8/finance/chart/${yt}?interval=1d&range=5d`;
+
+  // 4 strategies in order
+  const strategies = [
+    // 1. Direct (works on GitHub Pages, not on claude.ai)
+    () => fetch(yfUrl, {mode:'cors'}),
+    // 2. corsproxy.io
+    () => fetch(`https://corsproxy.io/?url=${encodeURIComponent(yfUrl)}`),
+    // 3. Corsfix — unlimited free
+    () => fetch(`https://proxy.corsfix.com/?${encodeURIComponent(yfUrl)}`),
+    // 4. allorigins
+    () => fetch(`https://api.allorigins.win/raw?url=${encodeURIComponent(yfUrl)}`),
   ];
-  for(const {key, yfTicker} of tickers) {
-    const d = await fetchPrice(yfTicker);
-    const elV = document.getElementById('pv-'+key);
-    const elC = document.getElementById('pc-'+key);
-    if(!elV) continue;
-    if(d) {
-      S.prices[key] = d.price;
-      elV.textContent = fmt(d.price,2)+' €';
-      const up = d.change>=0;
-      if(elC) elC.innerHTML=`<span style="color:${up?'var(--green)':'var(--red)'}">${up?'▲':'▼'} ${Math.abs(d.change).toFixed(2)}%</span>`;
+
+  for(const strategy of strategies){
+    try{
+      const r = await Promise.race([strategy(), new Promise((_,rej)=>setTimeout(rej,4000))]);
+      if(!r || !r.ok) continue;
+      const j = await r.json();
+      const result = j?.chart?.result?.[0];
+      if(!result) continue;
+      const closes = result.indicators?.quote?.[0]?.close?.filter(v=>v!=null);
+      if(!closes || closes.length < 2) continue;
+      return {
+        price: closes[closes.length-1],
+        change: (closes[closes.length-1]-closes[closes.length-2])/closes[closes.length-2]*100
+      };
+    } catch{ continue; }
+  }
+  return null;
+}
+
+async function loadPrices(){
+  document.getElementById('last-update').textContent='Chargement...';
+  const tickers = ['SPYI', ...ALLOC.map(a=>a.etf)];
+  for(const ticker of [...new Set(tickers)]){
+    const d = await fetchP(ticker);
+    const ev = document.getElementById('pv-'+ticker);
+    const ec = document.getElementById('pc-'+ticker);
+    if(!ev) continue;
+    if(d){
+      S.prices[ticker] = d.price;
+      ev.textContent = fmt(d.price,2)+' €';
+      const up = d.change >= 0;
+      if(ec) ec.innerHTML = `<span style="color:${up?'var(--green)':'var(--red)'}">${up?'▲':'▼'} ${Math.abs(d.change).toFixed(2)}%</span>`;
     } else {
-      elV.textContent='N/D';
-      if(elC) elC.innerHTML='<span class="tm">—</span>';
+      ev.textContent = 'N/D';
+      if(ec) ec.innerHTML = '<span style="color:var(--muted)" title="Marché fermé ou données indisponibles">—</span>';
     }
   }
   const now = new Date();
-  document.getElementById('last-update').textContent='Màj '+now.toLocaleTimeString('fr-FR',{hour:'2-digit',minute:'2-digit'});
-  refreshPortfolio();
+  document.getElementById('last-update').textContent = 'Màj '+now.toLocaleTimeString('fr-FR',{hour:'2-digit',minute:'2-digit'});
+  refreshPtf();
 }
 
-// ════════════════════════════════════════════════════════════════
-// ACTIONS
-// ════════════════════════════════════════════════════════════════
-document.getElementById('actions-list').innerHTML = [
-  {cls:'urgent',n:'1',t:'Activer Hello Bank Boost (2.80%)',d:"Dans l'appli Hello Bank → activer le compte Boost. Tente le transfert de tes 10 000€ d'un coup. Si bloqué à 500€/transaction → 10 virements de 500€ sur 10 jours consécutifs.",c:'→ Appli Hello Bank · 10 min · Cette semaine'},
-  {cls:'urgent',n:'2',t:'Ouvrir Interactive Brokers (IBKR)',d:"interactivebrokers.co.uk → 'Ouvrir un compte' → Individual → Résidence Belgique → Upload carte d'identité + preuve d'adresse. Validation 3–5 jours.",c:'→ interactivebrokers.co.uk · 20 min · Cette semaine'},
-  {cls:'urgent',n:'3',t:'Comparer RemitChoice vs Lemfi/Sendwave',d:'Sur ton prochain envoi de 300€ vers le Cameroun → compare le montant reçu. Économie potentielle 10–15€/mois = 120–180€/an.',c:'→ App Lemfi ou Sendwave · 10 min'},
-  {cls:'soon',n:'4',t:'Virer 5 000€ vers IBKR',d:"Hello Bank → virement SEPA vers IBKR. Si plafond 500€ → 10 virements sur 10 jours. Les 5 000€ restants = 2 500€ urgence + 2 500€ réserve Canada.",c:'→ Dès que IBKR validé (J+3 à J+5)'},
-  {cls:'soon',n:'5',t:'Acheter VWCE (ou IWDA+EMIM) sur IBKR',d:"IBKR → Trading → VWCE.AS sur Euronext Amsterdam → ordre Market en EUR. Si option B : IWDA.AS (75%) + EMIM.AS (25%). Commission ~1–3€/ordre.",c:'→ Dès que les fonds arrivent · 15 min'},
-  {cls:'soon',n:'6',t:'Programmer tes achats mensuels manuels',d:"Tu investis toi-même sans automatisation — bonne décision si tu as la discipline. Mets un rappel le 1er de chaque mois : 'Acheter ETF sur IBKR'. Utilise l'onglet Portefeuille de cette app pour suivre.",c:'→ Rappel calendrier · 0€ de frais'},
-  {cls:'later',n:'7',t:'Déclarer le compte IBKR à la BNB belge',d:'bnb.be → déclaration comptes étrangers. Obligatoire. IBKR collecte la TOB automatiquement pour résidents belges. Garder les relevés annuels pour la déclaration IPP.',c:'→ bnb.be · Avant le 30 juin'},
-  {cls:'later',n:'8',t:'Ouvrir Argenta Compte d\'accroissement (optionnel)',d:'argenta.be → 500€/mois max → 2.60%. Utile si tu as de l\'épargne au-delà des 400€ IBKR chaque mois. Sinon Hello Bank Boost seul suffit.',c:'→ argenta.be · 15 min · Optionnel'},
-  {cls:'future',n:'9',t:'Passer l\'IELTS B2',d:"ielts.org → centre Bruxelles ou Liège → ~250€. Prépare 2–3 mois avec IELTS Liz (YouTube) + Duolingo. +20–50 pts CRS Canada ET +20–30% valeur salariale actuarielle. Meilleur ROI de ta vie.",c:'→ ielts.org · Dans 3 mois'},
-  {cls:'future',n:'10',t:'Finir le permis de conduire',d:'3 000€ déjà investis — autant finir. Le permis ouvre l\'accès aux logements moins chers hors zones desservies.',c:'→ Planifie la prochaine leçon'},
-  {cls:'future',n:'11',t:'Décision Canada + conversation avec ta copine',d:'Si invitation Entrée express reçue → utilise les 2 500€ de réserve. Ouvre un TFSA (0% impôt). Explore la mobilité interne Michelin Canada avec ta copine (sites à Pictou, Toronto, Montréal).',c:'→ Décision de vie · Prépare la conversation'},
-].map(a=>`<div class="act ${a.cls}"><div class="act-num">${a.n}</div><div><div class="act-title">${a.t}</div><div class="act-detail">${a.d}</div><div class="act-cta">${a.c}</div></div></div>`).join('');
+function toast(m,c='var(--green)'){const t=document.getElementById('toast');t.innerHTML=`<span style="color:${c}">${m}</span>`;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),2600);}
 
-// RULES
-document.getElementById('rules-list').innerHTML = [
-  {c:'var(--green)',t:'📈 Règle 80/20 sur chaque augmentation',d:"À chaque hausse de salaire : 80% de la hausse → augmenter l'achat mensuel IBKR. 20% → qualité de vie. C'est cette seule règle qui détermine si tu atteins la liberté à 40 ou 55 ans."},
-  {c:'var(--green)',t:'🧱 Ne jamais vendre les ETF',d:'Même en crise. Même à −40%. Même si tout le monde panique. Tu achètes ta tranche mensuelle. Les crises sont des soldes. Le MSCI World et le FTSE All-World ont toujours récupéré sur 10+ ans.'},
-  {c:'var(--green)',t:'🚗 Garder la Clio jusqu\'à la mort',d:"Ne pas remplacer par un modèle plus cher. Une voiture à +15 000€ = 15 000€ en moins = des années de liberté perdues. Répare-la tant que c'est rationnel."},
-  {c:'var(--blue)',t:'🌍 Fonds famille Cameroun = enveloppe séparée',d:"Les envois mensuels + la réserve famille ne viennent jamais du portefeuille ETF. Budget fixe, compte séparé. C'est un engagement moral — pas une variable d'ajustement."},
-  {c:'var(--blue)',t:'📆 Regarder le portefeuille max 2 fois par an',d:"Janvier et juillet uniquement. Pas d'appli IBKR en semaine. Les décisions émotionnelles détruisent en moyenne 1.5%/an de rendement (Dalbar QAIB Study)."},
-  {c:'var(--amber)',t:'🇬🇧 IELTS B2 avant fin de l\'année',d:"L'anglais est le multiplicateur de tout le reste. +20–50 pts CRS Canada, +20–30% valeur salariale actuarielle, accès Dublin/Singapour/Zurich. Investissement < 500€ pour un retour de centaines de milliers d'euros."},
-].map(r=>`<div class="rule" style="border-color:${r.c}"><div class="rule-title">${r.t}</div><div class="rule-text">${r.d}</div></div>`).join('');
-
-// ════════════════════════════════════════════════════════════════
-// TOAST
-// ════════════════════════════════════════════════════════════════
-function toast(msg,color='var(--green)'){
-  const t=document.getElementById('toast');
-  t.innerHTML=`<span style="color:${color}">${msg}</span>`;
-  t.classList.add('show');
-  setTimeout(()=>t.classList.remove('show'),2800);
-}
-
-// ════════════════════════════════════════════════════════════════
-// INIT
-// ════════════════════════════════════════════════════════════════
-dashParams();
-salParams();
-projParams();
-// Date dynamique dans le header
-(function() {
-  const now = new Date();
-  const opts = { day:'numeric', month:'long', year:'numeric' };
-  const el = document.getElementById('live-date');
-  if(el) el.textContent = now.toLocaleDateString('fr-FR', opts);
-})();
-document.getElementById('t-date').value = new Date().toISOString().split('T')[0];
+// ═══ INIT ═══
+document.getElementById('live-date').textContent=new Date().toLocaleDateString('fr-FR',{day:'numeric',month:'long',year:'numeric'});
+document.getElementById('t-date').value=new Date().toISOString().split('T')[0];
+initDash();
+initStratTable();
+initIbkrOrders();
+initPortfolio();
+initProj();
 updateDash();
 loadPrices();
-setInterval(loadPrices, 60000);
+setInterval(loadPrices,60000);
 </script>
 </body>
 </html>
