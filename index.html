@@ -1070,16 +1070,42 @@ async function syncGs(){
   if(!csvUrl){toast('Configure CSV URL first','var(--amber)');return;}
   const el = document.getElementById('gs-status');
   if(el) el.innerHTML = '<span style="color:var(--blue);font-size:.75rem">Syncing...</span>';
+
+  // Try multiple proxies
+  const proxies = [
+    csvUrl, // direct (works on GitHub Pages)
+    'https://corsproxy.io/?url=' + encodeURIComponent(csvUrl),
+    'https://api.allorigins.win/raw?url=' + encodeURIComponent(csvUrl),
+    'https://thingproxy.freeboard.io/fetch/' + csvUrl,
+  ];
+
+  let csv = null;
+  for(const url of proxies){
+    try{
+      const r = await Promise.race([
+        fetch(url, {mode:'cors', cache:'no-cache'}),
+        new Promise((_,rej)=>setTimeout(rej,5000))
+      ]);
+      if(!r || !r.ok) continue;
+      const text = await r.text();
+      if(text && text.length > 5){ csv = text; break; }
+    } catch{ continue; }
+  }
+
+  if(!csv){
+    if(el) el.innerHTML = '<span style="color:var(--red);font-size:.75rem">Sync error - check CSV URL</span>';
+    toast('Sync error','var(--red)');
+    return;
+  }
+
   try{
-    const proxyUrl = 'https://corsproxy.io/?url=' + encodeURIComponent(csvUrl);
-    const r = await fetch(proxyUrl);
-    if(!r.ok) throw new Error('Read error');
-    const csv = await r.text();
     const rows = csv.trim().split('\n').slice(1);
     const trades = rows.filter(r=>r.trim()).map((row,idx) => {
-      const cols = row.split(',');
-      const date = cols[0]?.trim().replace(/"/g,'');
-      const etf  = cols[1]?.trim().replace(/"/g,'');
+      // Handle both comma and semicolon separators, and quoted fields
+      const cols = row.split(/,(?=(?:[^"]*"[^"]*")*[^"]*$)/)
+                      .map(c=>c.trim().replace(/^"|"$/g,''));
+      const date = cols[0];
+      const etf  = cols[1];
       const parts = parseFloat(cols[2]);
       const prix  = parseFloat(cols[3]);
       if(!date||!etf||isNaN(parts)||isNaN(prix)) return null;
@@ -1088,8 +1114,8 @@ async function syncGs(){
     S.trades = trades; save(); refreshPtf(); updateGsStatus();
     toast(trades.length + ' trade(s) synced');
   } catch(e){
-    if(el) el.innerHTML = '<span style="color:var(--red);font-size:.75rem">Sync error - check CSV URL</span>';
-    toast('Sync error','var(--red)');
+    if(el) el.innerHTML = '<span style="color:var(--red);font-size:.75rem">Parse error</span>';
+    toast('Parse error','var(--red)');
   }
 }
 
