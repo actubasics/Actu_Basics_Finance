@@ -434,11 +434,7 @@ const sign = v => v >= 0 ? '+' : '';
 
 const CSV_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vQlPZ1yfa1iSMixgd4VUgaHusfDLITdX5NexGC-V8JkCh0Jk5Y94QtX8fMcn-Z-O6Ve0mW10jE5CPge/pub?gid=0&single=true&output=csv';
 
-const EXCHANGE = {
-  SPYI:'DE', XDWD:'DE', IUSN:'DE', ZPRV:'DE', XAIX:'DE',
-  SPYL:'DE', C50:'DE', CEBZ:'DE', QUS5:'DE',
-  EMIM:'AS', VWCE:'AS', IWDA:'AS', SGLD:'AS',
-};
+
 
 const ALLOC = [
   {etf:'XDWD',pct:40,mnt:320,isin:'IE00BJ0KDQ92',ter:0.12,enc:'18.8B',bourse:'XETRA',color:'#1D9E75',role:'Developed world core',desc:'MSCI World - 0.12% TER - best WRDU alternative'},
@@ -850,71 +846,63 @@ function drawProj(){
 const HIST = {};
 
 // ---- PRICE FETCHING ----
-// Tries multiple sources in order until one works
+const EXCHANGE = {
+  SPYI:'DE', XDWD:'DE', IUSN:'DE', ZPRV:'DE', XAIX:'DE',
+  SPYL:'DE', C50:'DE', CEBZ:'DE', QUS5:'DE',
+  EMIM:'AS', VWCE:'AS', IWDA:'AS', SGLD:'AS',
+};
 
-function yfUrl(ticker, range) {
+async function fetchP(ticker){
   const ex = EXCHANGE[ticker] || 'DE';
   const yt = ticker + '.' + ex;
-  return 'https://query1.finance.yahoo.com/v8/finance/chart/' + yt + '?interval=1d&range=' + range;
-}
-
-function parseYF(j) {
-  const result = j?.chart?.result?.[0];
-  if(!result) return null;
-  const closes = result.indicators?.quote?.[0]?.close?.filter(v => v != null);
-  if(!closes || closes.length < 2) return null;
-  return {
-    price: closes[closes.length-1],
-    change: (closes[closes.length-1] - closes[closes.length-2]) / closes[closes.length-2] * 100
-  };
-}
-
-async function tryFetch(url, timeout=5000) {
-  try {
-    const r = await Promise.race([
-      fetch(url, {mode:'cors', cache:'no-cache'}),
-      new Promise((_,rej) => setTimeout(rej, timeout))
-    ]);
-    if(!r || !r.ok) return null;
-    return await r.json();
-  } catch { return null; }
-}
-
-async function fetchP(ticker) {
-  const base = yfUrl(ticker, '5d');
-  const proxies = [
-    base,
-    'https://corsproxy.io/?url=' + encodeURIComponent(base),
-    'https://api.allorigins.win/raw?url=' + encodeURIComponent(base),
-    'https://thingproxy.freeboard.io/fetch/' + base,
+  const yfUrl = 'https://query1.finance.yahoo.com/v8/finance/chart/' + yt + '?interval=1d&range=5d';
+  const strategies = [
+    () => fetch(yfUrl, {mode:'cors'}),
+    () => fetch('https://corsproxy.io/?url=' + encodeURIComponent(yfUrl)),
+    () => fetch('https://proxy.corsfix.com/?' + encodeURIComponent(yfUrl)),
+    () => fetch('https://api.allorigins.win/raw?url=' + encodeURIComponent(yfUrl)),
   ];
-  for(const url of proxies) {
-    const j = await tryFetch(url);
-    if(!j) continue;
-    const d = parseYF(j);
-    if(d) return d;
+  for(const strategy of strategies){
+    try{
+      const r = await Promise.race([strategy(), new Promise((_,rej)=>setTimeout(rej,4000))]);
+      if(!r || !r.ok) continue;
+      const j = await r.json();
+      const result = j?.chart?.result?.[0];
+      if(!result) continue;
+      const closes = result.indicators?.quote?.[0]?.close?.filter(v=>v!=null);
+      if(!closes || closes.length < 2) continue;
+      return {
+        price: closes[closes.length-1],
+        change: (closes[closes.length-1]-closes[closes.length-2])/closes[closes.length-2]*100
+      };
+    } catch{ continue; }
   }
   return null;
 }
 
-async function fetchHistory(ticker) {
-  const base = yfUrl(ticker, '1mo');
-  const proxies = [
-    base,
-    'https://corsproxy.io/?url=' + encodeURIComponent(base),
-    'https://api.allorigins.win/raw?url=' + encodeURIComponent(base),
-    'https://thingproxy.freeboard.io/fetch/' + base,
+async function fetchHistory(ticker){
+  const ex = EXCHANGE[ticker] || 'DE';
+  const yt = ticker + '.' + ex;
+  const yfUrl = 'https://query1.finance.yahoo.com/v8/finance/chart/' + yt + '?interval=1d&range=1mo';
+  const strategies = [
+    () => fetch(yfUrl, {mode:'cors'}),
+    () => fetch('https://corsproxy.io/?url=' + encodeURIComponent(yfUrl)),
+    () => fetch('https://proxy.corsfix.com/?' + encodeURIComponent(yfUrl)),
+    () => fetch('https://api.allorigins.win/raw?url=' + encodeURIComponent(yfUrl)),
   ];
-  for(const url of proxies) {
-    const j = await tryFetch(url, 6000);
-    if(!j) continue;
-    const res = j?.chart?.result?.[0];
-    if(!res) continue;
-    const ts = res.timestamp || [];
-    const closes = res.indicators?.quote?.[0]?.close || [];
-    const pairs = ts.map((t,i) => ({t:t*1000, v:closes[i]})).filter(p => p.v != null);
-    if(pairs.length < 5) continue;
-    return pairs;
+  for(const s of strategies){
+    try{
+      const r = await Promise.race([s(), new Promise((_,rej)=>setTimeout(rej,5000))]);
+      if(!r || !r.ok) continue;
+      const j = await r.json();
+      const res = j?.chart?.result?.[0];
+      if(!res) continue;
+      const ts = res.timestamp || [];
+      const closes = res.indicators?.quote?.[0]?.close || [];
+      const pairs = ts.map((t,i) => ({t:t*1000, v:closes[i]})).filter(p=>p.v!=null);
+      if(pairs.length < 5) continue;
+      return pairs;
+    } catch{ continue; }
   }
   return null;
 }
@@ -1015,7 +1003,6 @@ async function loadPrices(){
   const tickers = ['SPYI', ...ALLOC.map(a=>a.etf)];
   const unique = [...new Set(tickers)];
   for(const ticker of unique){
-    await new Promise(r => setTimeout(r, 300)); // 300ms delay to avoid rate limiting
     const d = await fetchP(ticker);
     const ev = document.getElementById('pv-'+ticker);
     const ec = document.getElementById('pc-'+ticker);
