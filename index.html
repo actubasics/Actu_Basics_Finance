@@ -122,7 +122,7 @@ select:focus,input[type=date]:focus,input[type=text]:focus{border-color:var(--gr
       </div>
       <div class="ct" style="margin-bottom:6px">Monthly investments - 800 EUR/month</div>
       <div id="dash-monthly"></div>
-      <div class="note" style="margin-top:6px">Avg TER: <strong style="color:var(--text)">~0.21%/yr</strong> · Commissions: <strong style="color:var(--text)">5 EUR/mo</strong> (4 x 1.25 EUR = 0.63%)</div>
+      <div class="note" style="margin-top:6px">Avg TER: <strong style="color:var(--text)">~0.21%/yr</strong> · Commissions: <strong style="color:var(--text)">5 EUR/mo</strong> (4 x 1.25 EUR = 0.63%) - Sharpe optimal allocation</div>
     </div>
   </div>
   <div class="card">
@@ -133,8 +133,29 @@ select:focus,input[type=date]:focus,input[type=text]:focus{border-color:var(--gr
 
 <!-- PORTFOLIO -->
 <div id="panel-portfolio" class="panel">
-  <div class="sec">Live prices</div>
-  <div id="price-grid" style="display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:16px"></div>
+  <div class="sec">Live prices - core portfolio</div>
+  <div id="price-grid" style="display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:10px"></div>
+  <div class="sec">Satellite watchlist - outside main strategy</div>
+  <div id="satellite-grid" style="display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin-bottom:16px">
+    <div class="kpi" id="pk-L0CK" style="cursor:pointer;border-left:3px solid #9b7fe8" onclick="showChart('L0CK','#9b7fe8')">
+      <div style="display:flex;justify-content:space-between"><div class="mono" style="font-size:.62rem;color:var(--muted)">L0CK - XETRA</div><span style="font-size:.58rem;color:#9b7fe8;font-family:var(--mono)">satellite</span></div>
+      <div style="display:flex;align-items:baseline;gap:5px;margin:2px 0">
+        <span class="mono" style="font-size:1rem;font-weight:500;color:#9b7fe8" id="pv-L0CK">-</span>
+        <span class="mono" style="font-size:.7rem" id="pc-L0CK"><span class="spin"></span></span>
+      </div>
+      <canvas id="spark-L0CK" height="36" style="width:100%;display:block;margin-top:4px"></canvas>
+      <div class="kl" style="font-size:.6rem;margin-top:2px">iShares Digital Security - TER 0.40%</div>
+    </div>
+    <div class="kpi" id="pk-NATO" style="cursor:pointer;border-left:3px solid #ff5757" onclick="showChart('NATO','#ff5757')">
+      <div style="display:flex;justify-content:space-between"><div class="mono" style="font-size:.62rem;color:var(--muted)">NATO - Milan EUR</div><span style="font-size:.58rem;color:#ff5757;font-family:var(--mono)">satellite</span></div>
+      <div style="display:flex;align-items:baseline;gap:5px;margin:2px 0">
+        <span class="mono" style="font-size:1rem;font-weight:500;color:#ff5757" id="pv-NATO">-</span>
+        <span class="mono" style="font-size:.7rem" id="pc-NATO"><span class="spin"></span></span>
+      </div>
+      <canvas id="spark-NATO" height="36" style="width:100%;display:block;margin-top:4px"></canvas>
+      <div class="kl" style="font-size:.6rem;margin-top:2px">HANetf Future of Defence - TER 0.49%</div>
+    </div>
+  </div>
 
   <div class="sec">Google Sheets sync</div>
   <div class="card" style="margin-bottom:14px">
@@ -282,12 +303,12 @@ function doGet(e) {
     <div class="ct">Strategy evolution over time</div>
     <div style="display:flex;flex-direction:column;gap:8px">
       <div style="border-left:3px solid var(--green);padding:12px 14px;background:rgba(0,212,170,.04);border-radius:0 10px 10px 0">
-        <div class="fw7" style="font-size:.88rem;margin-bottom:6px">Now - ongoing · XDWD 40% + EMIM 25% + IUSN 20% + ZPRV 15%</div>
+        <div class="fw7" style="font-size:.88rem;margin-bottom:6px">Now - ongoing · XDWD 45% + EMIM 20% + IUSN 20% + ZPRV 15%</div>
         <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:6px">
-          <div style="background:rgba(0,0,0,.2);border-radius:6px;padding:7px 9px;font-size:.72rem"><div style="color:var(--muted)">XDWD - 320 EUR/mo</div><div class="mono" style="color:#1D9E75">MSCI World 0.12%</div></div>
-          <div style="background:rgba(0,0,0,.2);border-radius:6px;padding:7px 9px;font-size:.72rem"><div style="color:var(--muted)">EMIM - 200 EUR/mo</div><div class="mono" style="color:#3b8eea">Emerging markets</div></div>
-          <div style="background:rgba(0,0,0,.2);border-radius:6px;padding:7px 9px;font-size:.72rem"><div style="color:var(--muted)">IUSN - 160 EUR/mo</div><div class="mono" style="color:#f59f00">Small cap premium</div></div>
-          <div style="background:rgba(0,0,0,.2);border-radius:6px;padding:7px 9px;font-size:.72rem"><div style="color:var(--muted)">ZPRV - 120 EUR/mo</div><div class="mono" style="color:#e91e8c">Value + size</div></div>
+          <div style="background:rgba(0,0,0,.2);border-radius:6px;padding:7px 9px;font-size:.72rem"><div style="color:var(--muted)">XDWD - 360 EUR/mo</div><div class="mono" style="color:#1D9E75">Market beta - core</div></div>
+          <div style="background:rgba(0,0,0,.2);border-radius:6px;padding:7px 9px;font-size:.72rem"><div style="color:var(--muted)">EMIM - 160 EUR/mo</div><div class="mono" style="color:#3b8eea">EM growth conviction</div></div>
+          <div style="background:rgba(0,0,0,.2);border-radius:6px;padding:7px 9px;font-size:.72rem"><div style="color:var(--muted)">IUSN - 160 EUR/mo</div><div class="mono" style="color:#f59f00">Size premium</div></div>
+          <div style="background:rgba(0,0,0,.2);border-radius:6px;padding:7px 9px;font-size:.72rem"><div style="color:var(--muted)">ZPRV - 120 EUR/mo</div><div class="mono" style="color:#e91e8c">Value + size factor</div></div>
         </div>
         <div class="note">4 lines - SPYI heritage untouched, growing on its own. New investments only go to these 4 ETFs.</div>
         <div style="margin-top:6px;background:rgba(83,74,183,.08);border:1px solid rgba(83,74,183,.2);border-radius:6px;padding:7px 10px;font-size:.73rem;color:var(--muted)">
@@ -437,19 +458,19 @@ const CSV_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vQlPZ1yfa1iSMix
 
 
 const ALLOC = [
-  {etf:'XDWD',pct:40,mnt:320,isin:'IE00BJ0KDQ92',ter:0.12,enc:'18.8B',bourse:'XETRA',color:'#1D9E75',role:'Developed world core',desc:'MSCI World - 0.12% TER - best WRDU alternative'},
-  {etf:'EMIM',pct:25,mnt:200,isin:'IE00BKM4GZ66',ter:0.18,enc:'~20B', bourse:'AEB',  color:'#3b8eea',role:'Emerging markets',desc:'MSCI EM IMI - Asia/India/China - 3,000 stocks'},
-  {etf:'IUSN',pct:20,mnt:160,isin:'IE00BF4RFH31',ter:0.35,enc:'~6.8B',bourse:'XETRA',color:'#f59f00',role:'Small cap premium',desc:'MSCI World Small Cap - WSML in EUR'},
-  {etf:'ZPRV',pct:15,mnt:120,isin:'IE00BSPLC413',ter:0.30,enc:'841M', bourse:'XETRA',color:'#e91e8c',role:'Value + size premium',desc:'MSCI USA Small Cap Value Weighted'},
+  {etf:'XDWD',pct:60,mnt:480,isin:'IE00BJ0KDQ92',ter:0.12,enc:'18.8B',bourse:'XETRA',color:'#1D9E75',role:'Developed world core',desc:'MSCI World - 0.12% TER - Sharpe optimal anchor'},
+  {etf:'EMIM',pct:15,mnt:120,isin:'IE00BKM4GZ66',ter:0.18,enc:'~20B', bourse:'AEB',  color:'#3b8eea',role:'Emerging markets',desc:'MSCI EM IMI - Asia/India/China - 3,000 stocks'},
+  {etf:'IUSN',pct:15,mnt:120,isin:'IE00BF4RFH31',ter:0.35,enc:'~6.8B',bourse:'XETRA',color:'#f59f00',role:'Small cap premium',desc:'MSCI World Small Cap - size factor'},
+  {etf:'ZPRV',pct:10,mnt: 80,isin:'IE00BSPLC413',ter:0.30,enc:'841M', bourse:'XETRA',color:'#e91e8c',role:'Value + size premium',desc:'MSCI USA Small Cap Value Weighted - Sharpe optimal 10%'},
 ];
 
 const SPYI_POS = {etf:'SPYI',isin:'IE00B3YLTY66',ter:0.17,enc:'5.7B',bourse:'XETRA',color:'#534AB7'};
 
 const IBKR_ORDERS = [
-  {etf:'XDWD',isin:'IE00BJ0KDQ92',bourse:'XETRA',mnt:320,note:'Market order - ~15 shares/mo'},
-  {etf:'EMIM',isin:'IE00BKM4GZ66',bourse:'AEB',  mnt:200,note:'Market order - ~4 shares/mo at ~46 EUR'},
-  {etf:'IUSN',isin:'IE00BF4RFH31',bourse:'XETRA',mnt:160,note:'Market order - ~14 shares/mo'},
-  {etf:'ZPRV',isin:'IE00BSPLC413',bourse:'XETRA',mnt:120,note:'Limit order - ~1-2 shares/mo at ~75 EUR'},
+  {etf:'XDWD',isin:'IE00BJ0KDQ92',bourse:'XETRA',mnt:480,note:'Market order - ~21 shares/mo at ~23 EUR'},
+  {etf:'EMIM',isin:'IE00BKM4GZ66',bourse:'AEB',  mnt:120,note:'Market order - ~2-3 shares/mo at ~46 EUR'},
+  {etf:'IUSN',isin:'IE00BF4RFH31',bourse:'XETRA',mnt:160,note:'Market order - ~14 shares/mo at ~11 EUR'},
+  {etf:'ZPRV',isin:'IE00BSPLC413',bourse:'XETRA',mnt: 80,note:'Limit order - ~1 share/mo at ~75 EUR'},
 ];
 
 const TER_MWY = ALLOC.reduce((s,e) => s + e.ter * (e.pct/100), 0);
@@ -611,7 +632,9 @@ function initPortfolio(){
 
   const PRICE_ETFS = [
     {etf:'SPYI', role:'Heritage - 500 shares', color:'#534AB7', bourse:'XETRA'},
-    ...ALLOC
+    ...ALLOC,
+    {etf:'L0CK', role:'Satellite - Cybersecurity (optional)', color:'#9b7fe8', bourse:'XETRA'},
+    {etf:'NATO', role:'Satellite - Defense (optional)', color:'#ff5757', bourse:'MI'},
   ];
   document.getElementById('price-grid').innerHTML = PRICE_ETFS.map(a => `
     <div class="kpi" id="pk-${a.etf}" style="cursor:pointer" onclick="showChart('${a.etf}','${a.color}')">
@@ -849,6 +872,7 @@ const HIST = {};
 const EXCHANGE = {
   SPYI:'DE', XDWD:'DE', IUSN:'DE', ZPRV:'DE', XAIX:'DE',
   SPYL:'DE', C50:'DE', CEBZ:'DE', QUS5:'DE',
+  'L0CK':'DE', NATO:'MI',
   EMIM:'AS', VWCE:'AS', IWDA:'AS', SGLD:'AS',
 };
 
@@ -1000,7 +1024,7 @@ function showChart(ticker, color){
 
 async function loadPrices(){
   document.getElementById('last-update').textContent = 'Loading...';
-  const tickers = ['SPYI', ...ALLOC.map(a=>a.etf)];
+  const tickers = ['SPYI', ...ALLOC.map(a=>a.etf), 'L0CK', 'NATO'];
   const unique = [...new Set(tickers)];
   for(const ticker of unique){
     const d = await fetchP(ticker);
