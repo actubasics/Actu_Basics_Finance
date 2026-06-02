@@ -236,7 +236,7 @@ function doGet(e) {
   <div class="card">
     <div class="ct">Trade history</div>
     <div style="overflow-x:auto"><table class="tbl"><thead><tr>
-      <th>Date</th><th>ETF</th><th>Shares</th><th>Buy price</th><th>Invested</th><th>Current price</th><th>Value</th><th>P&L EUR</th><th>%</th><th></th>
+      <th>Date</th><th>ETF</th><th>Shares</th><th>Buy price</th><th>Invested</th><th>Current price</th><th>Value</th><th>P&L EUR</th><th>%</th><th>% Portfolio</th><th></th>
     </tr></thead><tbody id="trades-body">
       <tr><td colspan="10" style="text-align:center;color:var(--muted);padding:20px">No trades recorded yet.</td></tr>
     </tbody></table></div>
@@ -696,7 +696,7 @@ function refreshPtf(){
   const body = document.getElementById('trades-body');
   const etfColors = Object.fromEntries([{etf:'SPYI',color:'#534AB7'},...ALLOC].map(a=>[a.etf,a.color]));
   if(!S.trades.length){
-    body.innerHTML = '<tr><td colspan="10" style="text-align:center;color:var(--muted);padding:20px">No trades recorded. Add your first investment above.</td></tr>';
+    body.innerHTML = '<tr><td colspan="11" style="text-align:center;color:var(--muted);padding:20px">No trades recorded. Add your first investment above.</td></tr>';
     document.getElementById('ptf-kpis').innerHTML = ''; return;
   }
   let totI=0, totV=0;
@@ -720,6 +720,7 @@ function refreshPtf(){
       <td class="mono">${val!==null ? fmt(val,2)+' EUR' : '-'}</td>
       <td style="color:${clr(pnl||0)};font-family:var(--mono)">${pnl!==null ? sign(pnl)+fmt(pnl,2)+' EUR' : '-'}</td>
       <td><span class="badge ${(pct||0)>=0?'bg':'br'}">${pct!==null ? sign(pct)+fmt(pct,2)+'%' : '-'}</span></td>
+      <td class="mono" style="color:var(--muted);font-size:.78rem">${totV>0&&val!==null ? fmt(val/(totV)*100,1)+'%' : totI>0 ? fmt(inv/totI*100,1)+'%' : '-'}</td>
       <td><button class="btn btn-d btn-sm" onclick="deleteT(${t.id})">x</button></td>
     </tr>`;
   });
