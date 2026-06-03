@@ -654,6 +654,7 @@ function initPortfolio(){
     {etf:'IUSN', role:'Small cap premium', color:'#f59f00', bourse:'XETRA'},
     {etf:'ZPRV', role:'Value + size premium', color:'#e91e8c', bourse:'XETRA'},
     {etf:'L0CK', role:'Satellite - Cybersecurity (optional)', color:'#9b7fe8', bourse:'XETRA'},
+    {etf:'SXR8', role:'Satellite - S&P 500 Core - TER 0.07%', color:'#EF9F27', bourse:'XETRA'},
     {etf:'NATO', role:'Satellite - Defense (optional)', color:'#ff5757', bourse:'MI'},
   ];
   document.getElementById('price-grid').innerHTML = PRICE_ETFS.map(a => `
@@ -1057,7 +1058,7 @@ function showChart(ticker, color){
 
 async function loadPrices(){
   document.getElementById('last-update').textContent = 'Loading...';
-  const tickers = ['SPYI','XDWD','EMIM','IUSN','ZPRV','L0CK','NATO'];
+  const tickers = ['SPYI','XDWD','EMIM','IUSN','ZPRV','L0CK','SXR8','NATO'];
   const unique = [...new Set(tickers)];
   for(const ticker of unique){
     const d = await fetchP(ticker);
