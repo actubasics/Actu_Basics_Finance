@@ -660,7 +660,7 @@ function initIbkrOrders(){
 }
 
 // PORTFOLIO
-const ALL_TICKERS = ['SPYI','QDVE','SXR8','SEMI','SXRV','IWMO','DFEN','L0CK','XAIX','ZPRV','XDWD','EMIM','IUSN','IWOG','RBOT','NATO','IIND','VWCE','IWDA','SPYL','NDIA','IMAE','CSPX'];
+const ALL_TICKERS = ['SPYI','QDVE','SXR8','SECO','SXRV','XDEM','DFEN','L0CK','XAIX','ZPRV','XDWD','EMIM','IUSN','IWOG','RBOT','NATO','IIND','VWCE','IWDA','SPYL','NDIA','IMAE','CSPX'];
 
 function initPortfolio(){
   document.getElementById('t-etf').innerHTML = ALL_TICKERS.map(t => `<option>${t}</option>`).join('');
@@ -671,14 +671,15 @@ function initPortfolio(){
     // Core — always shown
     {etf:'SPYI', role:'MSCI ACWI IMI - 9,000 stocks | Heritage: 500 shares', color:'#534AB7', bourse:'XETRA'},
     // Outperform SPYI on 10yr
-    {etf:'SEMI', role:'Semiconductors - ~22-25%/yr est. | NVDA/TSMC/ASML', color:'#ff9800', bourse:'XETRA'},
+    {etf:'SECO', role:'Semiconductors - ~22-25%/yr est. | NVDA/TSMC/ASML (SECO on XETRA)', color:'#ff9800', bourse:'XETRA'},
     {etf:'SXRV', role:'Nasdaq 100 - 18.90%/yr 10yr | Accumulating', color:'#4caf50', bourse:'XETRA'},
     {etf:'QDVE', role:'S&P 500 Tech - ~18-20%/yr | Apple/NVDA/MSFT', color:'#00bcd4', bourse:'XETRA'},
     {etf:'XAIX', role:'AI & Big Data - ~16-18%/yr | 100 companies', color:'#673ab7', bourse:'XETRA'},
     {etf:'L0CK', role:'Cybersecurity - ~15-18%/yr | CrowdStrike/Palo Alto', color:'#9b7fe8', bourse:'XETRA'},
     // Equivalent to SPYI
     {etf:'SXR8', role:'S&P 500 Core - ~15%/yr | TER 0.07% - 128B EUR', color:'#EF9F27', bourse:'XETRA'},
-    {etf:'IWMO', role:'World Momentum - 14.72%/yr 10yr | Auto-adaptive factor', color:'#00acc1', bourse:'XETRA'},
+    {etf:'XDEM', role:'World Momentum - 14.72%/yr 10yr | XDEM on XETRA (Xtrackers)', color:'#00acc1', bourse:'XETRA'},
+    {etf:'IWMO', role:'World Momentum - 14.72%/yr 10yr | IWMO on IBKR Milan (iShares)', color:'#26c6da', bourse:'MI'},
   ];
   document.getElementById('price-grid').innerHTML = PRICE_ETFS.map(a => `
     <div class="kpi" id="pk-${a.etf}" style="cursor:pointer" onclick="showChart('${a.etf}','${a.color}')">
@@ -929,8 +930,9 @@ const EXCHANGE = {
   SPYI:'DE', XDWD:'DE', IUSN:'DE', ZPRV:'DE', XAIX:'DE',
   SPYL:'DE', C50:'DE', CEBZ:'DE', QUS5:'DE',
   'L0CK':'DE', NATO:'MI', QDVE:'DE', SXR8:'DE',
-  SEMI:'DE', SXRV:'DE', IWOG:'DE', RBOT:'DE',
-  IIND:'DE', NDIA:'DE', IWMO:'DE', DFEN:'DE',
+  SECO:'DE', SXRV:'DE', IWOG:'DE', RBOT:'DE',
+  IIND:'DE', NDIA:'DE', XDEM:'DE', DFEN:'DE',
+  IWMO:'MI', // iShares Momentum - Milan EUR on IBKR
   EMIM:'AS', VWCE:'AS', IWDA:'AS', SGLD:'AS',
 };
 
@@ -1082,7 +1084,7 @@ function showChart(ticker, color){
 
 async function loadPrices(){
   document.getElementById('last-update').textContent = 'Loading...';
-  const tickers = ['SPYI','SEMI','SXRV','QDVE','XAIX','L0CK','SXR8','IWMO'];
+  const tickers = ['SPYI','SECO','SXRV','QDVE','XAIX','L0CK','SXR8','XDEM','IWMO'];
   const unique = [...new Set(tickers)];
   for(const ticker of unique){
     const d = await fetchP(ticker);
@@ -1316,7 +1318,7 @@ const ENCYCLO = [
   {etf:'IUSN', name:'iShares MSCI World Small Cap UCITS ETF', isin:'IE00BF4RFH31', bourse:'XETRA', ter:0.35, aum:'6.8B EUR',  r10:8.96,  acc:true,  cat:'Factor',     note:'MSCI World SC - size premium - underperforms SPYI 10yr'},
   {etf:'ZPRV', name:'SPDR MSCI USA SC Value Weighted UCITS',  isin:'IE00BSPLC413', bourse:'XETRA', ter:0.30, aum:'841M EUR',  r10:11.35, acc:true,  cat:'Factor',     note:'Fama-French value+size - 11.35%/yr 10yr - cyclical'},
   // === FACTOR ETFs ===
-  {etf:'IWMO', name:'iShares Edge MSCI World Momentum UCITS', isin:'IE00BP3QZ825', bourse:'XETRA', ter:0.25, aum:'4.5B EUR',  r10:14.72, acc:true,  cat:'Factor',     note:'Momentum factor - 14.72%/yr 10yr - auto-adaptive - 10 positive years out of 12'},
+  {etf:'XDEM', name:'iShares Edge MSCI World Momentum UCITS', isin:'IE00BL25JP72', bourse:'XETRA', ter:0.25, aum:'1.87B EUR', r10:14.72, acc:true,  cat:'Factor',     note:'Xtrackers Momentum - XETRA EUR ticker - same index as IWMO (iShares) - TER 0.25%'},
   // === US LARGE CAP ===
   {etf:'SXR8', name:'iShares Core S&P 500 UCITS ETF',         isin:'IE00B5BMR087', bourse:'XETRA', ter:0.07, aum:'128.9B EUR',r10:15.00, acc:true,  cat:'US Core',    note:'Largest EU ETF - TER 0.07% - S&P 500 full'},
   {etf:'CSPX', name:'iShares Core S&P 500 UCITS ETF USD',     isin:'IE00B5BMR087', bourse:'LSE',   ter:0.07, aum:'128.9B EUR',r10:15.00, acc:true,  cat:'US Core',    note:'Same as SXR8 - USD listed on LSE'},
@@ -1325,7 +1327,7 @@ const ENCYCLO = [
   {etf:'QDVE', name:'iShares S&P 500 Info Tech Sector UCITS', isin:'IE00B3WJKG14', bourse:'XETRA', ter:0.15, aum:'16.4B EUR', r10:19.00, acc:true,  cat:'Tech',       note:'S&P 500 tech pure - Apple/NVDA/MSFT - ~18-20%/yr est.'},
   {etf:'SXRV', name:'iShares Core Nasdaq-100 UCITS ETF',      isin:'IE00B53SZB19', bourse:'XETRA', ter:0.20, aum:'8B EUR',    r10:18.90, acc:true,  cat:'Tech',       note:'Best Nasdaq 100 UCITS - accumulating - 18.90%/yr 10yr'},
   {etf:'XAIX', name:'Xtrackers AI & Big Data UCITS ETF',      isin:'IE00BGV5VN51', bourse:'XETRA', ter:0.35, aum:'6.9B EUR',  r10:16.00, acc:true,  cat:'Tech',       note:'100 AI companies - global incl. Asia - ~16-18%/yr est.'},
-  {etf:'SEMI', name:'VanEck Semiconductor UCITS ETF',          isin:'IE00BMC38736', bourse:'XETRA', ter:0.35, aum:'N/A',       r10:22.00, acc:true,  cat:'Tech',       note:'Pure play semis - NVDA/TSMC/ASML/AMD - best potential'},
+  {etf:'SECO', name:'VanEck Semiconductor UCITS ETF',          isin:'IE00BMC38736', bourse:'XETRA', ter:0.35, aum:'N/A',       r10:22.00, acc:true,  cat:'Tech',       note:'Pure play semis - NVDA/TSMC/ASML/AMD - best potential'},
   // === THEMATIC ===
   {etf:'L0CK', name:'iShares Digital Security UCITS ETF',     isin:'IE00BG0J4C88', bourse:'XETRA', ter:0.40, aum:'1.5B EUR',  r10:16.00, acc:true,  cat:'Thematic',   note:'Cybersecurity - CrowdStrike/Palo Alto - non-cyclical growth'},
   {etf:'NATO', name:'HANetf Future of Defence UCITS ETF',     isin:'IE000OJ5TQP4', bourse:'XETRA', ter:0.49, aum:'2.38B EUR', r10:null,  acc:true,  cat:'Thematic',   note:'Defense geopolitical - Northrop/Safran - launched 2023'},
