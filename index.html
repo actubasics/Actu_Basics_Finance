@@ -134,7 +134,7 @@ select:focus,input[type=date]:focus,input[type=text]:focus{border-color:var(--gr
 <!-- PORTFOLIO -->
 <div id="panel-portfolio" class="panel">
   <div class="sec">Live prices</div>
-  <div id="price-grid" style="display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:10px"></div>
+  <div id="price-grid" style="display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:16px"></div>
 
 
   <div class="sec">Google Sheets sync</div>
@@ -641,21 +641,33 @@ function initIbkrOrders(){
 }
 
 // PORTFOLIO
-const ALL_TICKERS = ['SPYI'].concat(ALLOC.map(a=>a.etf)).concat(['VWCE','IWDA','XDWD','EMIM','IUSN','ZPRV','SPYL','CEBZ']);
+const ALL_TICKERS = ['SPYI','QDVE','SXR8','SEMI','SXRV','IWMO','DFEN','L0CK','XAIX','ZPRV','XDWD','EMIM','IUSN','IWOG','RBOT','NATO','IIND','VWCE','IWDA','SPYL','NDIA','IMAE','CSPX'];
 
 function initPortfolio(){
   document.getElementById('t-etf').innerHTML = ALL_TICKERS.map(t => `<option>${t}</option>`).join('');
   document.getElementById('t-date').value = new Date().toISOString().split('T')[0];
 
   const PRICE_ETFS = [
-    {etf:'SPYI', role:'MSCI ACWI IMI - 9,000 stocks - 50 countries | Heritage: 500 shares', color:'#534AB7', bourse:'XETRA'},
-    {etf:'XDWD', role:'Developed world core', color:'#1D9E75', bourse:'XETRA'},
-    {etf:'EMIM', role:'Emerging markets', color:'#3b8eea', bourse:'AEB'},
-    {etf:'IUSN', role:'Small cap premium', color:'#f59f00', bourse:'XETRA'},
-    {etf:'ZPRV', role:'Value + size premium', color:'#e91e8c', bourse:'XETRA'},
-    {etf:'L0CK', role:'Satellite - Cybersecurity (optional)', color:'#9b7fe8', bourse:'XETRA'},
+    // Core
+    {etf:'SPYI', role:'MSCI ACWI IMI - 9,000 stocks | Heritage: 500 shares - never sell', color:'#534AB7', bourse:'XETRA'},
+    {etf:'XDWD', role:'Developed world core - MSCI World', color:'#1D9E75', bourse:'XETRA'},
+    {etf:'EMIM', role:'Emerging markets - Asia/India/China', color:'#3b8eea', bourse:'AEB'},
+    {etf:'IUSN', role:'Small cap premium - MSCI World SC', color:'#f59f00', bourse:'XETRA'},
+    {etf:'ZPRV', role:'Value + size premium - USA SC Value', color:'#e91e8c', bourse:'XETRA'},
+    // Satellites - tech & growth
+    {etf:'QDVE', role:'Satellite - S&P 500 Tech (Apple/NVDA/MSFT)', color:'#00bcd4', bourse:'XETRA'},
     {etf:'SXR8', role:'Satellite - S&P 500 Core - TER 0.07%', color:'#EF9F27', bourse:'XETRA'},
-    {etf:'NATO', role:'Satellite - Defense (optional)', color:'#ff5757', bourse:'MI'},
+    {etf:'SEMI', role:'Satellite - Global Semiconductors (NVDA/TSMC/ASML)', color:'#ff9800', bourse:'XETRA'},
+    {etf:'SXRV', role:'Satellite - Nasdaq 100 - 18.9%/yr 10yr', color:'#4caf50', bourse:'XETRA'},
+    {etf:'XAIX', role:'Satellite - AI & Big Data - 100 companies', color:'#673ab7', bourse:'XETRA'},
+    {etf:'IWOG', role:'Satellite - MSCI World Growth - TER 0.19%', color:'#009688', bourse:'XETRA'},
+    // Satellites - thematic
+    {etf:'L0CK', role:'Satellite - Cybersecurity (CrowdStrike/Palo Alto)', color:'#9b7fe8', bourse:'XETRA'},
+    {etf:'RBOT', role:'Satellite - Robotics & Automation - TER 0.40%', color:'#607d8b', bourse:'XETRA'},
+    {etf:'NATO', role:'Satellite - Defense & Aerospace', color:'#ff5757', bourse:'MI'},
+    {etf:'IIND', role:'Satellite - India (optional)', color:'#ff6f00', bourse:'XETRA'},
+    {etf:'IWMO', role:'Satellite - World Momentum - 14.72%/yr 10yr - auto-adaptive', color:'#00acc1', bourse:'XETRA'},
+    {etf:'DFEN', role:'Satellite - VanEck Defense - 8.3B AUM - TER 0.55%', color:'#8d6e63', bourse:'XETRA'},
   ];
   document.getElementById('price-grid').innerHTML = PRICE_ETFS.map(a => `
     <div class="kpi" id="pk-${a.etf}" style="cursor:pointer" onclick="showChart('${a.etf}','${a.color}')">
@@ -906,8 +918,9 @@ const EXCHANGE = {
   SPYI:'DE', XDWD:'DE', IUSN:'DE', ZPRV:'DE', XAIX:'DE',
   SPYL:'DE', C50:'DE', CEBZ:'DE', QUS5:'DE',
   'L0CK':'DE', NATO:'MI', QDVE:'DE', SXR8:'DE',
+  SEMI:'DE', SXRV:'DE', IWOG:'DE', RBOT:'DE',
+  IIND:'DE', NDIA:'DE', IWMO:'DE', DFEN:'DE',
   EMIM:'AS', VWCE:'AS', IWDA:'AS', SGLD:'AS',
-  XDWD:'DE',
 };
 
 async function fetchP(ticker){
@@ -1058,7 +1071,7 @@ function showChart(ticker, color){
 
 async function loadPrices(){
   document.getElementById('last-update').textContent = 'Loading...';
-  const tickers = ['SPYI','XDWD','EMIM','IUSN','ZPRV','L0CK','SXR8','NATO'];
+  const tickers = ['SPYI','XDWD','EMIM','IUSN','ZPRV','QDVE','SXR8','SEMI','SXRV','XAIX','IWMO','L0CK','DFEN','IWOG','RBOT','NATO','IIND'];
   const unique = [...new Set(tickers)];
   for(const ticker of unique){
     const d = await fetchP(ticker);
