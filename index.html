@@ -111,24 +111,55 @@ select:focus,input[type=date]:focus,input[type=text]:focus{border-color:var(--gr
   <div class="g2">
     <div class="card"><div class="ct">Monthly budget</div><div class="ch"><canvas id="c-budget"></canvas></div></div>
     <div class="card">
-      <div class="ct">Current position - May 22, 2026</div>
-      <div style="background:rgba(83,74,183,.12);border:1px solid rgba(83,74,183,.3);border-radius:8px;padding:10px 12px;margin-bottom:8px">
-        <div style="display:flex;justify-content:space-between;align-items:center">
-          <div>
-            <div class="mono fw7" style="color:#534AB7;font-size:.9rem">SPYI - Heritage position</div>
-            <div class="note">500 shares at 11.50 EUR = 5,750 EUR - NEVER SELL</div>
-          </div>
-          <span class="badge bg" style="font-size:.6rem">Untouched</span>
+      <div class="ct">Strategy</div>
+      <div style="background:rgba(83,74,183,.1);border-left:3px solid #534AB7;border-radius:0 8px 8px 0;padding:9px 12px;margin-bottom:10px;display:flex;justify-content:space-between;align-items:center">
+        <div>
+          <div class="mono fw7" style="color:#534AB7">SPYI &mdash; Heritage</div>
+          <div class="note">500 shares &middot; 5,750 EUR &middot; Never sell &middot; Grows on its own</div>
+        </div>
+        <span class="badge bg">Untouched</span>
+      </div>
+      <div style="display:flex;align-items:center;gap:10px;background:var(--bg4);border-radius:8px;padding:9px 12px;margin-bottom:10px">
+        <div style="width:8px;height:8px;border-radius:50%;background:#534AB7;flex-shrink:0"></div>
+        <span class="mono fw7" style="color:#534AB7">SPYI</span>
+        <span style="font-size:.78rem;color:var(--text)">800 EUR/mo &middot; 1 order &middot; 1.25 EUR</span>
+        <span class="badge bg" style="margin-left:auto;font-size:.6rem">Monthly core</span>
+      </div>
+      <div style="font-size:.65rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);font-family:var(--mono);margin-bottom:5px">Alpha satellites &mdash; bonus only (80% SPYI + 20% satellites)</div>
+      <div style="display:grid;grid-template-columns:repeat(7,1fr);gap:4px;margin-bottom:5px">
+        <div style="background:rgba(255,152,0,.08);border-top:2px solid #ff9800;border-radius:6px;padding:5px;text-align:center">
+          <div class="mono fw7" style="color:#ff9800;font-size:.68rem">SECO</div>
+          <div style="font-size:.55rem;color:var(--muted)">~22% +7%</div>
+        </div>
+        <div style="background:rgba(76,175,80,.08);border-top:2px solid #4caf50;border-radius:6px;padding:5px;text-align:center">
+          <div class="mono fw7" style="color:#4caf50;font-size:.68rem">SXRV</div>
+          <div style="font-size:.55rem;color:var(--muted)">18.9% +4%</div>
+        </div>
+        <div style="background:rgba(0,188,212,.08);border-top:2px solid #00bcd4;border-radius:6px;padding:5px;text-align:center">
+          <div class="mono fw7" style="color:#00bcd4;font-size:.68rem">QDVE</div>
+          <div style="font-size:.55rem;color:var(--muted)">~19% +4%</div>
+        </div>
+        <div style="background:rgba(103,58,183,.08);border-top:2px solid #673ab7;border-radius:6px;padding:5px;text-align:center">
+          <div class="mono fw7" style="color:#673ab7;font-size:.68rem">XAIX</div>
+          <div style="font-size:.55rem;color:var(--muted)">~16% +1%</div>
+        </div>
+        <div style="background:rgba(155,127,232,.08);border-top:2px solid #9b7fe8;border-radius:6px;padding:5px;text-align:center">
+          <div class="mono fw7" style="color:#9b7fe8;font-size:.68rem">L0CK</div>
+          <div style="font-size:.55rem;color:var(--muted)">~15.5% +0.5%</div>
+        </div>
+        <div style="background:rgba(239,159,39,.08);border-top:2px solid #EF9F27;border-radius:6px;padding:5px;text-align:center">
+          <div class="mono fw7" style="color:#EF9F27;font-size:.68rem">SXR8</div>
+          <div style="font-size:.55rem;color:var(--muted)">~15% ~0%</div>
+        </div>
+        <div style="background:rgba(0,172,193,.08);border-top:2px solid #00acc1;border-radius:6px;padding:5px;text-align:center">
+          <div class="mono fw7" style="color:#00acc1;font-size:.68rem">XDEM</div>
+          <div style="font-size:.55rem;color:var(--muted)">14.7% ~0%</div>
         </div>
       </div>
-      <div class="ct" style="margin-bottom:6px">Monthly investment - 800 EUR/month - SPYI only</div>
-      <div id="dash-monthly"></div>
-      <div class="note" style="margin-top:6px">Avg TER: <strong style="color:var(--text)">~0.21%/yr</strong> · Commissions: <strong style="color:var(--text)">5 EUR/mo</strong> (4 x 1.25 EUR = 0.63%) - Sharpe optimal allocation</div>
+      <div style="font-size:.58rem;color:var(--dim)">SECO = IBKR &middot; VVSM.DE = Yahoo &middot; XDEM/IWMO same index &middot; % shown = 10yr annualized vs SPYI</div>
     </div>
-  </div>
-  <div class="card">
-    <div class="ct">Target allocation - 4 ETFs (new monthly investments)</div>
-    <div class="g4" id="dash-alloc"></div>
+    <div class="ct">Performance target &mdash; SPYI vs benchmarks</div>
+    <div id="dash-alloc"></div>
   </div>
 </div>
 
@@ -461,17 +492,19 @@ const ALLOC = [
 
 // Satellites — bonus only, 80% bonus to SPYI + 20% to satellites
 const SATELLITES=[
-  {etf:'QDVE',isin:'IE00B3WJKG14',ter:0.15,enc:'16.4B', bourse:'XETRA',color:'#00bcd4',role:'S&P 500 Tech alpha #1',desc:'Apple/NVIDIA/Microsoft pure - TER 0.15%'},
-  {etf:'SXR8',isin:'IE00B5BMR087',ter:0.07,enc:'128.9B',bourse:'XETRA',color:'#EF9F27',role:'S&P 500 Core alpha #2',desc:'iShares Core S&P 500 - TER 0.07% - largest EU ETF 128.9B EUR'},
-  {etf:'L0CK',isin:'IE00BG0J4C88',ter:0.40,enc:'1.5B',  bourse:'XETRA',color:'#9b7fe8',role:'Cybersecurity alpha #3',desc:'iShares Digital Security - CrowdStrike/Palo Alto/Zscaler'},
-  {etf:'ZPRV',isin:'IE00BSPLC413',ter:0.30,enc:'841M',  bourse:'XETRA',color:'#e91e8c',role:'Small Cap Value factor #4',desc:'MSCI USA SC Value - 11.35%/yr 10yr - Fama-French'},
+  {etf:'VVSM',isin:'IE00BMC38736',ter:0.35,enc:'9.1B',  bourse:'XETRA',color:'#ff9800',role:'Semiconductors alpha #1 - SECO on IBKR',desc:'NVDA/TSMC/ASML - ~22%/yr est - SECO ticker on IBKR VVSM on Yahoo'},
+  {etf:'SXRV',isin:'IE00B53SZB19',ter:0.20,enc:'8B',    bourse:'XETRA',color:'#4caf50',role:'Nasdaq 100 alpha #2',desc:'iShares Nasdaq 100 - 18.90%/yr 10yr - accumulating'},
+  {etf:'QDVE',isin:'IE00B3WJKG14',ter:0.15,enc:'16.4B', bourse:'XETRA',color:'#00bcd4',role:'S&P 500 Tech alpha #3',desc:'Apple/NVIDIA/Microsoft pure - TER 0.15%'},
+  {etf:'XAIX',isin:'IE00BGV5VN51',ter:0.35,enc:'6.9B',  bourse:'XETRA',color:'#673ab7',role:'AI & Big Data alpha #4',desc:'100 AI companies global - ~16%/yr est'},
+  {etf:'L0CK',isin:'IE00BG0J4C88',ter:0.40,enc:'1.5B',  bourse:'XETRA',color:'#9b7fe8',role:'Cybersecurity alpha #5',desc:'iShares Digital Security - CrowdStrike/Palo Alto/Zscaler'},
 ];
 
 const SATELLITE_ORDERS=[
-  {etf:'QDVE',isin:'IE00B3WJKG14',bourse:'XETRA',note:'S&P 500 Tech - NVIDIA/Apple/MSFT - alpha #1'},
-  {etf:'SXR8',isin:'IE00B5BMR087',bourse:'XETRA',note:'S&P 500 Core - TER 0.07% - largest EU ETF - alpha #2'},
-  {etf:'L0CK',isin:'IE00BG0J4C88',bourse:'XETRA',note:'Cybersecurity - CrowdStrike/Palo Alto - alpha #3'},
-  {etf:'ZPRV',isin:'IE00BSPLC413',bourse:'XETRA',note:'Small Cap Value US - Fama-French factor - alpha #4'},
+  {etf:'VVSM',isin:'IE00BMC38736',bourse:'XETRA',note:'Semiconductors ~22%/yr - search SECO on IBKR - alpha #1'},
+  {etf:'SXRV',isin:'IE00B53SZB19',bourse:'XETRA',note:'Nasdaq 100 - 18.90%/yr 10yr - accumulating - alpha #2'},
+  {etf:'QDVE',isin:'IE00B3WJKG14',bourse:'XETRA',note:'S&P 500 Tech - NVIDIA/Apple/MSFT - TER 0.15% - alpha #3'},
+  {etf:'XAIX',isin:'IE00BGV5VN51',bourse:'XETRA',note:'AI & Big Data - 100 companies global - alpha #4'},
+  {etf:'L0CK',isin:'IE00BG0J4C88',bourse:'XETRA',note:'Cybersecurity - CrowdStrike/Palo Alto - alpha #5'},
 ];
 
 const SPYI_POS = {etf:'SPYI',isin:'IE00B3YLTY66',ter:0.17,enc:'5.7B',bourse:'XETRA',color:'#534AB7'};
@@ -520,31 +553,37 @@ function initDash(){
     mkSpin('p-obj','Freedom target',100000,2000000,25000,750000,'EUR','updateDash()'),
   ].join('');
 
-  document.getElementById('dash-monthly').innerHTML = `
+  if(document.getElementById('dash-monthly')) document.getElementById('dash-monthly').innerHTML = `
     <div style="display:flex;align-items:center;gap:8px;margin:4px 0">
       <div style="width:200px;height:8px;border-radius:4px;background:#534AB7;flex-shrink:0"></div>
       <span class="mono fw7" style="color:#534AB7;min-width:40px;font-size:.78rem">SPYI</span>
       <span style="font-size:.72rem;color:var(--muted)">100% - 800 EUR - 1 order/mo</span>
     </div>
     <div style="font-size:.72rem;color:var(--muted);margin-top:6px;padding:6px 10px;background:rgba(83,74,183,.06);border-radius:6px;border-left:2px solid #9b7fe8">
-      Alpha satellites on bonus: QDVE (Tech) - SXR8 (S&P500) - L0CK (Cyber) - ZPRV (Value) | 80% bonus to SPYI, 20% to satellites
+      Alpha satellites on bonus (outperform SPYI): SECO/VVSM (Semis ~22%) - SXRV (Nasdaq 18.9%) - QDVE (Tech ~19%) - XAIX (AI ~16%) - L0CK (Cyber ~15.5%) | 80% bonus to SPYI
     </div>`;
 
-  document.getElementById('dash-alloc').innerHTML = `
-    <div style="background:var(--bg4);border-radius:8px;padding:12px;text-align:center;border-top:3px solid #534AB7;grid-column:1/-1">
-      <div class="mono fw7" style="color:#534AB7;font-size:.95rem">SPYI</div>
-      <div style="font-size:.7rem;color:var(--text);margin:3px 0">100% monthly</div>
-      <div style="font-size:.65rem;color:var(--muted)">800 EUR/mo - TER 0.17%</div>
-      <div style="font-size:.62rem;color:var(--green);margin-top:3px">14.92%/yr 10yr - beats everything</div>
-    </div>
-    <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin-top:8px">
-      ${[{e:'QDVE',c:'#00bcd4',r:'S&P500 Tech'},{e:'SXR8',c:'#EF9F27',r:'S&P500 Core'},{e:'L0CK',c:'#9b7fe8',r:'Cybersecurity'},{e:'ZPRV',c:'#e91e8c',r:'Value Factor'}].map(s=>
-        `<div style="background:rgba(0,0,0,.15);border-radius:6px;padding:6px;text-align:center;border-top:2px solid ${s.c}">
-          <div class="mono fw7" style="color:${s.c};font-size:.78rem">${s.e}</div>
-          <div style="font-size:.6rem;color:var(--muted)">${s.r}</div>
-          <div style="font-size:.58rem;color:var(--dim)">Bonus only</div>
-        </div>`).join('')}
-    </div>`;
+  const perfData = [
+    {lbl:'SPYI (your core)', r10:14.92, col:'#534AB7'},
+    {lbl:'VVSM Semiconductors', r10:22.0, col:'#ff9800'},
+    {lbl:'SXRV Nasdaq 100', r10:18.9, col:'#4caf50'},
+    {lbl:'QDVE S&P500 Tech', r10:19.0, col:'#00bcd4'},
+    {lbl:'XAIX AI & Data', r10:16.0, col:'#673ab7'},
+    {lbl:'L0CK Cybersecurity', r10:15.5, col:'#9b7fe8'},
+    {lbl:'SXR8 S&P500', r10:15.0, col:'#EF9F27'},
+    {lbl:'XDEM Momentum', r10:14.72, col:'#00acc1'},
+    {lbl:'XDWD World', r10:12.17, col:'#1D9E75'},
+    {lbl:'ZPRV Value', r10:11.35, col:'#e91e8c'},
+    {lbl:'EMIM Emerging', r10:9.23, col:'#3b8eea'},
+    {lbl:'IUSN Small Cap', r10:8.96, col:'#f59f00'},
+  ];
+  const maxR = Math.max(...perfData.map(d=>d.r10));
+  document.getElementById('dash-alloc').innerHTML = perfData.map(d => `
+    <div style="display:flex;align-items:center;gap:8px;margin-bottom:5px">
+      <div style="width:${Math.round(d.r10/maxR*160)}px;height:6px;border-radius:3px;background:${d.col};flex-shrink:0;min-width:4px"></div>
+      <span style="font-size:.72rem;font-family:var(--font-mono);color:${d.col};min-width:44px;font-weight:600">${d.r10.toFixed(1)}%</span>
+      <span style="font-size:.72rem;color:var(--muted)">${d.lbl}</span>
+    </div>`).join('');
 }
 
 function updateDash(){
