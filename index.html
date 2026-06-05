@@ -1130,11 +1130,12 @@ async function loadPrices(){
   const unique = [...new Set(tickers)];
   for(const ticker of unique){
     const d = await fetchP(ticker);
+    // Always store price even if card not in DOM (needed for trade history P&L)
+    if(d) S.prices[ticker] = d.price;
     const ev = document.getElementById('pv-'+ticker);
     const ec = document.getElementById('pc-'+ticker);
-    if(!ev) continue;
+    if(!ev) continue; // card not in price grid - price stored above, just skip UI update
     if(d){
-      S.prices[ticker] = d.price;
       ev.textContent = fmt(d.price,2) + ' EUR';
       const up = d.change >= 0;
       if(ec) ec.innerHTML = '<span style="color:'+(up?'var(--green)':'var(--red)')+'">'+(up?'up':'dn')+' '+Math.abs(d.change).toFixed(2)+'%</span>';
