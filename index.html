@@ -97,6 +97,7 @@ select:focus,input[type=date]:focus,input[type=text]:focus{border-color:var(--gr
     <button class="tab" onclick="go('strategy')">ETF Strategy</button>
     <button class="tab" onclick="go('ibkr')">IBKR Setup</button>
     <button class="tab" onclick="go('life')">Life Plan</button>
+    <button class="tab" onclick="go('encyclo')">ETF Encyclopedia</button>
   </div>
 </div></header>
 
@@ -417,6 +418,23 @@ function doGet(e) {
   <div id="rules-list"></div>
 
 </div>
+<!-- ENCYCLOPEDIA -->
+<div id="panel-encyclo" class="panel">
+  <div class="sec">All ETFs discussed — performance reference</div>
+  <div style="font-size:.82rem;color:var(--muted);margin-bottom:14px;line-height:1.6">
+    Complete reference of every ETF analyzed during this session. For culture and future reference.
+    Live prices not shown here — use Portfolio tab for current prices.
+    <strong style="color:var(--text)">SPYI benchmark: 14.92%/yr 10yr.</strong>
+  </div>
+  <div style="overflow-x:auto"><table class="tbl" id="encyclo-table">
+    <thead><tr>
+      <th>ETF</th><th>Full name</th><th>ISIN</th><th>Exchange</th><th>TER</th><th>AUM</th>
+      <th>10yr return</th><th>vs SPYI</th><th>Acc</th><th>Role / Notes</th>
+    </tr></thead>
+    <tbody id="encyclo-body"></tbody>
+  </table></div>
+</div>
+
 </div><!-- /w -->
 <div id="toast"></div>
 
@@ -467,13 +485,14 @@ const IBKR_ORDERS = [
 
 const TER_MWY = ALLOC.reduce((s,e) => s + e.ter * (e.pct/100), 0);
 
-const TABS = ['dash','portfolio','proj','strategy','ibkr','life'];
+const TABS = ['dash','portfolio','proj','strategy','ibkr','life','encyclo'];
 function go(n){
   document.querySelectorAll('.tab').forEach((t,i) => t.classList.toggle('active', TABS[i]===n));
   document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
   document.getElementById('panel-'+n).classList.add('active');
   if(n==='proj') drawProj();
   if(n==='strategy'){drawStratPie(); drawFees();}
+  if(n==='encyclo') initEncyclo();
 }
 
 function sp(id, d){
@@ -647,27 +666,19 @@ function initPortfolio(){
   document.getElementById('t-etf').innerHTML = ALL_TICKERS.map(t => `<option>${t}</option>`).join('');
   document.getElementById('t-date').value = new Date().toISOString().split('T')[0];
 
+  // Live price grid: only ETFs that perform >= SPYI (14.92%/yr 10yr) or are core positions
   const PRICE_ETFS = [
-    // Core
-    {etf:'SPYI', role:'MSCI ACWI IMI - 9,000 stocks | Heritage: 500 shares - never sell', color:'#534AB7', bourse:'XETRA'},
-    {etf:'XDWD', role:'Developed world core - MSCI World', color:'#1D9E75', bourse:'XETRA'},
-    {etf:'EMIM', role:'Emerging markets - Asia/India/China', color:'#3b8eea', bourse:'AEB'},
-    {etf:'IUSN', role:'Small cap premium - MSCI World SC', color:'#f59f00', bourse:'XETRA'},
-    {etf:'ZPRV', role:'Value + size premium - USA SC Value', color:'#e91e8c', bourse:'XETRA'},
-    // Satellites - tech & growth
-    {etf:'QDVE', role:'Satellite - S&P 500 Tech (Apple/NVDA/MSFT)', color:'#00bcd4', bourse:'XETRA'},
-    {etf:'SXR8', role:'Satellite - S&P 500 Core - TER 0.07%', color:'#EF9F27', bourse:'XETRA'},
-    {etf:'SEMI', role:'Satellite - Global Semiconductors (NVDA/TSMC/ASML)', color:'#ff9800', bourse:'XETRA'},
-    {etf:'SXRV', role:'Satellite - Nasdaq 100 - 18.9%/yr 10yr', color:'#4caf50', bourse:'XETRA'},
-    {etf:'XAIX', role:'Satellite - AI & Big Data - 100 companies', color:'#673ab7', bourse:'XETRA'},
-    {etf:'IWOG', role:'Satellite - MSCI World Growth - TER 0.19%', color:'#009688', bourse:'XETRA'},
-    // Satellites - thematic
-    {etf:'L0CK', role:'Satellite - Cybersecurity (CrowdStrike/Palo Alto)', color:'#9b7fe8', bourse:'XETRA'},
-    {etf:'RBOT', role:'Satellite - Robotics & Automation - TER 0.40%', color:'#607d8b', bourse:'XETRA'},
-    {etf:'NATO', role:'Satellite - Defense & Aerospace', color:'#ff5757', bourse:'MI'},
-    {etf:'IIND', role:'Satellite - India (optional)', color:'#ff6f00', bourse:'XETRA'},
-    {etf:'IWMO', role:'Satellite - World Momentum - 14.72%/yr 10yr - auto-adaptive', color:'#00acc1', bourse:'XETRA'},
-    {etf:'DFEN', role:'Satellite - VanEck Defense - 8.3B AUM - TER 0.55%', color:'#8d6e63', bourse:'XETRA'},
+    // Core — always shown
+    {etf:'SPYI', role:'MSCI ACWI IMI - 9,000 stocks | Heritage: 500 shares', color:'#534AB7', bourse:'XETRA'},
+    // Outperform SPYI on 10yr
+    {etf:'SEMI', role:'Semiconductors - ~22-25%/yr est. | NVDA/TSMC/ASML', color:'#ff9800', bourse:'XETRA'},
+    {etf:'SXRV', role:'Nasdaq 100 - 18.90%/yr 10yr | Accumulating', color:'#4caf50', bourse:'XETRA'},
+    {etf:'QDVE', role:'S&P 500 Tech - ~18-20%/yr | Apple/NVDA/MSFT', color:'#00bcd4', bourse:'XETRA'},
+    {etf:'XAIX', role:'AI & Big Data - ~16-18%/yr | 100 companies', color:'#673ab7', bourse:'XETRA'},
+    {etf:'L0CK', role:'Cybersecurity - ~15-18%/yr | CrowdStrike/Palo Alto', color:'#9b7fe8', bourse:'XETRA'},
+    // Equivalent to SPYI
+    {etf:'SXR8', role:'S&P 500 Core - ~15%/yr | TER 0.07% - 128B EUR', color:'#EF9F27', bourse:'XETRA'},
+    {etf:'IWMO', role:'World Momentum - 14.72%/yr 10yr | Auto-adaptive factor', color:'#00acc1', bourse:'XETRA'},
   ];
   document.getElementById('price-grid').innerHTML = PRICE_ETFS.map(a => `
     <div class="kpi" id="pk-${a.etf}" style="cursor:pointer" onclick="showChart('${a.etf}','${a.color}')">
@@ -1071,7 +1082,7 @@ function showChart(ticker, color){
 
 async function loadPrices(){
   document.getElementById('last-update').textContent = 'Loading...';
-  const tickers = ['SPYI','XDWD','EMIM','IUSN','ZPRV','QDVE','SXR8','SEMI','SXRV','XAIX','IWMO','L0CK','DFEN','IWOG','RBOT','NATO','IIND'];
+  const tickers = ['SPYI','SEMI','SXRV','QDVE','XAIX','L0CK','SXR8','IWMO'];
   const unique = [...new Set(tickers)];
   for(const ticker of unique){
     const d = await fetchP(ticker);
@@ -1285,6 +1296,80 @@ document.getElementById('rules-list').innerHTML = RULES.map(r => `
   </div>`).join('');
 
 // TOAST
+// ============================================================
+// ENCYCLOPEDIA — all ETFs discussed
+// ============================================================
+const ENCYCLO = [
+  // === CORE / HERITAGE ===
+  {etf:'SPYI', name:'SPDR MSCI ACWI IMI UCITS ETF',          isin:'IE00B3YLTY66', bourse:'XETRA', ter:0.17, aum:'5.7B EUR',  r10:14.92, acc:true,  cat:'Core',       note:'9,000 stocks 50 countries - heritage position - never sell'},
+  {etf:'VWCE', name:'Vanguard FTSE All-World UCITS ETF',      isin:'IE00BK5BQT80', bourse:'AEB',   ter:0.22, aum:'50B EUR',   r10:14.80, acc:true,  cat:'Core',       note:'3,700 stocks - FTSE vs MSCI - corr 0.99 with SPYI'},
+  // === DEVELOPED WORLD ===
+  {etf:'XDWD', name:'Xtrackers MSCI World UCITS ETF',         isin:'IE00BJ0KDQ92', bourse:'XETRA', ter:0.12, aum:'18.8B EUR', r10:12.17, acc:true,  cat:'Developed',  note:'Best MSCI World alternative - WRDU equivalent'},
+  {etf:'SPPW', name:'SPDR MSCI World UCITS ETF',              isin:'IE00BFY0GT14', bourse:'XETRA', ter:0.12, aum:'16B EUR',   r10:12.17, acc:true,  cat:'Developed',  note:'= XDWD same index same TER'},
+  {etf:'IWDA', name:'iShares Core MSCI World UCITS ETF',      isin:'IE00B4L5Y983', bourse:'AEB',   ter:0.20, aum:'80B EUR',   r10:12.17, acc:true,  cat:'Developed',  note:'Classic MSCI World - more expensive than XDWD'},
+  {etf:'IWOG', name:'iShares MSCI World Growth UCITS ETF',    isin:'IE00B4L5YX21', bourse:'XETRA', ter:0.19, aum:'N/A',       r10:13.50, acc:true,  cat:'Developed',  note:'Growth tilt - 85% USA - 300 companies'},
+  {etf:'IMAE', name:'iShares Core MSCI Europe UCITS ETF',     isin:'IE00B4K48X80', bourse:'XETRA', ter:0.12, aum:'16B USD',   r10:7.80,  acc:true,  cat:'Regional',   note:'Europe only - ASML/LVMH/Nestle - underperforms SPYI'},
+  // === EMERGING MARKETS ===
+  {etf:'EMIM', name:'iShares Core MSCI EM IMI UCITS ETF',     isin:'IE00BKM4GZ66', bourse:'AEB',   ter:0.18, aum:'20B EUR',   r10:9.23,  acc:true,  cat:'Emerging',   note:'3,000 stocks - Asia/India/China - best EM UCITS'},
+  {etf:'IIND', name:'iShares MSCI India UCITS ETF',           isin:'IE00BZCQB185', bourse:'XETRA', ter:0.65, aum:'N/A',       r10:null,  acc:true,  cat:'Regional',   note:'India only - high TER - already in EMIM at 20%'},
+  // === SMALL CAPS ===
+  {etf:'IUSN', name:'iShares MSCI World Small Cap UCITS ETF', isin:'IE00BF4RFH31', bourse:'XETRA', ter:0.35, aum:'6.8B EUR',  r10:8.96,  acc:true,  cat:'Factor',     note:'MSCI World SC - size premium - underperforms SPYI 10yr'},
+  {etf:'ZPRV', name:'SPDR MSCI USA SC Value Weighted UCITS',  isin:'IE00BSPLC413', bourse:'XETRA', ter:0.30, aum:'841M EUR',  r10:11.35, acc:true,  cat:'Factor',     note:'Fama-French value+size - 11.35%/yr 10yr - cyclical'},
+  // === FACTOR ETFs ===
+  {etf:'IWMO', name:'iShares Edge MSCI World Momentum UCITS', isin:'IE00BP3QZ825', bourse:'XETRA', ter:0.25, aum:'4.5B EUR',  r10:14.72, acc:true,  cat:'Factor',     note:'Momentum factor - 14.72%/yr 10yr - auto-adaptive - 10 positive years out of 12'},
+  // === US LARGE CAP ===
+  {etf:'SXR8', name:'iShares Core S&P 500 UCITS ETF',         isin:'IE00B5BMR087', bourse:'XETRA', ter:0.07, aum:'128.9B EUR',r10:15.00, acc:true,  cat:'US Core',    note:'Largest EU ETF - TER 0.07% - S&P 500 full'},
+  {etf:'CSPX', name:'iShares Core S&P 500 UCITS ETF USD',     isin:'IE00B5BMR087', bourse:'LSE',   ter:0.07, aum:'128.9B EUR',r10:15.00, acc:true,  cat:'US Core',    note:'Same as SXR8 - USD listed on LSE'},
+  {etf:'SPYL', name:'SPDR S&P 500 UCITS ETF',                 isin:'IE000XZSV718', bourse:'XETRA', ter:0.03, aum:'15.2B EUR', r10:15.00, acc:true,  cat:'US Core',    note:'Cheapest S&P 500 - TER 0.03%'},
+  // === TECH / GROWTH ===
+  {etf:'QDVE', name:'iShares S&P 500 Info Tech Sector UCITS', isin:'IE00B3WJKG14', bourse:'XETRA', ter:0.15, aum:'16.4B EUR', r10:19.00, acc:true,  cat:'Tech',       note:'S&P 500 tech pure - Apple/NVDA/MSFT - ~18-20%/yr est.'},
+  {etf:'SXRV', name:'iShares Core Nasdaq-100 UCITS ETF',      isin:'IE00B53SZB19', bourse:'XETRA', ter:0.20, aum:'8B EUR',    r10:18.90, acc:true,  cat:'Tech',       note:'Best Nasdaq 100 UCITS - accumulating - 18.90%/yr 10yr'},
+  {etf:'XAIX', name:'Xtrackers AI & Big Data UCITS ETF',      isin:'IE00BGV5VN51', bourse:'XETRA', ter:0.35, aum:'6.9B EUR',  r10:16.00, acc:true,  cat:'Tech',       note:'100 AI companies - global incl. Asia - ~16-18%/yr est.'},
+  {etf:'SEMI', name:'VanEck Semiconductor UCITS ETF',          isin:'IE00BMC38736', bourse:'XETRA', ter:0.35, aum:'N/A',       r10:22.00, acc:true,  cat:'Tech',       note:'Pure play semis - NVDA/TSMC/ASML/AMD - best potential'},
+  // === THEMATIC ===
+  {etf:'L0CK', name:'iShares Digital Security UCITS ETF',     isin:'IE00BG0J4C88', bourse:'XETRA', ter:0.40, aum:'1.5B EUR',  r10:16.00, acc:true,  cat:'Thematic',   note:'Cybersecurity - CrowdStrike/Palo Alto - non-cyclical growth'},
+  {etf:'NATO', name:'HANetf Future of Defence UCITS ETF',     isin:'IE000OJ5TQP4', bourse:'XETRA', ter:0.49, aum:'2.38B EUR', r10:null,  acc:true,  cat:'Thematic',   note:'Defense geopolitical - Northrop/Safran - launched 2023'},
+  {etf:'DFEN', name:'VanEck Defense UCITS ETF',               isin:'IE000YYE6WK5', bourse:'XETRA', ter:0.55, aum:'8.3B USD',  r10:null,  acc:true,  cat:'Thematic',   note:'MarketVector Global Defense - 8.3B USD AUM - launched 2023'},
+  {etf:'RBOT', name:'iShares Automation & Robotics UCITS ETF',isin:'IE00BYZK4552', bourse:'XETRA', ter:0.40, aum:'3B EUR',    r10:null,  acc:true,  cat:'Thematic',   note:'Robotics & automation - industrial + medical'},
+  // === AVOIDED ===
+  {etf:'EQQQ', name:'Invesco NASDAQ-100 UCITS ETF',           isin:'IE0032077012', bourse:'LSE',   ter:0.30, aum:'11.6B EUR', r10:18.90, acc:false, cat:'Avoid',      note:'DISTRIBUTING - 30% dividend tax in Belgium - use SXRV instead'},
+  {etf:'EQDV', name:'iShares MSCI Europe Quality Dividend',   isin:'IE00BYYHSM20', bourse:'LSE',   ter:0.28, aum:'N/A',       r10:null,  acc:false, cat:'Avoid',      note:'DISTRIBUTING + Europe only - 30% dividend tax in Belgium'},
+  {etf:'VHYL', name:'Vanguard FTSE All-World High Dividend',  isin:'IE00B8GKDB10', bourse:'AEB',   ter:0.29, aum:'N/A',       r10:null,  acc:false, cat:'Avoid',      note:'DISTRIBUTING - 30% dividend tax in Belgium'},
+  {etf:'SGLD', name:'Invesco Physical Gold ETC',              isin:'IE00B579F325', bourse:'AEB',   ter:0.12, aum:'29.3B USD', r10:null,  acc:true,  cat:'Commodity',  note:'Physical gold ETC - no cashflow - hedge vs crisis - 0% CGT Belgium'},
+];
+
+const CAT_COLORS = {
+  'Core':'#534AB7','Developed':'#1D9E75','Emerging':'#3b8eea','Regional':'#888',
+  'Factor':'#e91e8c','US Core':'#EF9F27','Tech':'#00bcd4','Thematic':'#9b7fe8',
+  'Commodity':'#d4a017','Avoid':'#ff5757'
+};
+
+function initEncyclo(){
+  const spyi_r = 14.92;
+  document.getElementById('encyclo-body').innerHTML = ENCYCLO.map(e => {
+    const diff = e.r10 !== null ? e.r10 - spyi_r : null;
+    const diffStr = diff !== null
+      ? `<span style="color:${diff>=0?'var(--green)':'var(--red)'};font-family:var(--font-mono)">${diff>=0?'+':''}${diff.toFixed(2)}%</span>`
+      : '<span style="color:var(--muted)">N/A</span>';
+    const r10Str = e.r10 !== null
+      ? `<span style="font-family:var(--font-mono);color:${e.r10>=spyi_r?'var(--green)':e.r10>=12?'var(--amber)':'var(--red)'}">${e.r10.toFixed(2)}%</span>`
+      : '<span style="color:var(--muted)">N/A</span>';
+    const catColor = CAT_COLORS[e.cat] || '#888';
+    return `<tr>
+      <td class="mono fw7" style="color:${catColor}">${e.etf}</td>
+      <td style="font-size:.72rem;max-width:200px">${e.name}</td>
+      <td class="mono" style="font-size:.65rem">${e.isin}</td>
+      <td class="mono" style="font-size:.7rem">${e.bourse}</td>
+      <td class="mono" style="color:${e.ter<=0.12?'var(--green)':e.ter>=0.40?'var(--red)':'var(--amber)'}">${e.ter.toFixed(2)}%</td>
+      <td class="mono" style="font-size:.72rem">${e.aum}</td>
+      <td>${r10Str}</td>
+      <td>${diffStr}</td>
+      <td style="text-align:center">${e.acc ? '<span style="color:var(--green)">ACC</span>' : '<span style="color:var(--red)">DIST</span>'}</td>
+      <td style="font-size:.68rem;color:var(--muted);max-width:220px">${e.note}</td>
+    </tr>`;
+  }).join('');
+}
+
 function toast(m, c='var(--green)'){
   const t = document.getElementById('toast');
   t.innerHTML = '<span style="color:'+c+'">'+m+'</span>';
